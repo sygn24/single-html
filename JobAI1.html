@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina CV | 在线简历构建器</title>
+    <meta name="description" content="专业、现代的在线简历编辑器，支持实时预览和PDF导出。">
+    
+    <!-- 字体引入 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        paper: '#ffffff',
+                        'paper-dark': '#1e293b',
+                    },
+                    boxShadow: {
+                        'paper': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0,0,0,0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 自定义样式补充 */
+        body {
+            background-color: #f3f4f6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .dark body {
+            background-color: #0f172a;
+        }
+
+        /* 隐藏滚动条但保持功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 简历预览区域的缩放处理，模拟A4纸张 */
+        .a4-preview {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transform-origin: top center;
+            transition: transform 0.2s;
+        }
+
+        .dark .a4-preview {
+            filter: brightness(0.95);
+        }
+
+        /* 图片裁剪容器 */
+        .avatar-crop-container {
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+            print-color-adjust: exact; 
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* AI 按钮动画 */
+        .ai-sparkle {
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF6347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+        
+        .animate-spin-slow {
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 模版微缩图样式 (CSS Drawing) */
+        .mini-preview {
+            width: 100%;
+            height: 120px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        /* 选中状态 */
+        .template-card.active .mini-preview {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+
+        /* 打印专用样式 */
+        @media print {
+            @page {
+                margin: 0;
+                size: A4;
+            }
+            
+            body, html, main, #preview-panel {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                background-color: white !important;
+                display: block !important;
+                position: relative !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* 修复：移除 'header' 选择器，只隐藏带有 .no-print 类的元素 */
+            .no-print, aside, .zoom-controls, #template-modal {
+                display: none !important;
+            }
+
+            .a4-preview {
+                width: 100% !important;
+                height: auto !important; 
+                min-height: 100vh !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                transform: none !important;
+                filter: none !important;
+                border: none !important;
+                overflow: visible !important; 
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .break-inside-avoid {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .grid {
+                display: grid !important;
+            }
+            
+            .print\:text-white {
+                color: white !important;
+            }
+            .print\:text-black {
+                color: black !important;
+            }
+            
+            .print\:h-full {
+                height: 100% !important;
+                min-height: 100vh !important;
+            }
+        }
+        
+        /* 范围滑块美化 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #cbd5e1; /* Default gray, JS will update */
+            margin-top: -6px;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #475569;
+        }
+
+        /* 配色块样式 */
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .color-option.active {
+            border-color: #334155;
+            transform: scale(1.1);
+        }
+        .dark .color-option.active {
+            border-color: #fff;
+        }
+        
+        /* 自定义取色器覆盖 */
+        .color-input-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        .color-input-wrapper input[type=color] {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        /* 通用 section header */
+        .editor-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8; /* slate-400 */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dark .editor-section-title {
+            color: #94a3b8;
+        }
+
+        /* 样式控制按钮组 */
+        .style-btn-group {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+        }
+        .dark .style-btn-group {
+            background-color: #1e293b;
+        }
+        .style-btn {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 0.375rem;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .dark .style-btn {
+            color: #94a3b8;
+        }
+        .style-btn.active {
+            background-color: white;
+            color: #0f172a;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+        .dark .style-btn.active {
+            background-color: #334155;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="text-slate-800 dark:text-slate-200 antialiased h-screen flex flex-col overflow-hidden">
+
+    <!-- 顶部导航栏 -->
+    <header class="no-print h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 z-50 shrink-0">
+        <div class="flex items-center gap-3">
+            <div id="logo-bg" class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                L
+            </div>
+            <h1 class="font-bold text-xl tracking-tight"><span class="text-slate-900 dark:text-white">Lumina</span> <span class="text-blue-600" id="logo-text">CV</span></h1>
+        </div>
+
+        <div class="flex items-center gap-4">
+            
+            <!-- 模版切换按钮 (Trigger Modal) -->
+            <button onclick="openTemplateModal()" class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-200 dark:border-slate-700">
+                <i class="fas fa-th-large text-blue-500"></i>
+                <span class="hidden sm:inline">模版库</span>
+                <span id="current-tmpl-name" class="bg-white dark:bg-slate-900 px-2 py-0.5 rounded text-xs ml-1 text-slate-500 border border-slate-200 dark:border-slate-700">经典风格</span>
+            </button>
+
+            <!-- 分割线 -->
+            <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+            <!-- 新增：顶部缩放控制 (仅在大屏显示) -->
+            <div class="hidden lg:flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+                <button onclick="changeZoom(-0.1)" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-all shadow-sm hover:shadow active:scale-95" title="缩小">
+                    <i class="fas fa-minus text-xs"></i>
+                </button>
+                <span class="text-xs font-mono text-slate-600 dark:text-slate-300 w-12 text-center select-none" id="page-zoom-val">100%</span>
+                <button onclick="changeZoom(0.1)" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-all shadow-sm hover:shadow active:scale-95" title="放大">
+                    <i class="fas fa-plus text-xs"></i>
+                </button>
+            </div>
+
+            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-600 dark:text-slate-400" title="切换深色/浅色模式">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:block"></i>
+            </button>
+            
+            <button onclick="printResume()" id="btn-export" class="text-white px-5 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg" style="background-color: #2563eb;">
+                <i class="fas fa-download"></i>
+                <span class="hidden sm:inline">导出 PDF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主工作区 -->
+    <main class="flex-1 flex overflow-hidden relative">
+        
+        <!-- 左侧：编辑器 -->
+        <aside class="no-print w-full md:w-[450px] lg:w-[500px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 z-20 shadow-xl transition-all duration-300 absolute md:relative h-full" id="editor-panel">
+            
+            <!-- 编辑器 Tabs -->
+            <div class="flex border-b border-slate-200 dark:border-slate-800">
+                <button onclick="switchTab('content')" id="tab-content" class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors text-blue-600 border-blue-600 bg-blue-50/50 dark:bg-blue-900/10">内容编辑</button>
+                <button onclick="switchTab('style')" id="tab-style" class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors text-slate-500 border-transparent hover:text-slate-700 dark:text-slate-400">样式设置</button>
+            </div>
+
+            <!-- Panel 1: 内容编辑 -->
+            <div id="panel-content" class="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar pb-24">
+                
+                <!-- 1. 个人信息与照片 -->
+                <section class="space-y-4">
+                    <h2 class="editor-section-title">
+                        <i class="fas fa-user-circle"></i> 基本信息
+                    </h2>
+                    
+                    <!-- 照片上传与调整 -->
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-start gap-4">
+                            <div class="relative group cursor-pointer w-20 h-20 shrink-0">
+                                <div class="w-20 h-20 rounded-full overflow-hidden bg-slate-200 ring-2 ring-white dark:ring-slate-700 shadow-md">
+                                    <img id="editor-avatar-preview" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300" class="w-full h-full object-cover">
+                                </div>
+                                <label for="photo-upload" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-medium">
+                                    更换
+                                </label>
+                                <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="handlePhotoUpload(this)">
+                            </div>
+                            
+                            <div class="flex-1 space-y-3">
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs text-slate-500"><span>大小</span> <span id="val-zoom">100%</span></div>
+                                    <input type="range" min="0.5" max="2" step="0.1" value="1" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer range-slider" oninput="updatePhotoStyle('scale', this.value)">
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs text-slate-500"><span>位置 X</span> <span id="val-x">0px</span></div>
+                                    <input type="range" min="-50" max="50" value="0" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer range-slider" oninput="updatePhotoStyle('x', this.value)">
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs text-slate-500"><span>位置 Y</span> <span id="val-y">0px</span></div>
+                                    <input type="range" min="-50" max="50" value="0" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer range-slider" oninput="updatePhotoStyle('y', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">全名</label>
+                            <input type="text" id="input-name" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-shadow" value="李明哲" oninput="updateText('name', this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">求职意向 / 职位</label>
+                            <input type="text" id="input-job" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="高级前端工程师 & UX 设计师" oninput="updateText('job', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">电话</label>
+                            <input type="text" id="input-phone" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="138-0000-0000" oninput="updateContact('phone', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">邮箱</label>
+                            <input type="text" id="input-email" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="hello@limingzhe.com" oninput="updateContact('email', this.value)">
+                        </div>
+                         <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">城市</label>
+                            <input type="text" id="input-location" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="上海, 中国" oninput="updateContact('location', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">个人网站/链接</label>
+                            <input type="text" id="input-web" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="limingzhe.design" oninput="updateContact('web', this.value)">
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 2. 简介 -->
+                <section class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h2 class="editor-section-title">
+                            <i class="fas fa-align-left"></i> 个人简介
+                        </h2>
+                        <button onclick="generateSummary()" id="btn-ai-summary" class="text-xs bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-2 py-1 rounded shadow hover:opacity-90 transition-opacity flex items-center gap-1">
+                            <i class="fas fa-magic"></i> AI 生成
+                        </button>
+                    </div>
+                    <textarea id="input-summary" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none leading-relaxed resize-none" oninput="updateText('summary', this.value)">拥有5年丰富经验的前端开发工程师，专注于构建高性能、可访问且视觉精美的Web应用。精通React、Vue生态系统，对微前端架构有深入研究。具备优秀的设计审美，致力于弥合设计与代码之间的鸿沟。善于团队协作，曾主导多个百万级用户产品的重构工作。</textarea>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 3. 工作经历 (可动态添加) -->
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="editor-section-title">
+                            <i class="fas fa-briefcase"></i> 工作经历
+                        </h2>
+                        <button onclick="addExperience()" class="text-xs text-blue-600 hover:text-blue-700 font-medium link-color">+ 添加经历</button>
+                    </div>
+                    <div id="experience-editor-list" class="space-y-4">
+                        <!-- JS 将渲染表单项 -->
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 4. 教育背景 (新增) -->
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="editor-section-title">
+                            <i class="fas fa-graduation-cap"></i> 教育背景
+                        </h2>
+                        <button onclick="addEducation()" class="text-xs text-blue-600 hover:text-blue-700 font-medium link-color">+ 添加教育</button>
+                    </div>
+                    <div id="education-editor-list" class="space-y-4">
+                        <!-- JS 将渲染表单项 -->
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 5. 项目经历 (新增) -->
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="editor-section-title">
+                            <i class="fas fa-rocket"></i> 项目经历
+                        </h2>
+                        <button onclick="addProject()" class="text-xs text-blue-600 hover:text-blue-700 font-medium link-color">+ 添加项目</button>
+                    </div>
+                    <div id="project-editor-list" class="space-y-4">
+                        <!-- JS 将渲染表单项 -->
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 6. 技能与其他 (扩展) -->
+                <section class="space-y-4">
+                    <h2 class="editor-section-title">
+                        <i class="fas fa-tools"></i> 技能与附加信息
+                    </h2>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">专业技能 (用逗号分隔)</label>
+                        <textarea id="input-skills" rows="3" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none" oninput="updateSkills(this.value)">JavaScript (ES6+), TypeScript, React, Next.js, Tailwind CSS, Node.js, Figma, UI/UX Design, Docker, Git</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">语言能力</label>
+                        <input type="text" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value="中文 (Native), English (Professional)" oninput="updateText('languages', this.value)">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">奖项与证书</label>
+                        <textarea rows="2" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none" oninput="updateText('certificates', this.value)">AWS Certified Solutions Architect, PMP Certification</textarea>
+                    </div>
+                </section>
+                
+                <div class="h-8"></div>
+            </div>
+
+            <!-- Panel 2: 样式设置 (丰富版) -->
+            <div id="panel-style" class="hidden flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar pb-24">
+                
+                <!-- 1. 主题颜色 (带自定义取色器) -->
+                <section class="space-y-4">
+                    <h2 class="editor-section-title">
+                        <i class="fas fa-palette"></i> 主题颜色
+                    </h2>
+                    <div class="flex flex-wrap gap-4" id="color-picker">
+                        <!-- JS 渲染色块 -->
+                    </div>
+                    
+                    <!-- 自定义取色器 -->
+                    <div class="mt-2 flex items-center gap-2">
+                        <div class="color-option color-input-wrapper w-8 h-8 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-sm">
+                            <i class="fas fa-plus text-slate-400 text-xs"></i>
+                            <input type="color" oninput="updateStyle('color', this.value)" title="自定义颜色">
+                        </div>
+                        <span class="text-xs text-slate-500">自定义颜色</span>
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 2. 字体风格 -->
+                <section class="space-y-4">
+                    <h2 class="editor-section-title">
+                        <i class="fas fa-font"></i> 字体风格
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="updateStyle('font', 'sans')" id="font-btn-sans" class="border border-blue-500 bg-blue-50 text-blue-700 px-4 py-3 rounded-lg text-sm font-sans text-center transition-all shadow-sm">
+                            无衬线 (Sans)
+                            <br><span class="text-xs opacity-75">现代、清晰</span>
+                        </button>
+                        <button onclick="updateStyle('font', 'serif')" id="font-btn-serif" class="border border-slate-200 bg-white text-slate-600 px-4 py-3 rounded-lg text-sm font-serif text-center transition-all hover:shadow-md hover:border-slate-300">
+                            衬线 (Serif)
+                            <br><span class="text-xs opacity-75">经典、优雅</span>
+                        </button>
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 3. 字号大小 -->
+                <section class="space-y-4">
+                    <h2 class="editor-section-title">
+                        <i class="fas fa-text-height"></i> 全局字号
+                    </h2>
+                    <div class="style-btn-group">
+                        <button onclick="updateStyle('fontSize', 'small')" class="style-btn" id="fs-small">小</button>
+                        <button onclick="updateStyle('fontSize', 'normal')" class="style-btn active" id="fs-normal">中 (标准)</button>
+                        <button onclick="updateStyle('fontSize', 'large')" class="style-btn" id="fs-large">大</button>
+                    </div>
+                </section>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <!-- 4. 排版密度 -->
+                <section class="space-y-6">
+                    <div>
+                        <h2 class="editor-section-title mb-3">
+                            <i class="fas fa-arrows-alt-v"></i> 页边距
+                        </h2>
+                        <div class="style-btn-group">
+                            <button onclick="updateStyle('margins', 'narrow')" class="style-btn" id="mg-narrow">紧凑</button>
+                            <button onclick="updateStyle('margins', 'normal')" class="style-btn active" id="mg-normal">标准</button>
+                            <button onclick="updateStyle('margins', 'wide')" class="style-btn" id="mg-wide">宽敞</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="editor-section-title mb-3">
+                            <i class="fas fa-align-justify"></i> 行间距
+                        </h2>
+                        <div class="style-btn-group">
+                            <button onclick="updateStyle('spacing', 'tight')" class="style-btn" id="sp-tight">紧密</button>
+                            <button onclick="updateStyle('spacing', 'normal')" class="style-btn" id="sp-normal">舒适</button>
+                            <button onclick="updateStyle('spacing', 'relaxed')" class="style-btn active" id="sp-relaxed">宽松</button>
+                        </div>
+                    </div>
+                </section>
+                
+                <div class="h-8"></div>
+            </div>
+            
+            <!-- 移动端遮罩 -->
+            <div class="md:hidden absolute top-1/2 -right-3 z-30">
+                 <button onclick="toggleMobilePreview()" class="bg-blue-600 text-white w-8 h-16 rounded-r-lg shadow-lg flex items-center justify-center btn-theme-bg">
+                    <i class="fas fa-chevron-right"></i>
+                 </button>
+            </div>
+        </aside>
+
+        <!-- 右侧：实时预览 (A4 纸张模拟) -->
+        <div class="flex-1 bg-slate-100 dark:bg-black/20 overflow-auto flex justify-center py-8 md:py-12 px-4 relative" id="preview-panel">
+            
+            <!-- A4 纸张 -->
+            <div id="resume-preview" class="a4-preview relative box-border">
+                <!-- 模板内容将通过 JS 动态注入 -->
+            </div>
+
+            <!-- 缩放控制 (预览区右下角 - 已移动至顶部，此处仅保留作为占位或完全移除) -->
+            <!-- 为了代码整洁，已完全从右下角移除，现在只在顶部显示 -->
+        </div>
+
+    </main>
+
+    <!-- 模版选择 Modal (Same as before) -->
+    <div id="template-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeTemplateModal()"></div>
+        <div class="absolute inset-x-4 top-10 bottom-10 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-800 transform transition-all">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">模版库 <span class="text-xs font-normal text-slate-500 ml-2">10 款精心设计，满足各种职业需求</span></h3>
+                <button onclick="closeTemplateModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Template Cards (Simplified for brevity, content same as before) -->
+                <!-- Classic -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('classic')">
+                    <div class="mini-preview flex overflow-hidden shadow-sm group-hover:shadow-md">
+                        <div class="w-1/3 h-full bg-slate-700"></div><div class="w-2/3 h-full bg-white"></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">经典风格 (Classic)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">左侧深色栏，稳重传统</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="classic"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Modern -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('modern')">
+                    <div class="mini-preview flex flex-col overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="h-1/3 border-b border-slate-200 flex items-center px-2"><div class="w-8 h-8 rounded-full bg-slate-200 mr-2"></div><div class="h-2 w-16 bg-slate-800 rounded"></div></div><div class="flex-1 grid grid-cols-3 gap-1 p-1"><div class="col-span-2 space-y-1"><div class="h-1.5 w-full bg-slate-100"></div></div><div class="col-span-1 space-y-1"><div class="h-1.5 w-full bg-slate-100"></div></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">现代极简 (Modern)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">全宽布局，顶部大标题</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="modern"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Elegant -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('elegant')">
+                    <div class="mini-preview flex flex-col items-center pt-3 overflow-hidden shadow-sm group-hover:shadow-md bg-white border border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 mb-1"></div><div class="w-16 h-1.5 bg-slate-800 mb-2"></div><div class="w-full border-t border-slate-200 mt-1 flex-1 px-2 py-1 space-y-1"><div class="w-full h-1 bg-slate-100"></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">简约商务 (Elegant)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">单栏居中，适合学术/管理</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="elegant"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Timeline -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('timeline')">
+                    <div class="mini-preview flex flex-col p-2 overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="flex items-center mb-2 border-b pb-1"><div class="w-6 h-6 rounded-full bg-slate-200 mr-2"></div><div class="h-2 w-20 bg-slate-800"></div></div><div class="flex-1 flex gap-2"><div class="w-1/3 text-[4px] text-slate-300 space-y-1"><div class="h-1 bg-slate-100 w-full"></div></div><div class="w-2/3 border-l-2 border-slate-200 pl-2 space-y-2 relative"><div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-slate-400"></div><div class="h-1 bg-slate-100 w-full"></div></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">时光轴 (Timeline)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">视觉化经历，清晰轨迹</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="timeline"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Tech -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('tech')">
+                    <div class="mini-preview flex flex-col overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="h-1/3 bg-slate-900 flex items-center px-3"><div class="h-2 w-24 bg-green-400 rounded-sm font-mono"></div></div><div class="flex-1 p-2 grid grid-cols-2 gap-2"><div class="h-1 bg-slate-200 w-full"></div><div class="col-span-2 h-10 border border-dashed border-slate-300 rounded flex items-center justify-center text-[6px] text-slate-400">&lt;/&gt;</div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">极客精神 (Tech)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">终端风格，程序员首选</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="tech"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Right Side -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('right')">
+                    <div class="mini-preview flex overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="w-2/3 h-full bg-white p-2"><div class="h-2 w-20 bg-slate-800 mb-2"></div><div class="h-1 w-full bg-slate-100 mb-1"></div></div><div class="w-1/3 h-full bg-slate-100 border-l border-slate-200"></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">右侧布局 (Right)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">打破常规，侧栏在右</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="right"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Swiss -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('swiss')">
+                    <div class="mini-preview flex flex-col p-2 overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="w-10 h-10 border-4 border-black mb-2"></div><div class="h-3 w-20 bg-black mb-1"></div><div class="h-1 w-full bg-black mb-2"></div><div class="grid grid-cols-2 gap-2"><div class="h-1 bg-slate-400 w-full"></div><div class="h-1 bg-slate-400 w-full"></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">瑞士风格 (Swiss)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">网格系统，粗体排版</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="swiss"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Creative -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('creative')">
+                    <div class="mini-preview relative overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="absolute top-0 right-0 w-2/3 h-1/2 bg-blue-100 -rotate-6 transform origin-top-right"></div><div class="absolute top-4 left-3 w-8 h-8 rounded-lg bg-white border border-slate-100 shadow-sm z-10"></div><div class="absolute top-5 left-14 w-20 h-2 bg-slate-800 z-10"></div><div class="absolute bottom-2 left-3 right-3 h-1/2 grid grid-cols-3 gap-1"><div class="bg-slate-50 rounded"></div><div class="col-span-2 bg-slate-50 rounded"></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">创意设计 (Creative)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">几何背景，个性鲜明</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="creative"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Compact -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('compact')">
+                    <div class="mini-preview p-2 space-y-1.5 overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="w-full border-b border-black pb-1 mb-1"><div class="w-1/3 h-1.5 bg-black mx-auto"></div></div><div class="w-full h-1 bg-slate-300"></div><div class="w-full h-1 bg-slate-300"></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">紧凑学术 (Compact)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">高密度信息，无废话</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="compact"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+                <!-- Bold -->
+                <div class="template-card group cursor-pointer" onclick="selectTemplateAndClose('bold')">
+                    <div class="mini-preview flex flex-col overflow-hidden shadow-sm group-hover:shadow-md bg-white">
+                        <div class="h-1/3 bg-slate-800 w-full flex flex-col justify-center items-center"><div class="w-8 h-8 rounded-full bg-white/20 mb-1"></div><div class="w-16 h-1 bg-white/20 rounded"></div></div><div class="flex-1 grid grid-cols-3 gap-1 p-1"><div class="col-span-1 space-y-1"><div class="h-1.5 w-full bg-slate-100"></div></div><div class="col-span-2 space-y-1"><div class="h-1.5 w-full bg-slate-100"></div></div></div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center"><div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm">醒目风格 (Bold)</h4><p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">顶部通栏背景，视觉强烈</p></div><div class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-blue-600 opacity-0 group-hover:opacity-100 check-icon" data-tmpl="bold"><i class="fas fa-check text-[10px]"></i></div></div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 rounded-b-xl">
+                <p class="text-xs text-slate-500 text-center">提示：切换模版不会丢失您的内容，所有数据都会自动适配。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 逻辑 -->
+    <script>
+        // --- API Config ---
+        const apiKey = ""; 
+
+        // --- 数据状态 ---
+        const state = {
+            template: 'classic', 
+            zoom: 1, 
+            style: {
+                color: '#2563eb', // Default blue-600
+                font: 'sans',      // sans | serif | mono
+                fontSize: 'normal', // small | normal | large
+                margins: 'normal',  // narrow | normal | wide
+                spacing: 'relaxed'   // tight | normal | relaxed
+            },
+            photo: {
+                src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=500&h=500',
+                scale: 1,
+                x: 0,
+                y: 0
+            },
+            data: {
+                name: '李明哲',
+                job: '高级前端工程师 & UX 设计师',
+                phone: '138-0000-0000',
+                email: 'hello@limingzhe.com',
+                location: '上海, 中国',
+                web: 'limingzhe.design',
+                summary: '拥有5年丰富经验的前端开发工程师，专注于构建高性能、可访问且视觉精美的Web应用。精通React、Vue生态系统，对微前端架构有深入研究。具备优秀的设计审美，致力于弥合设计与代码之间的鸿沟。善于团队协作，曾主导多个百万级用户产品的重构工作。',
+                experiences: [
+                    {
+                        id: 1,
+                        role: '高级前端工程师',
+                        company: 'TechFlow 科技有限公司',
+                        time: '2021 - 至今',
+                        desc: '• 主导公司核心 SaaS 平台的重构，将首屏加载时间减少了 40%。\n• 设计并实现了一套基于 React 的内部组件库，提升了团队 30% 的开发效率。\n• 引入自动化测试流程，将线上 Bug 率降低了 25%。\n• 指导初级工程师，组织每周技术分享会。'
+                    },
+                    {
+                        id: 2,
+                        role: '前端开发工程师',
+                        company: 'Creative Web Studio',
+                        time: '2018 - 2021',
+                        desc: '• 负责多个电商客户的营销活动页面开发，抗住了百万级并发流量。\n• 与设计师紧密合作，完美还原 Figma 设计稿，实现复杂的动画交互效果。\n• 优化移动端适配，确保在各种设备上的流畅体验。'
+                    }
+                ],
+                education: [
+                    {
+                        degree: '计算机科学与技术 (学士)',
+                        school: '上海交通大学',
+                        time: '2014 - 2018'
+                    }
+                ],
+                projects: [
+                    {
+                        name: 'Lumina 在线简历',
+                        role: '独立开发者',
+                        time: '2023',
+                        desc: '开发了一款基于 Tailwind CSS 的在线简历构建器，支持实时预览和 PDF 导出。集成了 Gemini AI 进行文本润色。'
+                    }
+                ],
+                languages: '中文 (Native), English (Professional)',
+                certificates: 'AWS Certified Solutions Architect, PMP Certification',
+                skills: ['JavaScript (ES6+)', 'TypeScript', 'React', 'Next.js', 'Vue.js', 'Tailwind CSS', 'Node.js', 'Figma', 'UI/UX Design', 'Git', 'CI/CD']
+            }
+        };
+
+        // --- 预设颜色 ---
+        const colors = [
+            { name: 'Blue', hex: '#2563eb' },
+            { name: 'Indigo', hex: '#4f46e5' },
+            { name: 'Purple', hex: '#9333ea' },
+            { name: 'Pink', hex: '#db2777' },
+            { name: 'Red', hex: '#dc2626' },
+            { name: 'Orange', hex: '#ea580c' },
+            { name: 'Amber', hex: '#d97706' },
+            { name: 'Green', hex: '#16a34a' },
+            { name: 'Teal', hex: '#0d9488' },
+            { name: 'Slate', hex: '#475569' },
+            { name: 'Black', hex: '#000000' }
+        ];
+
+        // --- 初始化 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderExperienceEditor();
+            renderEducationEditor();
+            renderProjectEditor();
+            renderColorPicker();
+            renderPreview();
+            updateActiveTemplateUI();
+            
+            // 自动检测系统暗黑模式
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+        });
+
+        // --- 模版商城逻辑 ---
+        function openTemplateModal() {
+            document.getElementById('template-modal').classList.remove('hidden');
+            updateActiveTemplateUI();
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('template-modal').classList.add('hidden');
+        }
+
+        function selectTemplateAndClose(tmpl) {
+            setTemplate(tmpl);
+            closeTemplateModal();
+        }
+
+        function updateActiveTemplateUI() {
+            const tmplNameMap = {
+                'classic': '经典风格',
+                'modern': '现代极简',
+                'elegant': '简约商务',
+                'creative': '创意设计',
+                'compact': '紧凑学术',
+                'timeline': '时光轴',
+                'tech': '极客精神',
+                'right': '右侧布局',
+                'swiss': '瑞士风格',
+                'bold': '醒目风格'
+            };
+            
+            document.getElementById('current-tmpl-name').innerText = tmplNameMap[state.template];
+
+            document.querySelectorAll('.template-card').forEach(card => {
+                const checkIcon = card.querySelector('.check-icon');
+                const isMatch = checkIcon.getAttribute('data-tmpl') === state.template;
+                
+                if (isMatch) {
+                    card.classList.add('active');
+                    checkIcon.classList.remove('opacity-0');
+                    checkIcon.classList.add('bg-blue-50', 'border-blue-200');
+                } else {
+                    card.classList.remove('active');
+                    checkIcon.classList.add('opacity-0');
+                    checkIcon.classList.remove('bg-blue-50', 'border-blue-200');
+                }
+            });
+        }
+
+        // --- Gemini API Call Helper ---
+        async function callGeminiAPI(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                return text;
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                alert("AI 调用失败，请稍后重试。");
+                return null;
+            }
+        }
+
+        // --- AI Features ---
+
+        async function generateSummary() {
+            const btn = document.getElementById('btn-ai-summary');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="fas fa-spinner animate-spin-slow"></i> 生成中...`;
+            btn.disabled = true;
+
+            const prompt = `You are a professional resume writer. Write a professional, concise, and impactful resume summary (about 3-4 sentences) for a "${state.data.job}" with the following skills: "${state.data.skills.join(', ')}". 
+            Ensure the tone is confident and professional.
+            IMPORTANT: Output ONLY the summary text, no explanations. 
+            If the inputs are in Chinese, output in Chinese. If mixed, prefer Chinese for the output.`;
+
+            const result = await callGeminiAPI(prompt);
+
+            if (result) {
+                updateText('summary', result.trim());
+                document.getElementById('input-summary').value = result.trim();
+            }
+
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+
+        async function optimizeExperience(index) {
+            const btn = document.getElementById(`btn-ai-exp-${index}`);
+            const originalText = btn.innerHTML;
+            const currentDesc = state.data.experiences[index].desc;
+
+            if(!currentDesc || currentDesc.length < 5) {
+                alert("请先填写一些经历描述，AI 才能帮您润色哦！");
+                return;
+            }
+
+            btn.innerHTML = `<i class="fas fa-spinner animate-spin-slow"></i>`;
+            btn.disabled = true;
+
+            const prompt = `You are a professional resume writer. Rewrite and polish the following resume work experience bullet points to be more professional, action-oriented, result-driven, and concise.
+            Original Text:
+            "${currentDesc}"
+            
+            IMPORTANT: 
+            1. Output ONLY the polished text. Do not add conversational filler.
+            2. Maintain the bullet point format if present.
+            3. Keep the same language as the original text (if Chinese, output Chinese).`;
+
+            const result = await callGeminiAPI(prompt);
+
+            if (result) {
+                updateExp(index, 'desc', result.trim());
+                renderExperienceEditor();
+            }
+
+            if(document.getElementById(`btn-ai-exp-${index}`)) {
+                const newBtn = document.getElementById(`btn-ai-exp-${index}`);
+                newBtn.innerHTML = originalText;
+                newBtn.disabled = false;
+            }
+        }
+
+        // --- 导出功能 ---
+        function printResume() {
+            window.focus(); 
+            window.print();
+        }
+
+        // --- Tab 切换 ---
+        function switchTab(tab) {
+            const btnContent = document.getElementById('tab-content');
+            const btnStyle = document.getElementById('tab-style');
+            const panelContent = document.getElementById('panel-content');
+            const panelStyle = document.getElementById('panel-style');
+
+            if (tab === 'content') {
+                btnContent.classList.add('text-blue-600', 'border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+                btnContent.classList.remove('text-slate-500', 'border-transparent');
+                
+                btnStyle.classList.remove('text-blue-600', 'border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+                btnStyle.classList.add('text-slate-500', 'border-transparent');
+                
+                panelContent.classList.remove('hidden');
+                panelStyle.classList.add('hidden');
+            } else {
+                btnStyle.classList.add('text-blue-600', 'border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+                btnStyle.classList.remove('text-slate-500', 'border-transparent');
+                
+                btnContent.classList.remove('text-blue-600', 'border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+                btnContent.classList.add('text-slate-500', 'border-transparent');
+                
+                panelStyle.classList.remove('hidden');
+                panelContent.classList.add('hidden');
+            }
+        }
+
+        // --- 样式设置逻辑 ---
+        function renderColorPicker() {
+            const container = document.getElementById('color-picker');
+            container.innerHTML = colors.map(c => `
+                <div onclick="updateStyle('color', '${c.hex}')" 
+                     class="color-option ${state.style.color === c.hex ? 'active' : ''}" 
+                     style="background-color: ${c.hex};" 
+                     title="${c.name}">
+                </div>
+            `).join('');
+        }
+
+        function updateStyle(prop, value) {
+            state.style[prop] = value;
+            
+            if (prop === 'color') {
+                renderColorPicker(); 
+                document.getElementById('logo-text').style.color = value;
+                document.querySelectorAll('.link-color').forEach(el => el.style.color = value);
+                document.querySelectorAll('.btn-theme-bg').forEach(el => el.style.backgroundColor = value);
+                document.getElementById('btn-export').style.backgroundColor = value;
+            }
+
+            if (prop === 'font') {
+                const btnSans = document.getElementById('font-btn-sans');
+                const btnSerif = document.getElementById('font-btn-serif');
+                if (value === 'sans') {
+                    btnSans.className = "border border-blue-500 bg-blue-50 text-blue-700 px-4 py-3 rounded-lg text-sm font-sans text-center transition-all shadow-sm";
+                    btnSerif.className = "border border-slate-200 bg-white text-slate-600 px-4 py-3 rounded-lg text-sm font-serif text-center transition-all hover:shadow-md hover:border-slate-300";
+                } else {
+                    btnSerif.className = "border border-blue-500 bg-blue-50 text-blue-700 px-4 py-3 rounded-lg text-sm font-serif text-center transition-all shadow-sm";
+                    btnSans.className = "border border-slate-200 bg-white text-slate-600 px-4 py-3 rounded-lg text-sm font-sans text-center transition-all hover:shadow-md hover:border-slate-300";
+                }
+            }
+            
+            // Helper to update active class for button groups
+            if (['fontSize', 'margins', 'spacing'].includes(prop)) {
+                // Remove active class from siblings
+                const prefixMap = { 'fontSize': 'fs-', 'margins': 'mg-', 'spacing': 'sp-' };
+                const prefix = prefixMap[prop];
+                document.querySelectorAll(`[id^="${prefix}"]`).forEach(btn => btn.classList.remove('active'));
+                document.getElementById(`${prefix}${value}`).classList.add('active');
+            }
+
+            renderPreview();
+        }
+
+        // --- 核心渲染逻辑 ---
+
+        function renderPreview() {
+            const container = document.getElementById('resume-preview');
+            const { data, photo, template, style } = state;
+            const themeColor = style.color;
+            let fontFamily = style.font === 'serif' ? 'font-serif' : 'font-sans';
+            if (template === 'tech') fontFamily = 'font-mono';
+            
+            // --- 样式计算逻辑 ---
+            
+            // 1. 字号
+            let textBase = 'text-xs'; // Default
+            let textTitle = 'text-sm';
+            if (style.fontSize === 'small') { textBase = 'text-[10px]'; textTitle = 'text-xs'; }
+            if (style.fontSize === 'large') { textBase = 'text-sm'; textTitle = 'text-base'; }
+            
+            // 2. 间距 (Leading)
+            let leadingClass = 'leading-relaxed';
+            if (style.spacing === 'tight') leadingClass = 'leading-snug';
+            if (style.spacing === 'normal') leadingClass = 'leading-normal';
+            
+            // 3. 页边距 (Padding) - 根据模版调整
+            let padX = 'px-12';
+            let padY = 'py-12';
+            if (style.margins === 'narrow') { padX = 'px-8'; padY = 'py-8'; }
+            if (style.margins === 'wide') { padX = 'px-16'; padY = 'py-16'; }
+            
+            // 特殊处理 Modern 模版的 padding
+            let modPad = 'p-10';
+            if (style.margins === 'narrow') modPad = 'p-6';
+            if (style.margins === 'wide') modPad = 'p-14';
+
+            const summaryHtml = data.summary.replace(/\n/g, '<br>');
+            const skillsHtml = data.skills.map(s => `<span class="inline-block bg-slate-100 text-slate-700 px-2 py-1 rounded ${textBase} font-medium mr-1 mb-1 print:bg-slate-100 print:text-black">${s.trim()}</span>`).join('');
+
+            // 通用片段生成
+            const renderExpList = (items, compact = false) => items.map(item => `
+                <div class="mb-4 break-inside-avoid">
+                    <div class="flex justify-between items-baseline mb-1">
+                        <h3 class="font-bold text-slate-900 ${textTitle}">${item.role || item.degree}</h3>
+                        <span class="${textBase} text-slate-500 font-medium whitespace-nowrap">${item.time}</span>
+                    </div>
+                    <div class="${textBase} font-medium mb-1" style="color: ${themeColor}">${item.company || item.school || item.name}</div>
+                    ${item.desc ? `<div class="${textBase} text-slate-600 ${leadingClass} text-justify whitespace-pre-line ${compact ? 'pl-0' : ''}">${item.desc}</div>` : ''}
+                </div>
+            `).join('');
+
+            const renderSimpleList = (items) => items.map(item => `
+                <div class="mb-2 break-inside-avoid">
+                    <div class="flex justify-between items-baseline">
+                        <h3 class="font-bold text-slate-900 ${textBase}">${item.school || item.name}</h3>
+                        <span class="${textBase} text-slate-500">${item.time}</span>
+                    </div>
+                    <div class="${textBase} text-slate-600">${item.degree || item.role}</div>
+                </div>
+            `).join('');
+
+            const imgStyle = `transform: translate(${photo.x}px, ${photo.y}px) scale(${photo.scale});`;
+            const containerClass = `h-full min-h-[297mm] bg-white text-slate-800 ${fontFamily}`;
+
+            // Helper for Projects & Languages
+            const projectsSection = data.projects && data.projects.length > 0 ? `
+                <section class="mt-6">
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 项目经历</h2>
+                    ${renderExpList(data.projects)}
+                </section>
+            ` : '';
+
+            // --- 模版渲染路由 ---
+            
+            // 1. Classic (Grid Layout for Print Stability)
+            if (template === 'classic') {
+                container.innerHTML = `
+                    <div class="${containerClass} grid grid-cols-12 min-h-screen">
+                        <div class="col-span-4 text-white p-8 flex flex-col print-adjust-color print:h-full" style="background-color: ${themeColor};">
+                            <div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white/20 mx-auto mb-6 relative bg-white/10">
+                                <img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-100" style="${imgStyle}">
+                            </div>
+                            <div class="space-y-6">
+                                <div><h4 class="${textBase} font-bold opacity-80 uppercase tracking-widest mb-3 border-b border-white/20 pb-1 print:text-white">联系方式</h4>
+                                    <div class="space-y-2 ${textBase} print:text-white">
+                                        ${data.phone ? `<div class="flex items-center gap-2"><i class="fas fa-phone w-4 text-center opacity-70"></i> ${data.phone}</div>` : ''}
+                                        ${data.email ? `<div class="flex items-center gap-2"><i class="fas fa-envelope w-4 text-center opacity-70"></i> ${data.email}</div>` : ''}
+                                        ${data.location ? `<div class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-4 text-center opacity-70"></i> ${data.location}</div>` : ''}
+                                        ${data.web ? `<div class="flex items-center gap-2"><i class="fas fa-globe w-4 text-center opacity-70"></i> ${data.web}</div>` : ''}
+                                    </div>
+                                </div>
+                                <div><h4 class="${textBase} font-bold opacity-80 uppercase tracking-widest mb-3 border-b border-white/20 pb-1 print:text-white">教育背景</h4>
+                                    <div class="space-y-3 print:text-white">${data.education.map(edu => `<div><div class="font-bold ${textBase}">${edu.school}</div><div class="text-[10px] opacity-75">${edu.time}</div><div class="text-[11px] opacity-90">${edu.degree}</div></div>`).join('')}</div>
+                                </div>
+                                <div><h4 class="${textBase} font-bold opacity-80 uppercase tracking-widest mb-3 border-b border-white/20 pb-1 print:text-white">技能专长</h4>
+                                    <div class="flex flex-wrap gap-1 print:text-white">${data.skills.map(s => `<span class="bg-white/20 text-white text-[10px] px-2 py-1 rounded border border-white/10 print:text-white">${s}</span>`).join('')}</div>
+                                </div>
+                                ${data.languages || data.certificates ? `
+                                <div><h4 class="${textBase} font-bold opacity-80 uppercase tracking-widest mb-3 border-b border-white/20 pb-1 print:text-white">其他</h4>
+                                    <div class="space-y-2 ${textBase} opacity-90 print:text-white">
+                                        ${data.languages ? `<div class="mb-2"><strong>语言:</strong> ${data.languages}</div>` : ''}
+                                        ${data.certificates ? `<div><strong>证书:</strong> ${data.certificates}</div>` : ''}
+                                    </div>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                        <div class="col-span-8 ${modPad} bg-white text-slate-800">
+                            <header class="mb-8 border-b border-slate-100 pb-6"><h1 class="text-3xl font-bold text-slate-900 mb-2 tracking-tight">${data.name}</h1><p class="font-medium tracking-wide uppercase text-sm" style="color: ${themeColor}">${data.job}</p></header>
+                            <section class="mb-8"><h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-3 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 个人简介</h2><p class="${textBase} ${leadingClass} text-slate-600 text-justify">${summaryHtml}</p></section>
+                            <section><h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 工作经历</h2><div class="space-y-5">${renderExpList(data.experiences)}</div></section>
+                            ${projectsSection}
+                        </div>
+                    </div>`;
+            } 
+            // 2. Modern
+            else if (template === 'modern') {
+                container.innerHTML = `
+                    <div class="${containerClass} ${modPad} flex flex-col">
+                        <header class="flex items-center gap-6 mb-8 border-b-2 pb-8" style="border-color: ${themeColor}">
+                            <div class="avatar-crop-container w-24 h-24 rounded-full bg-slate-100 shrink-0 overflow-hidden relative border border-slate-200">
+                                <img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}">
+                            </div>
+                            <div class="flex-1">
+                                <h1 class="text-4xl font-black text-slate-900 mb-1 tracking-tight">${data.name}</h1>
+                                <p class="font-medium text-lg mb-3" style="color: ${themeColor}">${data.job}</p>
+                                <div class="flex flex-wrap gap-x-4 gap-y-1 ${textBase} text-slate-500 font-mono">
+                                     ${data.phone ? `<span>${data.phone}</span>` : ''} ${data.email ? `<span class="text-slate-300">|</span> <span>${data.email}</span>` : ''} ${data.location ? `<span class="text-slate-300">|</span> <span>${data.location}</span>` : ''} ${data.web ? `<span class="text-slate-300">|</span> <span>${data.web}</span>` : ''}
+                                </div>
+                            </div>
+                        </header>
+                        <div class="grid grid-cols-12 gap-8 flex-1">
+                            <div class="col-span-8 space-y-8">
+                                <section><h2 class="text-sm font-black text-slate-900 uppercase mb-3 tracking-widest border-b border-slate-200 pb-2">Profile</h2><p class="${textBase} ${leadingClass} text-slate-600 text-justify">${summaryHtml}</p></section>
+                                <section><h2 class="text-sm font-black text-slate-900 uppercase mb-4 tracking-widest border-b border-slate-200 pb-2">Experience</h2><div class="space-y-6">${renderExpList(data.experiences)}</div></section>
+                                ${data.projects.length > 0 ? `<section><h2 class="text-sm font-black text-slate-900 uppercase mb-4 tracking-widest border-b border-slate-200 pb-2">Projects</h2><div class="space-y-6">${renderExpList(data.projects)}</div></section>` : ''}
+                            </div>
+                            <div class="col-span-4 space-y-8">
+                                <section><h2 class="text-sm font-black text-slate-900 uppercase mb-3 tracking-widest border-b border-slate-200 pb-2">Skills</h2><div class="flex flex-wrap gap-1">${skillsHtml}</div></section>
+                                <section><h2 class="text-sm font-black text-slate-900 uppercase mb-3 tracking-widest border-b border-slate-200 pb-2">Education</h2><div class="space-y-4">${renderSimpleList(data.education)}</div></section>
+                                ${(data.languages || data.certificates) ? `<section><h2 class="text-sm font-black text-slate-900 uppercase mb-3 tracking-widest border-b border-slate-200 pb-2">Misc</h2><div class="${textBase} text-slate-600 space-y-2">${data.languages ? `<div><strong>Lang:</strong> ${data.languages}</div>` : ''}${data.certificates ? `<div><strong>Cert:</strong> ${data.certificates}</div>` : ''}</div></section>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 3. Elegant
+            else if (template === 'elegant') {
+                container.innerHTML = `
+                    <div class="${containerClass} ${padX} ${padY}">
+                        <header class="text-center mb-6 pb-4 border-b border-slate-300">
+                             <div class="avatar-crop-container w-20 h-20 rounded-full mx-auto mb-3 bg-slate-100 overflow-hidden relative border border-slate-200">
+                                <img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}">
+                            </div>
+                            <h1 class="text-3xl font-bold text-slate-900 mb-1 tracking-wide">${data.name}</h1>
+                            <p class="text-sm italic mb-3 font-sans" style="color: ${themeColor}">${data.job}</p>
+                            <div class="flex justify-center flex-wrap gap-4 text-xs font-sans text-slate-500 uppercase tracking-widest">
+                                ${data.phone ? `<span>${data.phone}</span>` : ''} ${data.email ? `<span class="text-slate-300">•</span> <span>${data.email}</span>` : ''} ${data.location ? `<span class="text-slate-300">•</span> <span>${data.location}</span>` : ''} ${data.web ? `<span class="text-slate-300">•</span> <span>${data.web}</span>` : ''}
+                            </div>
+                        </header>
+                        <div class="space-y-5 font-sans">
+                            <section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">个人简介</h2><p class="${textBase} ${leadingClass} text-slate-700 text-justify">${summaryHtml}</p></section>
+                            <section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">工作经历</h2><div class="space-y-4">${renderExpList(data.experiences)}</div></section>
+                            ${data.projects.length > 0 ? `<section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">项目经历</h2><div class="space-y-4">${renderExpList(data.projects)}</div></section>` : ''}
+                            <div class="grid grid-cols-2 gap-6">
+                                <section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">教育背景</h2><div class="space-y-3">${renderSimpleList(data.education)}</div></section>
+                                <div class="space-y-5">
+                                    <section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">核心技能</h2><div class="flex flex-wrap gap-x-3 gap-y-2 ${textBase} text-slate-700">${data.skills.map(s => `<span class="border-b border-slate-200 pb-0.5">${s}</span>`).join('')}</div></section>
+                                    ${(data.languages || data.certificates) ? `<section><h2 class="text-base font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">其他</h2><div class="${textBase} text-slate-700 space-y-1">${data.languages ? `<div>${data.languages}</div>` : ''}${data.certificates ? `<div>${data.certificates}</div>` : ''}</div></section>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 4. Creative
+            else if (template === 'creative') {
+                 container.innerHTML = `
+                    <div class="${containerClass} flex flex-col h-full relative">
+                        <div class="absolute top-0 right-0 w-2/3 h-64 opacity-10 print:opacity-100 print-adjust-color" style="background-color: ${themeColor}; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); z-index: 0;"></div>
+                        <header class="${modPad} pb-0 relative z-10 flex justify-between items-end mb-12">
+                             <div><h1 class="text-5xl font-black text-slate-900 mb-2 tracking-tight leading-none">${data.name.slice(0,1)}<span style="color: ${themeColor}">${data.name.slice(1)}</span></h1><p class="text-xl font-medium text-slate-500 tracking-wide">${data.job}</p></div>
+                             <div class="avatar-crop-container w-32 h-32 rounded-lg shadow-xl shrink-0 overflow-hidden relative bg-white ring-4 ring-white"><img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+                        </header>
+                        <div class="${modPad} pt-0 grid grid-cols-12 gap-10 flex-1 relative z-10">
+                             <div class="col-span-4 space-y-10">
+                                <div class="bg-slate-50 p-6 rounded-xl border-l-4" style="border-color: ${themeColor}"><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Contact</h3><div class="space-y-3 ${textBase} text-slate-600">${data.phone ? `<div>${data.phone}</div>` : ''} ${data.email ? `<div class="break-words">${data.email}</div>` : ''} ${data.location ? `<div>${data.location}</div>` : ''} ${data.web ? `<div class="text-blue-600 underline">${data.web}</div>` : ''}</div></div>
+                                <div><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Skills</h3><div class="flex flex-wrap gap-2">${data.skills.map(s => `<span class="bg-white border border-slate-200 px-3 py-1.5 rounded-full ${textBase} font-medium shadow-sm">${s}</span>`).join('')}</div></div>
+                                 <div><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Education</h3><div class="space-y-4">${renderSimpleList(data.education)}</div></div>
+                                 ${(data.languages || data.certificates) ? `<div><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Misc</h3><div class="${textBase} text-slate-600 space-y-2">${data.languages ? `<div>${data.languages}</div>` : ''}${data.certificates ? `<div>${data.certificates}</div>` : ''}</div></div>` : ''}
+                             </div>
+                             <div class="col-span-8 space-y-10">
+                                <section><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">About Me</h3><p class="${textBase} ${leadingClass} text-slate-700">${summaryHtml}</p></section>
+                                <section><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">Work Experience</h3><div class="space-y-8 border-l-2 border-slate-100 pl-6 ml-2">${renderExpList(data.experiences)}</div></section>
+                                ${data.projects.length > 0 ? `<section><h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">Projects</h3><div class="space-y-8 border-l-2 border-slate-100 pl-6 ml-2">${renderExpList(data.projects)}</div></section>` : ''}
+                             </div>
+                        </div>
+                    </div>`;
+            }
+            // 5. Compact
+            else if (template === 'compact') {
+                 container.innerHTML = `
+                    <div class="${containerClass} ${padX} ${padY} text-black">
+                        <header class="border-b border-black pb-4 mb-4"><h1 class="text-2xl font-bold uppercase text-center mb-2 tracking-wide">${data.name}</h1><div class="text-center text-sm flex justify-center flex-wrap gap-4">${data.phone ? `<span>${data.phone}</span>` : ''} ${data.email ? `<span>${data.email}</span>` : ''} ${data.location ? `<span>${data.location}</span>` : ''} ${data.web ? `<span>${data.web}</span>` : ''}</div></header>
+                        <section class="mb-4"><h2 class="text-sm font-bold uppercase border-b border-black mb-2" style="color: ${themeColor}">Summary</h2><p class="${textBase} ${leadingClass} text-justify">${data.summary}</p></section>
+                        <section class="mb-4"><h2 class="text-sm font-bold uppercase border-b border-black mb-2" style="color: ${themeColor}">Experience</h2><div class="space-y-3">${renderExpList(data.experiences)}</div></section>
+                        ${data.projects.length > 0 ? `<section class="mb-4"><h2 class="text-sm font-bold uppercase border-b border-black mb-2" style="color: ${themeColor}">Projects</h2><div class="space-y-3">${renderExpList(data.projects)}</div></section>` : ''}
+                        <section class="mb-4"><h2 class="text-sm font-bold uppercase border-b border-black mb-2" style="color: ${themeColor}">Education</h2>${renderSimpleList(data.education)}</section>
+                         <section class="mb-4"><h2 class="text-sm font-bold uppercase border-b border-black mb-2" style="color: ${themeColor}">Skills & Misc</h2><p class="${textBase} leading-snug">${data.skills.join(', ')}<br>${data.languages ? data.languages : ''}</p></section>
+                    </div>`;
+            }
+            // 6. Timeline (NEW)
+            else if (template === 'timeline') {
+                container.innerHTML = `
+                    <div class="${containerClass} flex flex-col h-full ${padX} ${padY}">
+                        <header class="flex items-center gap-8 mb-12">
+                            <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg shrink-0 relative"><img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+                            <div>
+                                <h1 class="text-4xl font-bold text-slate-800 mb-2">${data.name}</h1>
+                                <p class="text-xl font-medium" style="color: ${themeColor}">${data.job}</p>
+                                <div class="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
+                                    ${data.phone ? `<span><i class="fas fa-phone mr-1"></i>${data.phone}</span>` : ''}
+                                    ${data.email ? `<span><i class="fas fa-envelope mr-1"></i>${data.email}</span>` : ''}
+                                    ${data.location ? `<span><i class="fas fa-map-marker-alt mr-1"></i>${data.location}</span>` : ''}
+                                </div>
+                            </div>
+                        </header>
+                        <div class="flex gap-12 flex-1">
+                            <div class="w-1/3 space-y-8 border-r border-slate-100 pr-8">
+                                <section>
+                                    <h3 class="font-bold text-slate-800 uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Profile</h3>
+                                    <p class="${textBase} ${leadingClass} text-slate-600 text-justify">${summaryHtml}</p>
+                                </section>
+                                <section>
+                                    <h3 class="font-bold text-slate-800 uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Education</h3>
+                                    <div class="space-y-4">${renderSimpleList(data.education)}</div>
+                                </section>
+                                <section>
+                                    <h3 class="font-bold text-slate-800 uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Skills</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${data.skills.map(s => `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded ${textBase} font-medium">${s}</span>`).join('')}
+                                    </div>
+                                </section>
+                                ${(data.languages || data.certificates) ? `<section><h3 class="font-bold text-slate-800 uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Misc</h3><div class="${textBase} text-slate-600">${data.languages ? `<div>${data.languages}</div>` : ''}<br>${data.certificates ? `<div>${data.certificates}</div>` : ''}</div></section>` : ''}
+                            </div>
+                            <div class="w-2/3 space-y-8">
+                                <h3 class="font-bold text-slate-800 uppercase tracking-wider mb-6 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Experience</h3>
+                                <div class="relative border-l-2 border-slate-200 ml-3 space-y-10 pl-8 pb-4">
+                                    ${renderExpList(data.experiences)}
+                                </div>
+                                ${data.projects.length > 0 ? `
+                                <h3 class="font-bold text-slate-800 uppercase tracking-wider mb-6 border-b-2 pb-1 inline-block" style="border-color: ${themeColor}">Projects</h3>
+                                <div class="relative border-l-2 border-slate-200 ml-3 space-y-10 pl-8 pb-4">
+                                    ${renderExpList(data.projects)}
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 7. Tech (NEW)
+            else if (template === 'tech') {
+                container.innerHTML = `
+                    <div class="${containerClass} bg-slate-50 min-h-[297mm]">
+                        <header class="bg-slate-900 text-white p-8 print-adjust-color">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h1 class="text-3xl font-bold mb-1 tracking-tighter text-green-400 font-mono">&lt;${data.name} /&gt;</h1>
+                                    <p class="text-sm text-slate-400 font-mono"> // ${data.job}</p>
+                                </div>
+                                <div class="text-right text-[10px] font-mono text-slate-400 space-y-0.5 print:text-white">
+                                    ${data.email ? `<div>${data.email}</div>` : ''}
+                                    ${data.phone ? `<div>${data.phone}</div>` : ''}
+                                    ${data.web ? `<div>${data.web}</div>` : ''}
+                                </div>
+                            </div>
+                        </header>
+                        <div class="p-8 grid grid-cols-3 gap-6">
+                            <div class="col-span-2 space-y-6">
+                                <section class="bg-white p-5 shadow-sm border border-slate-200">
+                                    <h2 class="text-sm font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-terminal" style="color: ${themeColor}"></i> Experience</h2>
+                                    <div class="space-y-5">${renderExpList(data.experiences)}</div>
+                                </section>
+                                ${data.projects.length > 0 ? `<section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="text-sm font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-laptop-code" style="color: ${themeColor}"></i> Projects</h2><div class="space-y-5">${renderExpList(data.projects)}</div></section>` : ''}
+                                <section class="bg-white p-5 shadow-sm border border-slate-200">
+                                    <h2 class="text-sm font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-code" style="color: ${themeColor}"></i> Summary</h2>
+                                    <p class="${textBase} ${leadingClass} text-slate-600 font-sans text-justify">${summaryHtml}</p>
+                                </section>
+                            </div>
+                            <div class="col-span-1 space-y-6">
+                                <div class="w-full aspect-square bg-white border border-slate-200 p-2 shadow-sm mb-2">
+                                    <img src="${photo.src}" class="w-full h-full object-cover grayscale" style="${imgStyle}">
+                                </div>
+                                <section class="bg-white p-5 shadow-sm border border-slate-200">
+                                    <h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Stack</h2>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${data.skills.map(s => `<span class="bg-slate-900 text-green-400 px-2 py-1 text-[10px] font-mono border border-slate-700">${s}</span>`).join('')}
+                                    </div>
+                                </section>
+                                <section class="bg-white p-5 shadow-sm border border-slate-200">
+                                    <h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Education</h2>
+                                    <div class="space-y-3">${renderSimpleList(data.education)}</div>
+                                </section>
+                                ${(data.languages || data.certificates) ? `<section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Misc</h2><div class="font-mono text-[10px] text-slate-600">${data.languages ? `<div>${data.languages}</div>` : ''}<br>${data.certificates ? `<div>${data.certificates}</div>` : ''}</div></section>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 8. Right Side (NEW)
+            else if (template === 'right') {
+                container.innerHTML = `
+                    <div class="${containerClass} grid grid-cols-12 min-h-screen">
+                        <div class="col-span-8 p-10 bg-white text-slate-800">
+                            <header class="mb-8 border-b border-slate-100 pb-6">
+                                <h1 class="text-3xl font-bold text-slate-900 mb-2 tracking-tight">${data.name}</h1>
+                                <p class="font-medium tracking-wide uppercase text-sm" style="color: ${themeColor}">${data.job}</p>
+                            </header>
+                            <section class="mb-8"><h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-3 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 个人简介</h2><p class="${textBase} ${leadingClass} text-slate-600 text-justify">${summaryHtml}</p></section>
+                            <section class="mb-8"><h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 工作经历</h2><div class="space-y-5">${renderExpList(data.experiences)}</div></section>
+                            ${data.projects.length > 0 ? `<section><h2 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${themeColor}"></span> 项目经历</h2><div class="space-y-5">${renderExpList(data.projects)}</div></section>` : ''}
+                        </div>
+                        <div class="col-span-4 bg-slate-50 border-l border-slate-200 p-8 flex flex-col print-adjust-color print:h-full">
+                            <div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white shadow-lg mx-auto mb-6 relative bg-white">
+                                <img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-100" style="${imgStyle}">
+                            </div>
+                            <div class="space-y-8">
+                                <div><h4 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-3 border-b border-slate-200 pb-1" style="color: ${themeColor}">联系方式</h4><div class="space-y-2 text-xs text-slate-600">${data.phone ? `<div>${data.phone}</div>` : ''}${data.email ? `<div class="break-all">${data.email}</div>` : ''}${data.location ? `<div>${data.location}</div>` : ''}</div></div>
+                                <div><h4 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-3 border-b border-slate-200 pb-1" style="color: ${themeColor}">教育背景</h4><div class="space-y-3 text-slate-600">${renderSimpleList(data.education)}</div></div>
+                                <div><h4 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-3 border-b border-slate-200 pb-1" style="color: ${themeColor}">技能专长</h4><div class="flex flex-wrap gap-1">${data.skills.map(s => `<span class="bg-white text-slate-600 text-[10px] px-2 py-1 rounded border border-slate-200 shadow-sm">${s}</span>`).join('')}</div></div>
+                                ${(data.languages || data.certificates) ? `<div><h4 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-3 border-b border-slate-200 pb-1" style="color: ${themeColor}">其他信息</h4><div class="text-xs text-slate-600 space-y-1">${data.languages ? `<div>${data.languages}</div>` : ''}${data.certificates ? `<div>${data.certificates}</div>` : ''}</div></div>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 9. Swiss (NEW)
+            else if (template === 'swiss') {
+                container.innerHTML = `
+                    <div class="${containerClass} ${padX} ${padY} bg-white">
+                        <header class="mb-12">
+                            <h1 class="text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">${data.name}</h1>
+                            <div class="w-20 h-2 bg-black mb-6" style="background-color: ${themeColor}"></div>
+                            <div class="flex justify-between items-end">
+                                <p class="text-xl font-bold text-slate-500 uppercase tracking-widest">${data.job}</p>
+                                <div class="text-right text-xs font-bold text-slate-900 space-y-1">
+                                    ${data.phone} <br> ${data.email}
+                                </div>
+                            </div>
+                        </header>
+                        <div class="grid grid-cols-4 gap-8 border-t-4 border-black pt-8" style="border-color: ${themeColor}">
+                            <div class="col-span-1">
+                                <h3 class="text-sm font-black uppercase mb-6">About</h3>
+                            </div>
+                            <div class="col-span-3">
+                                <p class="${textBase} ${leadingClass} font-medium text-justify">${summaryHtml}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8">
+                            <div class="col-span-1">
+                                <h3 class="text-sm font-black uppercase mb-6">Experience</h3>
+                            </div>
+                            <div class="col-span-3 space-y-8">
+                                ${data.experiences.map(exp => `
+                                    <div class="grid grid-cols-3 gap-4 break-inside-avoid">
+                                        <div class="col-span-1 text-xs font-bold text-slate-400 pt-1">${exp.time}</div>
+                                        <div class="col-span-2">
+                                            <h4 class="font-black text-lg text-slate-900 leading-none mb-1">${exp.role}</h4>
+                                            <div class="text-sm font-bold mb-3" style="color: ${themeColor}">${exp.company}</div>
+                                            <p class="${textBase} ${leadingClass} font-medium text-slate-600 text-justify">${exp.desc}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${data.projects.length > 0 ? `
+                        <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8">
+                            <div class="col-span-1"><h3 class="text-sm font-black uppercase mb-6">Projects</h3></div>
+                            <div class="col-span-3 space-y-8">
+                                ${data.projects.map(proj => `
+                                    <div class="grid grid-cols-3 gap-4 break-inside-avoid">
+                                        <div class="col-span-1 text-xs font-bold text-slate-400 pt-1">${proj.time}</div>
+                                        <div class="col-span-2">
+                                            <h4 class="font-black text-lg text-slate-900 leading-none mb-1">${proj.name}</h4>
+                                            <div class="text-sm font-bold mb-3" style="color: ${themeColor}">${proj.role}</div>
+                                            <p class="${textBase} ${leadingClass} font-medium text-slate-600 text-justify">${proj.desc}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>` : ''}
+                        <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8">
+                            <div class="col-span-1">
+                                <h3 class="text-sm font-black uppercase mb-6">Skills</h3>
+                            </div>
+                            <div class="col-span-3">
+                                <div class="grid grid-cols-3 gap-x-4 gap-y-2">
+                                    ${data.skills.map(s => `<div class="${textBase} font-bold border-b border-slate-100 pb-1">${s}</div>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            // 10. Bold (NEW)
+            else if (template === 'bold') {
+                container.innerHTML = `
+                    <div class="${containerClass} bg-white h-full flex flex-col">
+                        <header class="${padX} ${padY} text-white print-adjust-color flex items-center gap-8" style="background-color: ${themeColor}">
+                             <div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white/30 shrink-0 relative bg-white/10">
+                                <img src="${photo.src}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}">
+                            </div>
+                            <div class="flex-1">
+                                <h1 class="text-5xl font-bold mb-2 tracking-tight">${data.name}</h1>
+                                <p class="text-xl opacity-90 font-medium tracking-wide uppercase">${data.job}</p>
+                            </div>
+                        </header>
+                        <div class="flex-1 ${padX} pb-12 grid grid-cols-12 gap-10">
+                             <div class="col-span-4 space-y-10 border-r border-slate-100 pr-6">
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 pb-2" style="border-color: ${themeColor}">Contact</h3>
+                                    <div class="space-y-3 ${textBase} text-slate-600">
+                                         ${data.phone ? `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded flex items-center justify-center bg-slate-100 text-slate-500"><i class="fas fa-phone text-xs"></i></span> ${data.phone}</div>` : ''}
+                                         ${data.email ? `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded flex items-center justify-center bg-slate-100 text-slate-500"><i class="fas fa-envelope text-xs"></i></span> <span class="break-all">${data.email}</span></div>` : ''}
+                                         ${data.location ? `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded flex items-center justify-center bg-slate-100 text-slate-500"><i class="fas fa-map-marker-alt text-xs"></i></span> ${data.location}</div>` : ''}
+                                         ${data.web ? `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded flex items-center justify-center bg-slate-100 text-slate-500"><i class="fas fa-globe text-xs"></i></span> <span class="break-all">${data.web}</span></div>` : ''}
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 pb-2" style="border-color: ${themeColor}">Education</h3>
+                                    <div class="space-y-4">
+                                        ${data.education.map(edu => `
+                                            <div>
+                                                <div class="font-bold text-sm text-slate-900">${edu.school}</div>
+                                                <div class="text-xs text-slate-500 mb-1">${edu.time}</div>
+                                                <div class="text-xs text-slate-700">${edu.degree}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 pb-2" style="border-color: ${themeColor}">Skills</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${data.skills.map(s => `<span class="bg-slate-50 text-slate-700 px-3 py-1.5 rounded ${textBase} font-medium border border-slate-100">${s}</span>`).join('')}
+                                    </div>
+                                </div>
+                                
+                                ${(data.languages || data.certificates) ? `
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 pb-2" style="border-color: ${themeColor}">Misc</h3>
+                                    <div class="${textBase} text-slate-600 space-y-2">
+                                        ${data.languages ? `<div>${data.languages}</div>` : ''}
+                                        ${data.certificates ? `<div>${data.certificates}</div>` : ''}
+                                    </div>
+                                </div>` : ''}
+                             </div>
+
+                             <div class="col-span-8 space-y-10">
+                                <section>
+                                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <i class="fas fa-user text-slate-300"></i> Profile
+                                    </h3>
+                                    <p class="${textBase} ${leadingClass} text-slate-600">
+                                        ${summaryHtml}
+                                    </p>
+                                </section>
+
+                                <section>
+                                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <i class="fas fa-briefcase text-slate-300"></i> Experience
+                                     </h3>
+                                     <div class="space-y-8">
+                                        ${data.experiences.map(exp => `
+                                            <div class="break-inside-avoid group">
+                                                <div class="flex justify-between items-baseline mb-2">
+                                                    <h4 class="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors">${exp.role}</h4>
+                                                    <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">${exp.time}</span>
+                                                </div>
+                                                <div class="text-sm font-bold mb-3" style="color: ${themeColor}">${exp.company}</div>
+                                                <p class="${textBase} ${leadingClass} text-slate-600 text-justify border-l-4 border-slate-100 pl-4">${exp.desc}</p>
+                                            </div>
+                                        `).join('')}
+                                     </div>
+                                </section>
+                                
+                                ${data.projects.length > 0 ? `
+                                <section>
+                                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <i class="fas fa-rocket text-slate-300"></i> Projects
+                                     </h3>
+                                     <div class="space-y-8">
+                                        ${data.projects.map(proj => `
+                                            <div class="break-inside-avoid">
+                                                <div class="flex justify-between items-baseline mb-2">
+                                                    <h4 class="font-bold text-lg text-slate-900">${proj.name}</h4>
+                                                    <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">${proj.time}</span>
+                                                </div>
+                                                <div class="text-sm font-bold mb-3" style="color: ${themeColor}">${proj.role}</div>
+                                                <p class="${textBase} ${leadingClass} text-slate-600 text-justify border-l-4 border-slate-100 pl-4">${proj.desc}</p>
+                                            </div>
+                                        `).join('')}
+                                     </div>
+                                </section>` : ''}
+                             </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- 编辑器逻辑 ---
+
+        function renderExperienceEditor() {
+            const list = document.getElementById('experience-editor-list');
+            list.innerHTML = state.data.experiences.map((exp, index) => `
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 group relative transition-all hover:shadow-md">
+                    <button onclick="removeExperience(${index})" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="text" placeholder="职位" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs font-bold" value="${exp.role}" oninput="updateExp(${index}, 'role', this.value)">
+                        <input type="text" placeholder="时间段" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs text-right" value="${exp.time}" oninput="updateExp(${index}, 'time', this.value)">
+                        <input type="text" placeholder="公司名称" class="col-span-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs text-blue-600" value="${exp.company}" oninput="updateExp(${index}, 'company', this.value)">
+                    </div>
+                    <div class="relative">
+                        <textarea id="exp-desc-${index}" placeholder="工作描述..." rows="3" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs resize-none" oninput="updateExp(${index}, 'desc', this.value)">${exp.desc}</textarea>
+                        <button onclick="optimizeExperience(${index})" id="btn-ai-exp-${index}" class="absolute bottom-2 right-2 text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition-colors flex items-center gap-1 border border-indigo-100">
+                            <i class="fas fa-magic"></i> 润色
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEducationEditor() {
+            const list = document.getElementById('education-editor-list');
+            list.innerHTML = state.data.education.map((edu, index) => `
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 group relative transition-all hover:shadow-md">
+                    <button onclick="removeEducation(${index})" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <div class="space-y-2">
+                        <input type="text" placeholder="学校名称" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs font-bold" value="${edu.school}" oninput="updateEdu(${index}, 'school', this.value)">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" placeholder="学位/专业" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs" value="${edu.degree}" oninput="updateEdu(${index}, 'degree', this.value)">
+                            <input type="text" placeholder="时间段" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs text-right" value="${edu.time}" oninput="updateEdu(${index}, 'time', this.value)">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectEditor() {
+            const list = document.getElementById('project-editor-list');
+            list.innerHTML = state.data.projects.map((proj, index) => `
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 group relative transition-all hover:shadow-md">
+                    <button onclick="removeProject(${index})" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="text" placeholder="项目名称" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs font-bold" value="${proj.name}" oninput="updateProject(${index}, 'name', this.value)">
+                        <input type="text" placeholder="时间段" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs text-right" value="${proj.time}" oninput="updateProject(${index}, 'time', this.value)">
+                        <input type="text" placeholder="担任角色 / 技术栈" class="col-span-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs text-blue-600" value="${proj.role}" oninput="updateProject(${index}, 'role', this.value)">
+                    </div>
+                    <textarea placeholder="项目描述..." rows="3" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-xs resize-none" oninput="updateProject(${index}, 'desc', this.value)">${proj.desc}</textarea>
+                </div>
+            `).join('');
+        }
+
+        // --- 更新数据的方法 ---
+
+        function updateText(field, value) {
+            state.data[field] = value;
+            renderPreview();
+        }
+
+        function updateContact(field, value) {
+            state.data[field] = value;
+            renderPreview();
+        }
+
+        function updateSkills(value) {
+            state.data.skills = value.split(',').filter(s => s.trim() !== '');
+            renderPreview();
+        }
+
+        function updateExp(index, field, value) {
+            state.data.experiences[index][field] = value;
+            renderPreview();
+        }
+
+        function addExperience() {
+            state.data.experiences.unshift({ role: '职位名称', company: '公司名称', time: '时间段', desc: '描述你的工作职责...' });
+            renderExperienceEditor();
+            renderPreview();
+        }
+
+        function removeExperience(index) {
+            if(confirm('确定删除?')) {
+                state.data.experiences.splice(index, 1);
+                renderExperienceEditor();
+                renderPreview();
+            }
+        }
+
+        // Education Handlers
+        function updateEdu(index, field, value) {
+            state.data.education[index][field] = value;
+            renderPreview();
+        }
+        function addEducation() {
+            state.data.education.unshift({ school: '学校名称', degree: '专业/学位', time: '时间段' });
+            renderEducationEditor();
+            renderPreview();
+        }
+        function removeEducation(index) {
+            if(confirm('确定删除?')) {
+                state.data.education.splice(index, 1);
+                renderEducationEditor();
+                renderPreview();
+            }
+        }
+
+        // Project Handlers
+        function updateProject(index, field, value) {
+            state.data.projects[index][field] = value;
+            renderPreview();
+        }
+        function addProject() {
+            state.data.projects.unshift({ name: '项目名称', role: '角色/技术', time: '时间', desc: '项目描述...' });
+            renderProjectEditor();
+            renderPreview();
+        }
+        function removeProject(index) {
+            if(confirm('确定删除?')) {
+                state.data.projects.splice(index, 1);
+                renderProjectEditor();
+                renderPreview();
+            }
+        }
+
+        // --- 图片处理 ---
+
+        function handlePhotoUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    state.photo.src = e.target.result;
+                    document.getElementById('editor-avatar-preview').src = e.target.result;
+                    renderPreview();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updatePhotoStyle(prop, value) {
+            state.photo[prop] = parseFloat(value);
+            // 更新编辑器内的数值显示
+            const displayId = prop === 'scale' ? 'val-zoom' : (prop === 'x' ? 'val-x' : 'val-y');
+            const displayUnit = prop === 'scale' ? '%' : 'px';
+            const displayVal = prop === 'scale' ? Math.round(value * 100) : value;
+            document.getElementById(displayId).innerText = `${displayVal}${displayUnit}`;
+            
+            renderPreview();
+        }
+
+        // --- UI 控制 ---
+
+        function setTemplate(tmpl) {
+            state.template = tmpl;
+            updateActiveTemplateUI();
+            renderPreview();
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function changeZoom(delta) {
+            let newZoom = state.zoom + delta;
+            if (newZoom < 0.3) newZoom = 0.3;
+            if (newZoom > 1.5) newZoom = 1.5;
+            state.zoom = newZoom;
+            
+            document.getElementById('page-zoom-val').innerText = Math.round(newZoom * 100) + '%';
+            document.getElementById('resume-preview').style.transform = `scale(${newZoom})`;
+        }
+        
+        function toggleMobilePreview() {
+            // 简单的移动端切换逻辑
+            const editor = document.getElementById('editor-panel');
+            editor.classList.toggle('-translate-x-full');
+        }
+
+    </script>
+</body>
+</html>
