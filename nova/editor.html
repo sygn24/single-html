@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" class="scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
@@ -1633,16 +1633,33 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 			async function generateSummary() {
 				const btn = document.getElementById('btn-ai-summary')
 				const original = btn.innerHTML
-				btn.innerHTML = '...'
+				btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中'
 				btn.disabled = true
-				const res = await callGeminiAPI(
-					`Write a professional resume summary (3 sentences) for a "${
-						state.data.job
-					}" with skills: "${state.data.skills.join(', ')}". Output in Chinese.`
-				)
+				const prompt = `你是一位专业的简历撰写专家。请为以下职位生成一段专业的个人简介。
+
+职位：${state.data.job}
+技能：${state.data.skills.join('、')}
+
+要求：
+1. 只返回纯文本内容，不要任何标题、格式标记或解释
+2. 3-4句话，控制在100字以内
+3. 突出专业能力和核心优势
+4. 语言简洁有力，体现专业性
+
+直接输出个人简介：`
+				const res = await callGeminiAPI(prompt)
 				if (res) {
-					updateText('summary', res.trim())
-					document.getElementById('input-summary').value = res.trim()
+					let cleanText = res.trim()
+					cleanText = cleanText.replace(/^[\s\S]*?直接输出.*?[:：]\s*/i, '')
+					cleanText = cleanText.replace(/^#+\s*.*/gm, '')
+					cleanText = cleanText.replace(/\*\*/g, '')
+					cleanText = cleanText.replace(/`/g, '')
+					cleanText = cleanText.trim()
+					if (cleanText) {
+						updateText('summary', cleanText)
+						document.getElementById('input-summary').value = cleanText
+						showToast('生成完成', 'success')
+					}
 				}
 				btn.innerHTML = original
 				btn.disabled = false
@@ -1650,15 +1667,39 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 			async function optimizeExperience(index) {
 				const btn = document.getElementById(`btn-ai-exp-${index}`)
 				const original = btn.innerHTML
-				btn.innerHTML = '...'
+				btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中'
 				btn.disabled = true
-				const res = await callGeminiAPI(
-					`Rewrite bullet point to be professional/result-oriented in Chinese: "${state.data.experiences[index].desc}"`
-				)
+				const prompt = `你是一位专业的简历优化专家。请将以下工作经历描述优化为更专业、更有说服力的表述。
+
+要求：
+1. 只返回优化后的纯文本内容，不要任何解释、标题、表格或格式标记
+2. 保持中文，语言简洁有力
+3. 突出成果和数据（如有）
+4. 使用动词开头，体现主动性
+5. 控制在2-3句话以内
+
+原文：${state.data.experiences[index].desc}
+
+直接输出优化后的文本：`
+				const res = await callGeminiAPI(prompt)
 				if (res) {
-					updateExp(index, 'desc', res.trim())
-					renderExperienceEditor()
+					// 清理返回的文本，移除可能的 markdown 格式
+					let cleanText = res.trim()
+					cleanText = cleanText.replace(/^[\s\S]*?直接输出.*?[:：]\s*/i, '')
+					cleanText = cleanText.replace(/^#+\s*.*/gm, '')
+					cleanText = cleanText.replace(/^\|.*\|$/gm, '')
+					cleanText = cleanText.replace(/^[-*]\s+/gm, '')
+					cleanText = cleanText.replace(/\*\*/g, '')
+					cleanText = cleanText.replace(/`/g, '')
+					cleanText = cleanText.trim()
+					if (cleanText) {
+						updateExp(index, 'desc', cleanText)
+						renderExperienceEditor()
+						showToast('优化完成', 'success')
+					}
 				}
+				btn.innerHTML = original
+				btn.disabled = false
 			}
 
 			// --- 渲染函数 ---
@@ -2455,6 +2496,14 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							`<span class="inline-block bg-slate-100 text-slate-700 px-2 py-1 rounded ${tBase} font-medium mb-1 print:bg-slate-100 print:text-black">${s.trim()}</span>`
 					)
 					.join('')
+				const formatDescAsList = (desc) => {
+					if (!desc) return ''
+					const lines = desc.split('\n').filter(line => line.trim())
+					if (lines.length <= 1) {
+						return `<ul class="${tBase} text-slate-600 ${lead} list-disc list-inside ml-1"><li>${desc.trim()}</li></ul>`
+					}
+					return `<ul class="${tBase} text-slate-600 ${lead} list-disc list-inside ml-1">${lines.map(line => `<li>${line.trim()}</li>`).join('')}</ul>`
+				}
 				const list = items =>
 					items
 						.filter(i => i.visible !== false)
@@ -2466,11 +2515,7 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 									i.time
 								}</span></div><div class="${tBase} font-medium mb-1" style="color:${color}">${
 									i.company || i.school || i.role
-								}</div>${
-									i.desc
-										? `<div class="${tBase} text-slate-600 ${lead} text-justify whitespace-pre-line">${i.desc}</div>`
-										: ''
-								}</div>`
+								}</div>${i.desc ? formatDescAsList(i.desc) : ''}</div>`
 						)
 						.join('')
 				const simple = items =>
@@ -2869,7 +2914,7 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 			                     <div class="col-span-1 md:col-span-7 space-y-10">
 			                         <section>
 			                             <h3 class="text-xl font-serif font-bold mb-6 flex items-center gap-3 text-slate-800"><span class="text-2xl opacity-50" style="color: ${color}">🌿</span> Experience</h3>
-			                             <div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(data.experiences)}</div>
+			                             <div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(data。experiences)}</div>
 			                         </section>
 			                         ${
 											data.projects.length
@@ -2882,16 +2927,16 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 			                     <div class="col-span-1 md:col-span-5 space-y-10">
 			                          <section>
 			                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Skills</h3>
-			                             <div class="flex flex-wrap gap-3">${data.skills
-												.map(
+			                             <div class="flex flex-wrap gap-3">${data。skills
+												。map(
 													s =>
 														`<span class="bg-slate-50 text-slate-700 px-4 py-2 rounded-full text-xs border border-slate-100">${s}</span>`
 												)
-												.join('')}</div>
+												。join('')}</div>
 			                         </section>
 			                         <section>
 			                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Education</h3>
-			                             ${simple(data.education)}
+			                             ${simple(data。education)}
 			                         </section>
 			                     </div>
 			                 </div>
