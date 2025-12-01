@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>Nova CV | 智能在线简历构建器</title>
+		<meta
+			name="description"
+			content="Nova CV - 下一代智能简历工具。支持 AI 写作、实时预览、PDF 导出，提供 10+ 款专业模版。"
+		/>
+
+		<!-- Favicon -->
+		<link
+			rel="icon"
+			href="https://ui-avatars.com/api/?name=N&background=2563eb&color=fff&rounded=true&font-size=0.6"
+			type="image/png"
+		/>
+
+		<!-- 字体引入 -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- Tailwind CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
+
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+		<!-- Tailwind 配置 -->
+		<script>
+			tailwind.config = {
+				darkMode: 'class',
+				theme: {
+					extend: {
+						fontFamily: {
+							sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+							serif: ['Noto Serif SC', 'serif'],
+							mono: ['JetBrains Mono', 'monospace']
+						},
+						colors: {
+							paper: '#ffffff',
+							'paper-dark': '#1e293b'
+						},
+						animation: {
+							float: 'float 6s ease-in-out infinite',
+							'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+							'cursor-blink': 'blink 1s step-end infinite'
+						},
+						keyframes: {
+							float: {
+								'0%, 100%': { transform: 'translateY(0)' },
+								'50%': { transform: 'translateY(-20px)' }
+							},
+							blink: {
+								'0%, 100%': { opacity: '1' },
+								'50%': { opacity: '0' }
+							}
+						}
+					}
+				}
+			}
+		</script>
+
+		<style>
+			/* 全局样式 */
+			body {
+				background-color: #f3f4f6;
+				transition: background-color 0.3s, color 0.3s;
+			}
+			.dark body {
+				background-color: #020617;
+			}
+
+			.no-scrollbar::-webkit-scrollbar {
+				display: none;
+			}
+			.no-scrollbar {
+				-ms-overflow-style: none;
+				scrollbar-width: none;
+			}
+
+			/* 滚动显现动画 */
+			.scroll-reveal {
+				opacity: 0;
+				transform: translateY(30px);
+				transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+			}
+			.scroll-reveal.active {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			/* 落地页背景 */
+			.bg-grid {
+				background-size: 40px 40px;
+				background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+					linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+				mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+				-webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+			}
+			.dark .bg-grid {
+				background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+					linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+			}
+
+			.blob {
+				position: absolute;
+				filter: blur(80px);
+				opacity: 0.4;
+				z-index: -1;
+				animation: float 10s ease-in-out infinite;
+			}
+		</style>
+	</head>
+	<body
+		class="text-slate-800 dark:text-slate-200 antialiased min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950"
+	>
+		<!-- 宣传首页 -->
+		<div id="landing-page" class="flex flex-col min-h-screen relative overflow-hidden">
+			<!-- 动态装饰背景 -->
+			<div class="absolute inset-0 bg-grid pointer-events-none z-0"></div>
+			<div
+				class="blob w-96 h-96 bg-blue-500 rounded-full top-[-10%] left-[-10%] mix-blend-multiply dark:mix-blend-screen animate-float"
+				style="animation-delay: 0s"
+			></div>
+			<div
+				class="blob w-96 h-96 bg-purple-500 rounded-full top-[20%] right-[-10%] mix-blend-multiply dark:mix-blend-screen animate-float"
+				style="animation-delay: 2s"
+			></div>
+			<div
+				class="blob w-80 h-80 bg-pink-500 rounded-full bottom-[-10%] left-[20%] mix-blend-multiply dark:mix-blend-screen animate-float"
+				style="animation-delay: 4s"
+			></div>
+
+			<!-- 导航栏 -->
+			<nav class="px-6 py-6 flex justify-between items-center max-w-7xl mx-auto w-full relative z-10">
+				<div class="flex items-center gap-2 text-2xl font-bold tracking-tighter group cursor-pointer">
+					<div
+						class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg bg-gradient-to-br from-blue-600 to-indigo-600 group-hover:scale-110 transition-transform"
+					>
+						N
+					</div>
+					<span class="text-slate-900 dark:text-white">Nova <span class="text-blue-600">CV</span></span>
+				</div>
+				<div class="flex gap-4 items-center">
+					<button
+						onclick="toggleTheme()"
+						class="w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-600 dark:text-slate-300"
+					>
+						<i class="fas fa-adjust"></i>
+					</button>
+					<a
+						href="editor.html"
+						class="hidden md:block text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+						>直接进入</a
+					>
+					<a
+						href="editor.html"
+						class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-opacity shadow-lg"
+					>
+						开始制作
+					</a>
+				</div>
+			</nav>
+
+			<!-- 主视觉区域 -->
+			<div class="flex-1 flex flex-col justify-center items-center text-center px-4 py-20 relative z-10">
+				<div class="max-w-4xl mx-auto">
+					<div
+						class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-xs font-bold mb-8 scroll-reveal active"
+					>
+						<span class="relative flex h-2 w-2">
+							<span
+								class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"
+							></span>
+							<span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+						</span>
+						AI 驱动的简历构建器 v2.0
+					</div>
+
+					<h1
+						class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight leading-tight scroll-reveal active"
+						style="transition-delay: 0.1s"
+					>
+						打造你的 <br class="md:hidden" />
+						<span
+							class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
+							id="typewriter-text"
+						></span
+						><span class="animate-cursor-blink text-blue-600">|</span>
+					</h1>
+
+					<p
+						class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed scroll-reveal active"
+						style="transition-delay: 0.2s"
+					>
+						告别繁琐排版。Nova CV 助您在 10 分钟内生成精美、专业的 PDF 简历。内置 Gemini AI
+						助手，让您的经历更具说服力。
+					</p>
+
+					<div
+						class="flex flex-col sm:flex-row gap-4 justify-center scroll-reveal active"
+						style="transition-delay: 0.3s"
+					>
+						<a
+							href="editor.html"
+							class="group bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-500/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
+						>
+							立即免费制作
+							<i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+						</a>
+						<button
+							onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})"
+							class="bg-white dark:bg-slate-800/50 backdrop-blur text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-lg px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+						>
+							了解更多
+						</button>
+					</div>
+
+					<!-- 数据统计 -->
+					<div
+						class="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-800/50 flex justify-center gap-8 md:gap-16 text-center scroll-reveal active"
+						style="transition-delay: 0.4s"
+					>
+						<div>
+							<div class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">10+</div>
+							<div class="text-xs md:text-sm text-slate-500 uppercase tracking-wider font-bold mt-1">
+								专业模版
+							</div>
+						</div>
+						<div>
+							<div class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">100%</div>
+							<div class="text-xs md:text-sm text-slate-500 uppercase tracking-wider font-bold mt-1">
+								隐私安全
+							</div>
+						</div>
+						<div>
+							<div class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">AI</div>
+							<div class="text-xs md:text-sm text-slate-500 uppercase tracking-wider font-bold mt-1">
+								智能润色
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 功能特性区域 -->
+			<div id="features" class="py-24 px-6 bg-white/50 dark:bg-slate-900/50 relative z-10">
+				<div class="max-w-7xl mx-auto">
+					<div class="text-center mb-16 scroll-reveal">
+						<h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+							为何选择 Nova CV?
+						</h2>
+						<p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+							专注于求职体验，每一个细节都为您精心打磨。
+						</p>
+					</div>
+
+					<div class="grid md:grid-cols-3 gap-8">
+						<div
+							class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 scroll-reveal"
+						>
+							<div
+								class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 mb-6 text-2xl"
+							>
+								<i class="fas fa-magic"></i>
+							</div>
+							<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">AI 智能润色</h3>
+							<p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+								不知道如何描述工作经历？内置 Gemini AI
+								模型，一键优化措辞，让您的简历更具专业度和说服力。
+							</p>
+						</div>
+						<div
+							class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 scroll-reveal"
+							style="transition-delay: 0.1s"
+						>
+							<div
+								class="w-14 h-14 bg-violet-100 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center text-violet-600 mb-6 text-2xl"
+							>
+								<i class="fas fa-th-large"></i>
+							</div>
+							<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">多款精选模版</h3>
+							<p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+								提供 10+
+								款由设计师精心打造的简历模版。从传统的经典风格到极客风、创意风，满足不同行业需求。
+							</p>
+						</div>
+						<div
+							class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 scroll-reveal"
+							style="transition-delay: 0.2s"
+						>
+							<div
+								class="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center text-emerald-600 mb-6 text-2xl"
+							>
+								<i class="fas fa-shield-alt"></i>
+							</div>
+							<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">隐私绝对安全</h3>
+							<p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+								我们没有任何后端服务器。您的所有数据都只存储在您的本地浏览器中，安全无忧，随时导出。
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 使用步骤 -->
+			<div class="py-24 px-6 relative z-10">
+				<div class="max-w-5xl mx-auto">
+					<div class="text-center mb-16 scroll-reveal">
+						<h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+							简单三步，搞定简历
+						</h2>
+					</div>
+
+					<div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
+						<div class="flex-1 text-center scroll-reveal">
+							<div
+								class="w-16 h-16 mx-auto bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-2xl font-bold text-slate-900 dark:text-white shadow-md mb-4 border-4 border-blue-50 dark:border-slate-700"
+							>
+								1
+							</div>
+							<h4 class="font-bold text-lg mb-2 dark:text-white">选择模版</h4>
+							<p class="text-sm text-slate-500">挑选一款最适合您职业风格的模版。</p>
+						</div>
+						<div class="hidden md:block h-px w-16 bg-slate-300 dark:bg-slate-700"></div>
+						<div class="flex-1 text-center scroll-reveal" style="transition-delay: 0.1s">
+							<div
+								class="w-16 h-16 mx-auto bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-2xl font-bold text-slate-900 dark:text-white shadow-md mb-4 border-4 border-blue-50 dark:border-slate-700"
+							>
+								2
+							</div>
+							<h4 class="font-bold text-lg mb-2 dark:text-white">填写 & AI 润色</h4>
+							<p class="text-sm text-slate-500">输入信息，使用 AI 助手优化文字表达。</p>
+						</div>
+						<div class="hidden md:block h-px w-16 bg-slate-300 dark:bg-slate-700"></div>
+						<div class="flex-1 text-center scroll-reveal" style="transition-delay: 0.2s">
+							<div
+								class="w-16 h-16 mx-auto bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-2xl font-bold text-slate-900 dark:text-white shadow-md mb-4 border-4 border-blue-50 dark:border-slate-700"
+							>
+								3
+							</div>
+							<h4 class="font-bold text-lg mb-2 dark:text-white">实时预览 & 导出</h4>
+							<p class="text-sm text-slate-500">所见即所得，一键导出高清 PDF。</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="py-20 text-center relative z-10">
+				<div class="scroll-reveal">
+					<h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8">准备好开始了吗？</h2>
+					<a
+						href="editor.html"
+						class="inline-block bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-lg px-10 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
+					>
+						免费创建简历
+					</a>
+				</div>
+			</div>
+
+			<footer
+				class="text-center py-8 text-slate-400 text-sm border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 relative z-10"
+			>
+				<p>&copy; 2023 Nova CV. Build with ❤️ and Tailwind CSS.</p>
+			</footer>
+		</div>
+
+		<script>
+			// --- 打字机效果与滚动逻辑 ---
+			const typewriterWords = ['完美简历', '职业未来', '理想 Offer']
+			let typeIndex = 0,
+				charIndex = 0,
+				isDeleting = false,
+				typeTimer
+			function typeWriter() {
+				const currentWord = typewriterWords[typeIndex]
+				const speed = isDeleting ? 50 : 150
+				const textEl = document.getElementById('typewriter-text')
+				if (!textEl) return
+				if (!isDeleting && charIndex < currentWord.length) {
+					textEl.textContent += currentWord.charAt(charIndex)
+					charIndex++
+					typeTimer = setTimeout(typeWriter, speed)
+				} else if (isDeleting && charIndex > 0) {
+					textEl.textContent = currentWord.substring(0, charIndex - 1)
+					charIndex--
+					typeTimer = setTimeout(typeWriter, speed)
+				} else {
+					if (!isDeleting) {
+						isDeleting = true
+						typeTimer = setTimeout(typeWriter, 2000)
+					} else {
+						isDeleting = false
+						typeIndex = (typeIndex + 1) % typewriterWords.length
+						typeTimer = setTimeout(typeWriter, 500)
+					}
+				}
+			}
+			const observer = new IntersectionObserver(
+				entries => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) entry.target.classList.add('active')
+					})
+				},
+				{ threshold: 0.1 }
+			)
+
+			function toggleTheme() {
+				document.documentElement.classList.toggle('dark')
+			}
+
+			window.addEventListener('DOMContentLoaded', () => {
+				document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el))
+				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+					document.documentElement.classList.add('dark')
+				typeWriter()
+			})
+		</script>
+	</body>
+</html>
