@@ -1306,9 +1306,13 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-800 transform transition-all overflow-hidden"
 			>
 				<!-- 标题栏 -->
-				<div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+				<div
+					class="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50"
+				>
 					<div class="flex items-center gap-3">
-						<div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+						<div
+							class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center"
+						>
 							<i class="fas fa-cog text-blue-600 dark:text-blue-400"></i>
 						</div>
 						<h3 class="text-lg font-bold text-slate-900 dark:text-white">系统设置</h3>
@@ -1320,7 +1324,7 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 						<i class="fas fa-times"></i>
 					</button>
 				</div>
-				
+
 				<!-- 内容区 -->
 				<div class="p-6 space-y-5">
 					<div>
@@ -1331,12 +1335,20 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
 								<i class="fas fa-key"></i>
 							</span>
-							<input type="password" id="input-api-key" class="w-full" style="padding-left: 42px !important;" placeholder="sk-..." />
+							<input
+								type="password"
+								id="input-api-key"
+								class="w-full"
+								style="padding-left: 42px !important"
+								placeholder="sk-..."
+							/>
 						</div>
 					</div>
-					
+
 					<!-- 说明区域 -->
-					<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4">
+					<div
+						class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4"
+					>
 						<div class="flex gap-3">
 							<div class="text-blue-500 mt-0.5">
 								<i class="fas fa-info-circle"></i>
@@ -1344,16 +1356,17 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							<div class="text-sm">
 								<p class="font-medium text-blue-800 dark:text-blue-200 mb-1">为什么需要 API Key?</p>
 								<p class="text-blue-700 dark:text-blue-300/80 leading-relaxed">
-									配置 API Key 后，您可以使用 AI 智能润色功能，包括自动生成个人简介、优化工作经历描述等。
-									您的 Key 仅存储在本地浏览器中，不会上传到任何服务器。
+									配置 API Key 后，您可以使用 AI
+									智能润色功能，包括自动生成个人简介、优化工作经历描述等。 您的 Key
+									仅存储在本地浏览器中，不会上传到任何服务器。
 								</p>
 							</div>
 						</div>
 					</div>
-					
+
 					<!-- 申请链接 -->
-					<a 
-						href="https://aistudio.google.com/app/apikey" 
+					<a
+						href="https://aistudio.google.com/app/apikey"
 						target="_blank"
 						class="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
 					>
@@ -1361,9 +1374,11 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 						还没有 Key? 去 Google AI Studio 免费申请
 					</a>
 				</div>
-				
+
 				<!-- 底部操作栏 -->
-				<div class="px-5 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-2">
+				<div
+					class="px-5 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-2"
+				>
 					<button
 						onclick="closeSettingsModal()"
 						class="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
@@ -1406,14 +1421,14 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				const toast = document.createElement('div')
 				toast.className = `toast toast-${type} relative`
 				toast.innerHTML = `
-					<div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
-					<div class="toast-content">
-						<div class="toast-title">${title || titles[type]}</div>
-						<div class="toast-message">${message}</div>
-					</div>
-					<div class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times text-xs"></i></div>
-					<div class="toast-progress" style="animation: toastProgress ${duration}ms linear forwards"></div>
-				`
+								<div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
+								<div class="toast-content">
+									<div class="toast-title">${title || titles[type]}</div>
+									<div class="toast-message">${message}</div>
+								</div>
+								<div class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times text-xs"></i></div>
+								<div class="toast-progress" style="animation: toastProgress ${duration}ms linear forwards"></div>
+							`
 
 				container.appendChild(toast)
 
@@ -1637,16 +1652,16 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				btn.disabled = true
 				const prompt = `你是一位专业的简历撰写专家。请为以下职位生成一段专业的个人简介。
 
-职位：${state.data.job}
-技能：${state.data.skills.join('、')}
+			职位：${state.data.job}
+			技能：${state.data.skills.join('、')}
 
-要求：
-1. 只返回纯文本内容，不要任何标题、格式标记或解释
-2. 3-4句话，控制在100字以内
-3. 突出专业能力和核心优势
-4. 语言简洁有力，体现专业性
+			要求：
+			1. 只返回纯文本内容，不要任何标题、格式标记或解释
+			2. 3-4句话，控制在100字以内
+			3. 突出专业能力和核心优势
+			4. 语言简洁有力，体现专业性
 
-直接输出个人简介：`
+			直接输出个人简介：`
 				const res = await callGeminiAPI(prompt)
 				if (res) {
 					let cleanText = res.trim()
@@ -1671,16 +1686,16 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				btn.disabled = true
 				const prompt = `你是一位专业的简历优化专家。请将以下工作经历描述优化为更专业、更有说服力的表述。
 
-要求：
-1. 只返回优化后的纯文本内容，不要任何解释、标题、表格或格式标记
-2. 保持中文，语言简洁有力
-3. 突出成果和数据（如有）
-4. 使用动词开头，体现主动性
-5. 控制在2-3句话以内
+			要求：
+			1. 只返回优化后的纯文本内容，不要任何解释、标题、表格或格式标记
+			2. 保持中文，语言简洁有力
+			3. 突出成果和数据（如有）
+			4. 使用动词开头，体现主动性
+			5. 控制在2-3句话以内
 
-原文：${state.data.experiences[index].desc}
+			原文：${state.data.experiences[index].desc}
 
-直接输出优化后的文本：`
+			直接输出优化后的文本：`
 				const res = await callGeminiAPI(prompt)
 				if (res) {
 					// 清理返回的文本，移除可能的 markdown 格式
@@ -1707,40 +1722,40 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				document.getElementById('experience-editor-list').innerHTML = state.data.experiences
 					.map(
 						(exp, i) => `
-			             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
-								exp.visible === false ? 'opacity-50 grayscale' : ''
-							}">
-			                 <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold text-slate-400">经历 #${i + 1}</span>
-                                <div class="flex gap-2">
-                                    <button onclick="moveItem('experiences', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
+						             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
+											exp.visible === false ? 'opacity-50 grayscale' : ''
+										}">
+						                 <div class="flex justify-between mb-2">
+			                                <span class="text-xs font-bold text-slate-400">经历 #${i + 1}</span>
+			                                <div class="flex gap-2">
+			                                    <button onclick="moveItem('experiences', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
 							i === 0 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${i === 0 ? 'disabled' : ''} title="上移"><i class="fas fa-arrow-up"></i></button>
-                                    <button onclick="moveItem('experiences', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
+			                                    <button onclick="moveItem('experiences', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
 							i === state.data.experiences.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${
 							i === state.data.experiences.length - 1 ? 'disabled' : ''
 						} title="下移"><i class="fas fa-arrow-down"></i></button>
-                                    <button onclick="toggleItemVisibility('experiences', ${i})" class="text-slate-400 hover:text-blue-500" title="${
+			                                    <button onclick="toggleItemVisibility('experiences', ${i})" class="text-slate-400 hover:text-blue-500" title="${
 							exp.visible === false ? '显示' : '隐藏'
 						}"><i class="fas ${
 							exp.visible === false ? 'fa-eye-slash text-slate-300' : 'fa-eye'
 						}"></i></button>
-                                    <button onclick="removeExperience(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
-                                </div>
-                             </div>
-			                 <div class="grid grid-cols-2 gap-2 mb-2"><input type="text" placeholder="职位" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs font-bold" value="${
-									exp.role
-								}" oninput="updateExp(${i}, 'role', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
+			                                    <button onclick="removeExperience(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
+			                                </div>
+			                             </div>
+						                 <div class="grid grid-cols-2 gap-2 mb-2"><input type="text" placeholder="职位" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs font-bold" value="${
+												exp.role
+											}" oninput="updateExp(${i}, 'role', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
 							exp.time
 						}" oninput="updateExp(${i}, 'time', this.value)"><input type="text" placeholder="公司" class="col-span-2 bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" value="${
 							exp.company
 						}" oninput="updateExp(${i}, 'company', this.value)"></div>
-			                 <div><textarea rows="3" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" oninput="updateExp(${i}, 'desc', this.value)">${
+						                 <div><textarea rows="3" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" oninput="updateExp(${i}, 'desc', this.value)">${
 							exp.desc
 						}</textarea></div>
-						<div class="flex justify-end mt-2"><button onclick="optimizeExperience(${i})" id="btn-ai-exp-${i}" class="text-[10px] bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-2.5 py-1 rounded shadow hover:opacity-90 transition-opacity flex items-center gap-1"><i class="fas fa-magic"></i> AI 润色</button></div>
-			             </div>`
+									<div class="flex justify-end mt-2"><button onclick="optimizeExperience(${i})" id="btn-ai-exp-${i}" class="text-[10px] bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-2.5 py-1 rounded shadow hover:opacity-90 transition-opacity flex items-center gap-1"><i class="fas fa-magic"></i> AI 润色</button></div>
+						             </div>`
 					)
 					.join('')
 			}
@@ -1748,37 +1763,37 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				document.getElementById('education-editor-list').innerHTML = state.data.education
 					.map(
 						(edu, i) => `
-			             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
-								edu.visible === false ? 'opacity-50 grayscale' : ''
-							}">
-			                  <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold text-slate-400">学历 #${i + 1}</span>
-                                <div class="flex gap-2">
-                                    <button onclick="moveItem('education', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
+						             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
+											edu.visible === false ? 'opacity-50 grayscale' : ''
+										}">
+						                  <div class="flex justify-between mb-2">
+			                                <span class="text-xs font-bold text-slate-400">学历 #${i + 1}</span>
+			                                <div class="flex gap-2">
+			                                    <button onclick="moveItem('education', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
 							i === 0 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${i === 0 ? 'disabled' : ''} title="上移"><i class="fas fa-arrow-up"></i></button>
-                                    <button onclick="moveItem('education', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
+			                                    <button onclick="moveItem('education', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
 							i === state.data.education.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${
 							i === state.data.education.length - 1 ? 'disabled' : ''
 						} title="下移"><i class="fas fa-arrow-down"></i></button>
-                                    <button onclick="toggleItemVisibility('education', ${i})" class="text-slate-400 hover:text-blue-500" title="${
+			                                    <button onclick="toggleItemVisibility('education', ${i})" class="text-slate-400 hover:text-blue-500" title="${
 							edu.visible === false ? '显示' : '隐藏'
 						}"><i class="fas ${
 							edu.visible === false ? 'fa-eye-slash text-slate-300' : 'fa-eye'
 						}"></i></button>
-                                    <button onclick="removeEducation(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
-                                </div>
-                              </div>
-			                 <input type="text" placeholder="学校" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs mb-2 font-bold" value="${
-									edu.school
-								}" oninput="updateEdu(${i}, 'school', this.value)">
-			                 <div class="grid grid-cols-2 gap-2"><input type="text" placeholder="学位" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" value="${
-									edu.degree
-								}" oninput="updateEdu(${i}, 'degree', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
+			                                    <button onclick="removeEducation(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
+			                                </div>
+			                              </div>
+						                 <input type="text" placeholder="学校" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs mb-2 font-bold" value="${
+												edu.school
+											}" oninput="updateEdu(${i}, 'school', this.value)">
+						                 <div class="grid grid-cols-2 gap-2"><input type="text" placeholder="学位" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" value="${
+												edu.degree
+											}" oninput="updateEdu(${i}, 'degree', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
 							edu.time
 						}" oninput="updateEdu(${i}, 'time', this.value)"></div>
-			             </div>`
+						             </div>`
 					)
 					.join('')
 			}
@@ -1786,39 +1801,39 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 				document.getElementById('project-editor-list').innerHTML = state.data.projects
 					.map(
 						(proj, i) => `
-			             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
-								proj.visible === false ? 'opacity-50 grayscale' : ''
-							}">
-			                 <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold text-slate-400">项目 #${i + 1}</span>
-                                <div class="flex gap-2">
-                                    <button onclick="moveItem('projects', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
+						             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 mb-3 transition-all ${
+											proj.visible === false ? 'opacity-50 grayscale' : ''
+										}">
+						                 <div class="flex justify-between mb-2">
+			                                <span class="text-xs font-bold text-slate-400">项目 #${i + 1}</span>
+			                                <div class="flex gap-2">
+			                                    <button onclick="moveItem('projects', ${i}, -1)" class="text-slate-400 hover:text-blue-500 ${
 							i === 0 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${i === 0 ? 'disabled' : ''} title="上移"><i class="fas fa-arrow-up"></i></button>
-                                    <button onclick="moveItem('projects', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
+			                                    <button onclick="moveItem('projects', ${i}, 1)" class="text-slate-400 hover:text-blue-500 ${
 							i === state.data.projects.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
 						}" ${
 							i === state.data.projects.length - 1 ? 'disabled' : ''
 						} title="下移"><i class="fas fa-arrow-down"></i></button>
-                                    <button onclick="toggleItemVisibility('projects', ${i})" class="text-slate-400 hover:text-blue-500" title="${
+			                                    <button onclick="toggleItemVisibility('projects', ${i})" class="text-slate-400 hover:text-blue-500" title="${
 							proj.visible === false ? '显示' : '隐藏'
 						}"><i class="fas ${
 							proj.visible === false ? 'fa-eye-slash text-slate-300' : 'fa-eye'
 						}"></i></button>
-                                    <button onclick="removeProject(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
-                                </div>
-                             </div>
-			                 <div class="grid grid-cols-2 gap-2 mb-2"><input type="text" placeholder="项目名" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs font-bold" value="${
-									proj.name
-								}" oninput="updateProject(${i}, 'name', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
+			                                    <button onclick="removeProject(${i})" class="text-slate-400 hover:text-red-500" title="删除"><i class="fas fa-trash"></i></button>
+			                                </div>
+			                             </div>
+						                 <div class="grid grid-cols-2 gap-2 mb-2"><input type="text" placeholder="项目名" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs font-bold" value="${
+												proj.name
+											}" oninput="updateProject(${i}, 'name', this.value)"><input type="text" placeholder="时间" class="bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs text-right" value="${
 							proj.time
 						}" oninput="updateProject(${i}, 'time', this.value)"><input type="text" placeholder="角色/技术" class="col-span-2 bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" value="${
 							proj.role
 						}" oninput="updateProject(${i}, 'role', this.value)"></div>
-			                 <textarea rows="2" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" oninput="updateProject(${i}, 'desc', this.value)">${
+						                 <textarea rows="2" class="w-full bg-white dark:bg-slate-800 border border-slate-200 rounded px-2 py-1 text-xs" oninput="updateProject(${i}, 'desc', this.value)">${
 							proj.desc
 						}</textarea>
-			             </div>`
+						             </div>`
 					)
 					.join('')
 			}
@@ -2496,13 +2511,15 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							`<span class="inline-block bg-slate-100 text-slate-700 px-2 py-1 rounded ${tBase} font-medium mb-1 print:bg-slate-100 print:text-black">${s.trim()}</span>`
 					)
 					.join('')
-				const formatDescAsList = (desc) => {
+				const formatDescAsList = desc => {
 					if (!desc) return ''
 					const lines = desc.split('\n').filter(line => line.trim())
 					if (lines.length <= 1) {
 						return `<ul class="${tBase} text-slate-600 ${lead} list-disc list-inside ml-1"><li>${desc.trim()}</li></ul>`
 					}
-					return `<ul class="${tBase} text-slate-600 ${lead} list-disc list-inside ml-1">${lines.map(line => `<li>${line.trim()}</li>`).join('')}</ul>`
+					return `<ul class="${tBase} text-slate-600 ${lead} list-disc list-inside ml-1">${lines
+						.map(line => `<li>${line.trim()}</li>`)
+						.join('')}</ul>`
 				}
 				const list = items =>
 					items
@@ -2539,37 +2556,37 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 
 				if (template === 'classic') {
 					html = `<div class="${base} grid grid-cols-1 md:grid-cols-12">
-			                 <div class="col-span-1 md:col-span-4 text-white p-6 md:p-8 flex flex-col print-adjust-color" style="background-color: ${color}; min-height: auto md:min-height: 100%;">
-			                     <div class="avatar-crop-container w-24 h-24 md:w-32 md:h-32 rounded-full ring-4 ring-white/20 mx-auto mb-6 relative bg-white/10"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                     <div class="space-y-6">
-			                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Contact</h4><div class="space-y-1 ${tBase}">${
+						                 <div class="col-span-1 md:col-span-4 text-white p-6 md:p-8 flex flex-col print-adjust-color" style="background-color: ${color}; min-height: auto md:min-height: 100%;">
+						                     <div class="avatar-crop-container w-24 h-24 md:w-32 md:h-32 rounded-full ring-4 ring-white/20 mx-auto mb-6 relative bg-white/10"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                     <div class="space-y-6">
+						                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Contact</h4><div class="space-y-1 ${tBase}">${
 						data.phone
 					}<br>${data.email}<br>${data.location}<br>${data.web}</div></div>
-			                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Education</h4><div class="space-y-3">${data.education
+						                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Education</h4><div class="space-y-3">${data.education
 						.map(
 							e =>
 								`<div><div class="font-bold">${e.school}</div><div class="opacity-75 text-[10px]">${e.time}</div><div class="text-[11px]">${e.degree}</div></div>`
 						)
 						.join('')}</div></div>
-			                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Skills</h4><div class="flex flex-wrap gap-1">${data.skills
+						                         <div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Skills</h4><div class="flex flex-wrap gap-1">${data.skills
 						.map(s => `<span class="bg-white/20 px-2 py-1 rounded text-[10px]">${s}</span>`)
 						.join('')}</div></div>
-			                         ${
-											data.languages || data.certificates
-												? `<div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Misc</h4><div class="space-y-1 ${tBase}">${data.languages}<br>${data.certificates}</div></div>`
-												: ''
-										}
-			                     </div>
-			                 </div>
-			                 <div class="col-span-1 md:col-span-8 ${pad} bg-white">
-			                     <header class="mb-6 border-b pb-6"><h1 class="text-3xl font-bold mb-2">${
-										data.name
-									}</h1><p class="${tTitle} font-medium" style="color:${color}">${
+						                         ${
+														data.languages || data.certificates
+															? `<div><h4 class="${tBase} font-bold opacity-80 uppercase mb-2 border-b border-white/20 pb-1">Misc</h4><div class="space-y-1 ${tBase}">${data.languages}<br>${data.certificates}</div></div>`
+															: ''
+													}
+						                     </div>
+						                 </div>
+						                 <div class="col-span-1 md:col-span-8 ${pad} bg-white">
+						                     <header class="mb-6 border-b pb-6"><h1 class="text-3xl font-bold mb-2">${
+													data.name
+												}</h1><p class="${tTitle} font-medium" style="color:${color}">${
 						data.job
 					}</p></header>
-			                     <div class="space-y-6"><section><h2 class="${tTitle} font-bold uppercase mb-3 flex items-center gap-2"><span class="w-1 h-4 bg-slate-800"></span> Profile</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-bold uppercase mb-3 flex items-center gap-2"><span class="w-1 h-4 bg-slate-800"></span> Experience</h2>${list(
+						                     <div class="space-y-6"><section><h2 class="${tTitle} font-bold uppercase mb-3 flex items-center gap-2"><span class="w-1 h-4 bg-slate-800"></span> Profile</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-bold uppercase mb-3 flex items-center gap-2"><span class="w-1 h-4 bg-slate-800"></span> Experience</h2>${list(
 						data.experiences
 					)}</section>${
 						data.projects.length
@@ -2578,24 +2595,24 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							  )}</section>`
 							: ''
 					}</div>
-			                 </div>
-			             </div>`
+						                 </div>
+						             </div>`
 				} else if (template === 'modern') {
 					html = `<div class="${base} ${pad}">
-			                  <header class="flex items-center gap-6 mb-8 border-b-2 pb-8" style="border-color: ${color}">
-			                     <div class="avatar-crop-container w-20 h-20 md:w-24 md:h-24 rounded-full bg-slate-100 overflow-hidden relative flex-shrink-0"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                     <div class="flex-1"><h1 class="text-3xl md:text-4xl font-black mb-1">${
-										data.name
-									}</h1><p class="text-lg font-medium" style="color:${color}">${
+						                  <header class="flex items-center gap-6 mb-8 border-b-2 pb-8" style="border-color: ${color}">
+						                     <div class="avatar-crop-container w-20 h-20 md:w-24 md:h-24 rounded-full bg-slate-100 overflow-hidden relative flex-shrink-0"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                     <div class="flex-1"><h1 class="text-3xl md:text-4xl font-black mb-1">${
+													data.name
+												}</h1><p class="text-lg font-medium" style="color:${color}">${
 						data.job
 					}</p><div class="${tBase} mt-2 text-slate-500">${data.phone} | ${data.email} | ${
 						data.location
 					}</div></div>
-			                 </header>
-			                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-			                     <div class="col-span-1 md:col-span-2 space-y-6"><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Profile</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Experience</h2>${list(
+						                 </header>
+						                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+						                     <div class="col-span-1 md:col-span-2 space-y-6"><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Profile</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Experience</h2>${list(
 						data.experiences
 					)}</section>${
 						data.projects.length
@@ -2604,87 +2621,87 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 							  )}</section>`
 							: ''
 					}</div>
-			                     <div class="col-span-1 md:col-span-1 space-y-6"><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Skills</h2>${skills}</section><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Education</h2>${simple(
+						                     <div class="col-span-1 md:col-span-1 space-y-6"><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Skills</h2>${skills}</section><section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Education</h2>${simple(
 						data.education
 					)}</section>${
 						data.languages || data.certificates
 							? `<section><h2 class="${tTitle} font-black uppercase mb-2 text-slate-400">Misc</h2><div class="${tBase} text-slate-600">${data.languages}<br>${data.certificates}</div></section>`
 							: ''
 					}</div>
-			                 </div>
-			             </div>`
+						                 </div>
+						             </div>`
 				} else if (template === 'elegant') {
 					html = `<div class="${base} ${pad}">
-			                 <header class="text-center mb-8 pb-6 border-b border-slate-300">
-			                      <div class="avatar-crop-container w-20 h-20 rounded-full mx-auto mb-3 bg-slate-100 overflow-hidden relative border border-slate-200"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                     <h1 class="text-3xl font-bold mb-1 tracking-wide">${
-										data.name
-									}</h1><p class="${tTitle} italic mb-3 font-sans" style="color: ${color}">${
+						                 <header class="text-center mb-8 pb-6 border-b border-slate-300">
+						                      <div class="avatar-crop-container w-20 h-20 rounded-full mx-auto mb-3 bg-slate-100 overflow-hidden relative border border-slate-200"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                     <h1 class="text-3xl font-bold mb-1 tracking-wide">${
+													data.name
+												}</h1><p class="${tTitle} italic mb-3 font-sans" style="color: ${color}">${
 						data.job
 					}</p>
-			                     <div class="flex justify-center flex-wrap gap-3 ${tBase} font-sans text-slate-500 uppercase tracking-widest">${
+						                     <div class="flex justify-center flex-wrap gap-3 ${tBase} font-sans text-slate-500 uppercase tracking-widest">${
 						data.phone
 					} • ${data.email} • ${data.location}</div>
-			                 </header>
-			                 <div class="space-y-6 font-sans">
-			                     <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Profile</h2><p class="${tBase} ${lead} text-slate-700 text-justify">${summary}</p></section>
-			                     <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Experience</h2>${list(
+						                 </header>
+						                 <div class="space-y-6 font-sans">
+						                     <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Profile</h2><p class="${tBase} ${lead} text-slate-700 text-justify">${summary}</p></section>
+						                     <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Experience</h2>${list(
 						data.experiences
 					)}</section>
-			                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-			                         <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Education</h2>${simple(
+						                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+						                         <section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Education</h2>${simple(
 						data.education
 					)}</section>
-			                         <div class="space-y-6"><section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Skills</h2><div class="flex flex-wrap gap-2 text-xs">${data.skills
+						                         <div class="space-y-6"><section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Skills</h2><div class="flex flex-wrap gap-2 text-xs">${data.skills
 						.map(s => `<span class="border-b border-slate-200 pb-0.5">${s}</span>`)
 						.join('')}</div></section>${
 						data.languages || data.certificates
 							? `<section><h2 class="${tTitle} font-serif font-bold text-slate-900 border-b border-slate-800 pb-1 mb-3">Misc</h2><div class="${tBase} text-slate-700">${data.languages}<br>${data.certificates}</div></section>`
 							: ''
 					}</div>
-			                     </div>
-			                 </div>
-			             </div>`
+						                     </div>
+						                 </div>
+						             </div>`
 				} else if (template === 'timeline') {
 					html = `<div class="${base} flex flex-col h-full ${pad}">
-			                 <header class="flex items-center gap-8 mb-12"><div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg shrink-0 relative"><img src="${
-									photo.src
-								}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div><h1 class="text-4xl font-bold text-slate-800 mb-2">${
+						                 <header class="flex items-center gap-8 mb-12"><div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg shrink-0 relative"><img src="${
+												photo.src
+											}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div><h1 class="text-4xl font-bold text-slate-800 mb-2">${
 						data.name
 					}</h1><p class="text-xl font-medium" style="color: ${color}">${
 						data.job
 					}</p><div class="mt-4 ${tBase} text-slate-500">${data.phone} | ${data.email} | ${
 						data.location
 					}</div></div></header>
-			                 <div class="flex flex-col md:flex-row gap-12 flex-1">
-			                     <div class="w-full md:w-1/3 space-y-8 md:border-r border-slate-100 md:pr-8"><section><h3 class="font-bold uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${color}">Profile</h3><p class="${tBase} ${lead} text-slate-600">${summary}</p></section><section><h3 class="font-bold uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${color}">Education</h3>${simple(
+						                 <div class="flex flex-col md:flex-row gap-12 flex-1">
+						                     <div class="w-full md:w-1/3 space-y-8 md:border-r border-slate-100 md:pr-8"><section><h3 class="font-bold uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${color}">Profile</h3><p class="${tBase} ${lead} text-slate-600">${summary}</p></section><section><h3 class="font-bold uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${color}">Education</h3>${simple(
 						data.education
 					)}</section><section><h3 class="font-bold uppercase tracking-wider mb-4 border-b-2 pb-1 inline-block" style="border-color: ${color}">Skills</h3><div class="flex flex-wrap gap-2">${data.skills
 						.map(s => `<span class="bg-slate-100 px-2 py-1 rounded text-[10px]">${s}</span>`)
 						.join('')}</div></section></div>
-			                     <div class="w-full md:w-2/3 space-y-8"><h3 class="font-bold uppercase tracking-wider mb-6 border-b-2 pb-1 inline-block" style="border-color: ${color}">Experience</h3><div class="relative border-l-2 border-slate-200 ml-3 space-y-10 pl-8 pb-4">${list(
+						                     <div class="w-full md:w-2/3 space-y-8"><h3 class="font-bold uppercase tracking-wider mb-6 border-b-2 pb-1 inline-block" style="border-color: ${color}">Experience</h3><div class="relative border-l-2 border-slate-200 ml-3 space-y-10 pl-8 pb-4">${list(
 						data.experiences
 					)}</div></div>
-			                 </div>
-			             </div>`
+						                 </div>
+						             </div>`
 				} else if (template === 'tech') {
 					html = `<div class="${base} bg-slate-50 min-h-[297mm]">
-			                 <header class="bg-slate-900 text-white p-8 print-adjust-color"><div class="flex justify-between items-start"><div><h1 class="text-3xl font-bold mb-1 tracking-tighter text-green-400 font-mono">&lt;${
-									data.name
-								} /&gt;</h1><p class="text-sm text-slate-400 font-mono"> // ${
+						                 <header class="bg-slate-900 text-white p-8 print-adjust-color"><div class="flex justify-between items-start"><div><h1 class="text-3xl font-bold mb-1 tracking-tighter text-green-400 font-mono">&lt;${
+												data.name
+											} /&gt;</h1><p class="text-sm text-slate-400 font-mono"> // ${
 						data.job
 					}</p></div><div class="text-right text-[10px] font-mono text-slate-400 space-y-0.5 print:text-white">${
 						data.email
 					}<div>${data.phone}</div></div></div></header>
-			                 <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-			                     <div class="col-span-1 md:col-span-2 space-y-6"><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="${tTitle} font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-terminal" style="color: ${color}"></i> Experience</h2>${list(
+						                 <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+						                     <div class="col-span-1 md:col-span-2 space-y-6"><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="${tTitle} font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-terminal" style="color: ${color}"></i> Experience</h2>${list(
 						data.experiences
 					)}</section><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="${tTitle} font-bold text-slate-900 uppercase mb-3 tracking-widest flex items-center gap-2"><i class="fas fa-code" style="color: ${color}"></i> Summary</h2><p class="${tBase} ${lead} text-slate-600 font-sans text-justify">${summary}</p></section></div>
-			                     <div class="col-span-1 space-y-6"><div class="avatar-crop-container w-full aspect-square rounded-full bg-white border border-slate-200 p-2 shadow-sm mb-2 overflow-hidden relative"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover grayscale absolute top-0 left-0" style="${imgStyle}"></div><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Stack</h2><div class="flex flex-wrap gap-2">${data.skills
+						                     <div class="col-span-1 space-y-6"><div class="avatar-crop-container w-full aspect-square rounded-full bg-white border border-slate-200 p-2 shadow-sm mb-2 overflow-hidden relative"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover grayscale absolute top-0 left-0" style="${imgStyle}"></div><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Stack</h2><div class="flex flex-wrap gap-2">${data.skills
 						.map(
 							s =>
 								`<span class="bg-slate-900 text-green-400 px-2 py-1 text-[10px] font-mono border border-slate-700">${s}</span>`
@@ -2694,20 +2711,20 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 						)}</div></section><section class="bg-white p-5 shadow-sm border border-slate-200"><h2 class="text-xs font-bold text-slate-900 uppercase mb-3 tracking-widest">Education</h2>${simple(
 						data.education
 					)}</section></div>
-			                 </div>
-			             </div>`
+						                 </div>
+						             </div>`
 				} else if (template === 'right') {
 					html = `<div class="${base} grid grid-cols-1 md:grid-cols-12 min-h-screen">
-			                 <div class="col-span-1 md:col-span-8 p-10 bg-white text-slate-800"><header class="mb-8 border-b border-slate-100 pb-6"><h1 class="text-3xl font-bold mb-2">${
-									data.name
-								}</h1><p class="${tTitle} font-medium" style="color:${color}">${
+						                 <div class="col-span-1 md:col-span-8 p-10 bg-white text-slate-800"><header class="mb-8 border-b border-slate-100 pb-6"><h1 class="text-3xl font-bold mb-2">${
+												data.name
+											}</h1><p class="${tTitle} font-medium" style="color:${color}">${
 						data.job
 					}</p></header><section class="mb-8"><h2 class="${tTitle} font-bold text-slate-900 uppercase mb-3 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${color}"></span> Profile</h2><p class="${tBase} ${lead} text-slate-600 text-justify">${summary}</p></section><section><h2 class="${tTitle} font-bold text-slate-900 uppercase mb-4 flex items-center gap-2"><span class="w-1 h-4 rounded-sm" style="background-color: ${color}"></span> Experience</h2>${list(
 						data.experiences
 					)}</section></div>
-			                 <div class="col-span-1 md:col-span-4 bg-slate-50 border-l border-slate-200 p-8 flex flex-col print-adjust-color print:h-full"><div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white shadow-lg mx-auto mb-6 relative bg-white"><img src="${
-									photo.src
-								}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div class="space-y-8"><div><h4 class="${tBase} font-bold uppercase mb-3 border-b border-slate-200 pb-1" style="color:${color}">Contact</h4><div class="space-y-2 ${tBase} text-slate-600">${
+						                 <div class="col-span-1 md:col-span-4 bg-slate-50 border-l border-slate-200 p-8 flex flex-col print-adjust-color print:h-full"><div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white shadow-lg mx-auto mb-6 relative bg-white"><img src="${
+												photo.src
+											}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div class="space-y-8"><div><h4 class="${tBase} font-bold uppercase mb-3 border-b border-slate-200 pb-1" style="color:${color}">Contact</h4><div class="space-y-2 ${tBase} text-slate-600">${
 						data.phone
 					}<br>${data.email}<br>${
 						data.location
@@ -2719,39 +2736,39 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 								`<span class="bg-white text-slate-600 text-[10px] px-2 py-1 rounded border border-slate-200 shadow-sm">${s}</span>`
 						)
 						.join('')}</div></div></div></div>
-			             </div>`
+						             </div>`
 				} else if (template === 'swiss') {
 					html = `<div class="${base} ${pad} bg-white">
-			                 <header class="mb-12 flex items-start gap-6"><div class="avatar-crop-container w-20 h-20 rounded-full bg-slate-100 overflow-hidden relative flex-shrink-0 border-2 border-slate-200"><img src="${
-									photo.src
-								}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div class="flex-1"><h1 class="text-5xl font-black tracking-tighter leading-none mb-2">${
+						                 <header class="mb-12 flex items-start gap-6"><div class="avatar-crop-container w-20 h-20 rounded-full bg-slate-100 overflow-hidden relative flex-shrink-0 border-2 border-slate-200"><img src="${
+												photo.src
+											}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><div class="flex-1"><h1 class="text-5xl font-black tracking-tighter leading-none mb-2">${
 						data.name
 					}</h1><div class="w-20 h-2 bg-black mb-4" style="background-color: ${color}"></div><div class="flex justify-between items-end"><p class="text-lg font-bold text-slate-500 uppercase tracking-widest">${
 						data.job
 					}</p><div class="text-right text-xs font-bold text-slate-900 space-y-1">${data.phone}<br>${
 						data.email
 					}</div></div></div></header>
-			                 <div class="grid grid-cols-4 gap-8 border-t-4 border-black pt-8" style="border-color: ${color}"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">About</h3></div><div class="col-span-3"><p class="${tBase} ${lead} font-medium text-justify">${summary}</p></div></div>
-			                 <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">Experience</h3></div><div class="col-span-3 space-y-8">${list(
+						                 <div class="grid grid-cols-4 gap-8 border-t-4 border-black pt-8" style="border-color: ${color}"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">About</h3></div><div class="col-span-3"><p class="${tBase} ${lead} font-medium text-justify">${summary}</p></div></div>
+						                 <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">Experience</h3></div><div class="col-span-3 space-y-8">${list(
 						data.experiences
 					)}</div></div>
-			                 <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">Skills</h3></div><div class="col-span-3"><div class="grid grid-cols-3 gap-x-4 gap-y-2">${data.skills
+						                 <div class="grid grid-cols-4 gap-8 border-t border-slate-200 pt-8 mt-8"><div class="col-span-1"><h3 class="${tTitle} font-black uppercase mb-6">Skills</h3></div><div class="col-span-3"><div class="grid grid-cols-3 gap-x-4 gap-y-2">${data.skills
 						.map(s => `<div class="${tBase} font-bold border-b border-slate-100 pb-1">${s}</div>`)
 						.join('')}</div></div></div>
-			             </div>`
+						             </div>`
 				} else if (template === 'creative') {
 					// 计算浅色版本的主题色用于背景装饰
 					const lightColor = color + '15'
 					html = `<div class="${base} flex flex-col h-full relative">
-			                 <div class="absolute top-0 right-0 w-1/2 h-48" style="background: linear-gradient(to bottom left, ${lightColor} 0%, ${lightColor} 50%, transparent 50%); z-index: 0;"></div>
-			                 <header class="${pad} pb-0 relative z-10 flex justify-between items-end mb-12"><div><h1 class="text-5xl font-black mb-2 tracking-tight leading-none">${
+						                 <div class="absolute top-0 right-0 w-1/2 h-48" style="background: linear-gradient(to bottom left, ${lightColor} 0%, ${lightColor} 50%, transparent 50%); z-index: 0;"></div>
+						                 <header class="${pad} pb-0 relative z-10 flex justify-between items-end mb-12"><div><h1 class="text-5xl font-black mb-2 tracking-tight leading-none">${
 						data.name
 					}</h1><p class="text-xl font-medium text-slate-500 tracking-wide">${
 						data.job
 					}</p></div><div class="avatar-crop-container w-32 h-32 rounded-full shadow-xl shrink-0 overflow-hidden relative bg-white ring-4 ring-white"><img src="${
 						photo.src
 					}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div></header>
-			                 <div class="${pad} pt-0 grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 relative z-10"><div class="col-span-1 md:col-span-4 space-y-10"><div class="bg-slate-50 p-6 rounded-xl border-l-4" style="border-color: ${color}"><h3 class="${tTitle} font-bold uppercase tracking-widest text-slate-400 mb-4">Contact</h3><div class="space-y-3 ${tBase} text-slate-600">${
+						                 <div class="${pad} pt-0 grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 relative z-10"><div class="col-span-1 md:col-span-4 space-y-10"><div class="bg-slate-50 p-6 rounded-xl border-l-4" style="border-color: ${color}"><h3 class="${tTitle} font-bold uppercase tracking-widest text-slate-400 mb-4">Contact</h3><div class="space-y-3 ${tBase} text-slate-600">${
 						data.phone
 					}<br>${data.email}<br>${
 						data.location
@@ -2767,193 +2784,193 @@ AWS Certified Solutions Architect, PMP Certification</textarea
 					)}</div></div><div class="col-span-1 md:col-span-8 space-y-10"><section><h3 class="${tTitle} font-bold uppercase tracking-widest text-slate-400 mb-4">About Me</h3><p class="${tBase} ${lead} text-slate-700">${summary}</p></section><section><h3 class="${tTitle} font-bold uppercase tracking-widest text-slate-400 mb-6">Experience</h3><div class="space-y-8 border-l-2 border-slate-100 pl-6 ml-2">${list(
 						data.experiences
 					)}</div></section></div></div>
-			             </div>`
+						             </div>`
 				} else if (template === 'compact') {
 					html = `<div class="${base} ${pad} text-black">
-			                 <header class="border-b border-black pb-4 mb-4 flex flex-col items-center"><div class="avatar-crop-container w-16 h-16 rounded-full bg-slate-100 overflow-hidden relative mb-2 border border-slate-200"><img src="${
-									photo.src
-								}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><h1 class="text-2xl font-bold uppercase text-center mb-2 tracking-wide">${
+						                 <header class="border-b border-black pb-4 mb-4 flex flex-col items-center"><div class="avatar-crop-container w-16 h-16 rounded-full bg-slate-100 overflow-hidden relative mb-2 border border-slate-200"><img src="${
+												photo.src
+											}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div><h1 class="text-2xl font-bold uppercase text-center mb-2 tracking-wide">${
 						data.name
 					}</h1><div class="text-center text-sm flex justify-center flex-wrap gap-4">${data.phone} ${
 						data.email
 					} ${data.location}</div></header>
-			                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Summary</h2><p class="${tBase} ${lead} text-justify">${summary}</p></section>
-			                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Experience</h2><div class="space-y-3">${list(
+						                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Summary</h2><p class="${tBase} ${lead} text-justify">${summary}</p></section>
+						                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Experience</h2><div class="space-y-3">${list(
 						data.experiences
 					)}</div></section>
-			                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Education</h2>${simple(
+						                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Education</h2>${simple(
 						data.education
 					)}</section>
-			                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Skills</h2><p class="${tBase} leading-snug">${data.skills.join(
+						                 <section class="mb-4"><h2 class="${tTitle} font-bold uppercase border-b border-black mb-2" style="color: ${color}">Skills</h2><p class="${tBase} leading-snug">${data.skills.join(
 						', '
 					)}</p></section>
-			             </div>`
+						             </div>`
 				} else if (template === 'bold') {
 					html = `<div class="${base} bg-white h-full flex flex-col">
-			                     <header class="${pad} text-white print-adjust-color flex items-center gap-8" style="background-color: ${color}">
-			                          <div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white/30 shrink-0 relative bg-white/10"><img src="${
-											photo.src
-										}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                         <div class="flex-1"><h1 class="text-5xl font-bold mb-2 tracking-tight">${
-											data.name
-										}</h1><p class="text-xl opacity-90 font-medium tracking-wide uppercase">${
+						                     <header class="${pad} text-white print-adjust-color flex items-center gap-8" style="background-color: ${color}">
+						                          <div class="avatar-crop-container w-32 h-32 rounded-full ring-4 ring-white/30 shrink-0 relative bg-white/10"><img src="${
+														photo.src
+													}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                         <div class="flex-1"><h1 class="text-5xl font-bold mb-2 tracking-tight">${
+														data.name
+													}</h1><p class="text-xl opacity-90 font-medium tracking-wide uppercase">${
 						data.job
 					}</p></div>
-			                     </header>
-			                     <div class="flex-1 ${pad} grid grid-cols-1 md:grid-cols-12 gap-10">
-			                          <div class="col-span-1 md:col-span-4 space-y-8 md:border-r border-slate-100 md:pr-6">
-			                             <div class="space-y-1 ${tBase}"><div>${data.phone}</div><div>${data.email}</div><div>${
+						                     </header>
+						                     <div class="flex-1 ${pad} grid grid-cols-1 md:grid-cols-12 gap-10">
+						                          <div class="col-span-1 md:col-span-4 space-y-8 md:border-r border-slate-100 md:pr-6">
+						                             <div class="space-y-1 ${tBase}"><div>${data.phone}</div><div>${data.email}</div><div>${
 						data.location
 					}</div></div>
-			                             <div><h3 class="${tTitle} font-bold uppercase mb-2" style="color:${color}">Skills</h3><div class="flex flex-wrap gap-1">${data.skills
+						                             <div><h3 class="${tTitle} font-bold uppercase mb-2" style="color:${color}">Skills</h3><div class="flex flex-wrap gap-1">${data.skills
 						.map(s => `<span class="border px-2 py-1 rounded text-[10px]">${s}</span>`)
 						.join('')}</div></div>
-			                             <div><h3 class="${tTitle} font-bold uppercase mb-2" style="color:${color}">Education</h3>${simple(
+						                             <div><h3 class="${tTitle} font-bold uppercase mb-2" style="color:${color}">Education</h3>${simple(
 						data.education
 					)}</div>
-			                          </div>
-			                          <div class="col-span-1 md:col-span-8 space-y-8">
-			                             <section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-user text-slate-300"></i> Profile</h3><p class="${tBase} ${lead}">${summary}</p></section>
-			                             <section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-briefcase text-slate-300"></i> Experience</h3>${list(
+						                          </div>
+						                          <div class="col-span-1 md:col-span-8 space-y-8">
+						                             <section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-user text-slate-300"></i> Profile</h3><p class="${tBase} ${lead}">${summary}</p></section>
+						                             <section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-briefcase text-slate-300"></i> Experience</h3>${list(
 						data.experiences
 					)}</section>
-			                             ${
-												data.projects.length
-													? `<section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-rocket text-slate-300"></i> Projects</h3>${list(
-															data.projects
-													  )}</section>`
-													: ''
-											}
-			                          </div>
-			                     </div>
-			                 </div>`
+						                             ${
+															data.projects.length
+																? `<section><h3 class="${tTitle} font-bold uppercase mb-4 flex items-center gap-2"><i class="fas fa-rocket text-slate-300"></i> Projects</h3>${list(
+																		data.projects
+																  )}</section>`
+																: ''
+														}
+						                          </div>
+						                     </div>
+						                 </div>`
 				} else if (template === 'studio') {
 					html = `<div class="${base} flex flex-col h-full bg-slate-50">
-			                 <header class="bg-white p-8 md:p-12 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-8">
-			                     <div class="avatar-crop-container w-32 h-32 rounded-lg shadow-lg overflow-hidden relative shrink-0"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                     <div class="flex-1 text-center md:text-left">
-			                         <h1 class="text-4xl font-bold text-slate-900 mb-2">${data.name}</h1>
-			                         <p class="text-xl font-medium mb-4" style="color: ${color}">${data.job}</p>
-			                         <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-slate-500">
-			                             <span><i class="fas fa-envelope mr-1"></i>${data.email}</span>
-			                             <span><i class="fas fa-phone mr-1"></i>${data.phone}</span>
-			                             <span><i class="fas fa-map-marker-alt mr-1"></i>${data.location}</span>
-			                         </div>
-			                     </div>
-			                 </header>
-			                 <div class="flex-1 p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-10">
-			                     <div class="col-span-1 md:col-span-2 space-y-10">
-			                         <section>
-			                             <h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> About Me</h3>
-			                             <p class="${tBase} ${lead} text-slate-600 text-justify">${summary}</p>
-			                         </section>
-			                         <section>
-			                             <h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> Experience</h3>
-			                             <div class="space-y-8">${list(data.experiences)}</div>
-			                         </section>
-			                          ${
-											data.projects.length
-												? `<section><h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> Projects</h3>${list(
-														data.projects
-												  )}</section>`
-												: ''
-										}
-			                     </div>
-			                     <div class="col-span-1 space-y-10">
-			                         <section class="bg-white p-6 rounded-xl shadow-sm">
-			                             <h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Skills</h3>
-			                             <div class="flex flex-wrap gap-2">${data.skills
-												.map(
-													s =>
-														`<span class="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md text-xs font-medium border border-slate-100">${s}</span>`
-												)
-												.join('')}</div>
-			                         </section>
-			                         <section class="bg-white p-6 rounded-xl shadow-sm">
-			                             <h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Education</h3>
-			                             ${simple(data.education)}
-			                         </section>
-			                         ${
-											data.languages || data.certificates
-												? `<section class="bg-white p-6 rounded-xl shadow-sm"><h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Misc</h3><div class="${tBase} text-slate-600 space-y-2">${
-														data.languages
-															? `<div><div class="font-bold text-slate-800 mb-1">Languages</div>${data.languages}</div>`
+						                 <header class="bg-white p-8 md:p-12 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-8">
+						                     <div class="avatar-crop-container w-32 h-32 rounded-lg shadow-lg overflow-hidden relative shrink-0"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                     <div class="flex-1 text-center md:text-left">
+						                         <h1 class="text-4xl font-bold text-slate-900 mb-2">${data.name}</h1>
+						                         <p class="text-xl font-medium mb-4" style="color: ${color}">${data.job}</p>
+						                         <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-slate-500">
+						                             <span><i class="fas fa-envelope mr-1"></i>${data.email}</span>
+						                             <span><i class="fas fa-phone mr-1"></i>${data.phone}</span>
+						                             <span><i class="fas fa-map-marker-alt mr-1"></i>${data.location}</span>
+						                         </div>
+						                     </div>
+						                 </header>
+						                 <div class="flex-1 p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+						                     <div class="col-span-1 md:col-span-2 space-y-10">
+						                         <section>
+						                             <h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> About Me</h3>
+						                             <p class="${tBase} ${lead} text-slate-600 text-justify">${summary}</p>
+						                         </section>
+						                         <section>
+						                             <h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> Experience</h3>
+						                             <div class="space-y-8">${list(data.experiences)}</div>
+						                         </section>
+						                          ${
+														data.projects.length
+															? `<section><h3 class="text-lg font-bold uppercase tracking-wider mb-6 flex items-center gap-3"><span class="w-8 h-1 rounded-full" style="background-color: ${color}"></span> Projects</h3>${list(
+																	data.projects
+															  )}</section>`
 															: ''
-												  }${
-														data.certificates
-															? `<div><div class="font-bold text-slate-800 mb-1">Certificates</div>${data.certificates}</div>`
+													}
+						                     </div>
+						                     <div class="col-span-1 space-y-10">
+						                         <section class="bg-white p-6 rounded-xl shadow-sm">
+						                             <h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Skills</h3>
+						                             <div class="flex flex-wrap gap-2">${data.skills
+															.map(
+																s =>
+																	`<span class="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md text-xs font-medium border border-slate-100">${s}</span>`
+															)
+															.join('')}</div>
+						                         </section>
+						                         <section class="bg-white p-6 rounded-xl shadow-sm">
+						                             <h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Education</h3>
+						                             ${simple(data.education)}
+						                         </section>
+						                         ${
+														data.languages || data.certificates
+															? `<section class="bg-white p-6 rounded-xl shadow-sm"><h3 class="font-bold uppercase tracking-wider mb-4 text-slate-400 text-xs">Misc</h3><div class="${tBase} text-slate-600 space-y-2">${
+																	data.languages
+																		? `<div><div class="font-bold text-slate-800 mb-1">Languages</div>${data.languages}</div>`
+																		: ''
+															  }${
+																	data.certificates
+																		? `<div><div class="font-bold text-slate-800 mb-1">Certificates</div>${data.certificates}</div>`
+																		: ''
+															  }</div></section>`
 															: ''
-												  }</div></section>`
-												: ''
-										}
-			                     </div>
-			                 </div>
-			             </div>`
+													}
+						                     </div>
+						                 </div>
+						             </div>`
 				} else if (template === 'leaf') {
 					html = `<div class="${base} h-full bg-white relative overflow-hidden">
-			                 <div class="absolute top-0 left-0 w-full h-2" style="background-color: ${color}"></div>
-			                 <div class="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
-			                 <header class="${pad} pb-0 text-center relative z-10">
-			                     <div class="avatar-crop-container w-28 h-28 rounded-full mx-auto mb-6 border-4 border-white shadow-lg relative bg-white"><img src="${
-										photo.src
-									}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
-			                     <h1 class="text-4xl font-serif font-bold text-slate-800 mb-2">${data.name}</h1>
-			                     <p class="text-lg font-medium italic mb-6" style="color: ${color}">${data.job}</p>
-			                     <div class="flex justify-center gap-6 text-sm text-slate-500 border-t border-b border-slate-100 py-4 max-w-2xl mx-auto">
-			                         <span>${data.email}</span><span>•</span><span>${data.phone}</span><span>•</span><span>${
+						                 <div class="absolute top-0 left-0 w-full h-2" style="background-color: ${color}"></div>
+						                 <div class="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+						                 <header class="${pad} pb-0 text-center relative z-10">
+						                     <div class="avatar-crop-container w-28 h-28 rounded-full mx-auto mb-6 border-4 border-white shadow-lg relative bg-white"><img src="${
+													photo.src
+												}" class="w-full h-full object-cover absolute top-0 left-0" style="${imgStyle}"></div>
+						                     <h1 class="text-4xl font-serif font-bold text-slate-800 mb-2">${data.name}</h1>
+						                     <p class="text-lg font-medium italic mb-6" style="color: ${color}">${data.job}</p>
+						                     <div class="flex justify-center gap-6 text-sm text-slate-500 border-t border-b border-slate-100 py-4 max-w-2xl mx-auto">
+						                         <span>${data.email}</span><span>•</span><span>${data.phone}</span><span>•</span><span>${
 						data.location
 					}</span>
-			                     </div>
-			                 </header>
-			                 <div class="${pad} grid grid-cols-1 md:grid-cols-12 gap-12 relative z-10">
-			                     <div class="col-span-1 md:col-span-12">
-			                          <p class="${tBase} ${lead} text-center max-w-3xl mx-auto text-slate-600">${summary}</p>
-			                     </div>
-			                     <div class="col-span-1 md:col-span-7 space-y-10">
-			                         <section>
-			                             <h3 class="text-xl font-serif font-bold mb-6 flex items-center gap-3 text-slate-800"><span class="text-2xl opacity-50" style="color: ${color}">🌿</span> Experience</h3>
-			                             <div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(data。experiences)}</div>
-			                         </section>
-			                         ${
-											data.projects.length
-												? `<section><h3 class="text-xl font-serif font-bold mb-6 flex items-center gap-3 text-slate-800"><span class="text-2xl opacity-50" style="color: ${color}">🌿</span> Projects</h3><div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(
-														data.projects
-												  )}</div></section>`
-												: ''
-										}
-			                     </div>
-			                     <div class="col-span-1 md:col-span-5 space-y-10">
-			                          <section>
-			                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Skills</h3>
-			                             <div class="flex flex-wrap gap-3">${data。skills
-												。map(
-													s =>
-														`<span class="bg-slate-50 text-slate-700 px-4 py-2 rounded-full text-xs border border-slate-100">${s}</span>`
-												)
-												。join('')}</div>
-			                         </section>
-			                         <section>
-			                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Education</h3>
-			                             ${simple(data。education)}
-			                         </section>
-			                     </div>
-			                 </div>
-			             </div>`
+						                     </div>
+						                 </header>
+						                 <div class="${pad} grid grid-cols-1 md:grid-cols-12 gap-12 relative z-10">
+						                     <div class="col-span-1 md:col-span-12">
+						                          <p class="${tBase} ${lead} text-center max-w-3xl mx-auto text-slate-600">${summary}</p>
+						                     </div>
+						                     <div class="col-span-1 md:col-span-7 space-y-10">
+						                         <section>
+						                             <h3 class="text-xl font-serif font-bold mb-6 flex items-center gap-3 text-slate-800"><span class="text-2xl opacity-50" style="color: ${color}">🌿</span> Experience</h3>
+						                             <div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(data.experiences)}</div>
+						                         </section>
+						                         ${
+														data.projects.length
+															? `<section><h3 class="text-xl font-serif font-bold mb-6 flex items-center gap-3 text-slate-800"><span class="text-2xl opacity-50" style="color: ${color}">🌿</span> Projects</h3><div class="space-y-8 border-l border-slate-200 pl-6 ml-3">${list(
+																	data.projects
+															  )}</div></section>`
+															: ''
+													}
+						                     </div>
+						                     <div class="col-span-1 md:col-span-5 space-y-10">
+						                          <section>
+						                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Skills</h3>
+						                             <div class="flex flex-wrap gap-3">${data.skills
+															.map(
+																s =>
+																	`<span class="bg-slate-50 text-slate-700 px-4 py-2 rounded-full text-xs border border-slate-100">${s}</span>`
+															)
+															.join('')}</div>
+						                         </section>
+						                         <section>
+						                             <h3 class="text-xl font-serif font-bold mb-6 text-slate-800">Education</h3>
+						                             ${simple(data.education)}
+						                         </section>
+						                     </div>
+						                 </div>
+						             </div>`
 				} else {
 					html = `<div class="${base} ${pad}">
-			                 <div class="border-b-2 border-slate-900 pb-6 mb-6"><h1 class="text-4xl font-bold uppercase">${
-									data.name
-								}</h1><p class="text-xl text-slate-600">${data.job}</p><div class="${tBase} mt-2">${
-						data.email
-					} | ${data.phone}</div></div>
-			                 <div class="space-y-6"><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Summary</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Experience</h2>${list(
+						                 <div class="border-b-2 border-slate-900 pb-6 mb-6"><h1 class="text-4xl font-bold uppercase">${
+												data.name
+											}</h1><p class="text-xl text-slate-600">${
+						data.job
+					}</p><div class="${tBase} mt-2">${data.email} | ${data.phone}</div></div>
+						                 <div class="space-y-6"><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Summary</h2><p class="${tBase} ${lead}">${summary}</p></section><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Experience</h2>${list(
 						data.experiences
 					)}</section><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Education</h2>${simple(
 						data.education
 					)}</section><section><h2 class="${tTitle} font-bold uppercase mb-2 border-b pb-1">Skills</h2><div>${skills}</div></section></div>
-			             </div>`
+						             </div>`
 				}
 
 				c.innerHTML = html
