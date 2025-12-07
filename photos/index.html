@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能写真工作台 | 专业级影像生成</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Cpath d='M35 75L45 25h10l10 50h-8l-2-12H45l-2 12h-8zm16-19l-3-18-3 18h6zm24 19V25h8v50h-8z' fill='white'/%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Noto Serif SC"', 'serif'],
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#172554',
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'scan': 'scan 2s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        scan: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        .glass-panel { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark .glass-panel { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- Optimized Image Component with Reliable Fallback ---
+        const StyleImage = ({ src, alt, icon, isSelected }) => {
+            const [error, setError] = useState(false);
+            const [loaded, setLoaded] = useState(false);
+            useEffect(() => { setError(false); setLoaded(false); }, [src]);
+
+            // Default fallback image (Elegant placeholder)
+            const fallbackImage = "https://placehold.co/600x800/1e293b/94a3b8?text=Image+N/A&font=roboto";
+
+            return (
+                <div className="w-full h-full relative bg-slate-200 dark:bg-slate-800">
+                    {!loaded && !error && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+                            <i className="fa-solid fa-circle-notch animate-spin text-slate-400"></i>
+                        </div>
+                    )}
+                    <img 
+                        src={error ? fallbackImage : src} 
+                        alt={alt} 
+                        className={`w-full h-full object-cover transition-all duration-700 ${loaded || error ? 'opacity-100' : 'opacity-0'} ${isSelected ? '' : 'group-hover:scale-110'}`}
+                        onLoad={() => setLoaded(true)}
+                        onError={() => setError(true)}
+                    />
+                    {error && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                             <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
+                                <i className={`fa-solid ${icon} text-white/80`}></i>
+                             </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const MermaidDiagram = ({ chart, isDark }) => {
+            const containerRef = useRef(null);
+            useEffect(() => {
+                mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'neutral', fontFamily: '"Noto Sans SC", sans-serif' });
+                if (containerRef.current) mermaid.run({ nodes: [containerRef.current] });
+            }, [chart, isDark]);
+            return <div className="mermaid flex justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" ref={containerRef}>{chart}</div>;
+        };
+
+        const Typewriter = ({ text, speed = 100, delay = 0 }) => {
+            const [displayText, setDisplayText] = useState('');
+            const [started, setStarted] = useState(false);
+            const containerRef = useRef(null);
+            useEffect(() => {
+                const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setStarted(true); observer.disconnect(); } }, { threshold: 0.1 });
+                if (containerRef.current) observer.observe(containerRef.current);
+                return () => observer.disconnect();
+            }, []);
+            useEffect(() => {
+                if (!started) return;
+                let i = 0;
+                const startTimeout = setTimeout(() => {
+                    const timer = setInterval(() => {
+                        if (i < text.length) { setDisplayText(text.substring(0, i + 1)); i++; } else { clearInterval(timer); }
+                    }, speed);
+                    return () => clearInterval(timer);
+                }, delay);
+                return () => clearTimeout(startTimeout);
+            }, [started, text, speed, delay]);
+            return <span ref={containerRef}>{displayText}<span className="animate-pulse ml-1 text-brand-400">|</span></span>;
+        };
+
+        const CATEGORIES = [
+            { id: 'recommended', label: '推荐精选' },
+            { id: 'all', label: '全部' },
+            { id: 'professional', label: '商务职业' },
+            { id: 'fashion', label: '时尚潮流' },
+            { id: 'artistic', label: '艺术绘画' },
+            { id: 'cinematic', label: '电影叙事' },
+            { id: 'vintage', label: '复古怀旧' },
+            { id: 'cultural', label: '环球文化' },
+            { id: 'anime', label: '二次元/CG' },
+            { id: 'fantasy', label: '奇幻神话' },
+            { id: 'nature', label: '自然氛围' },
+        ];
+
+        // 100+ Styles
+        const PHOTO_STYLES = [
+            // --- Recommended (Original 12) ---
+            { id: 'career', category: 'professional', isRecommended: true, title: '职业肖像', subtitle: '商务专业', icon: 'fa-user-tie', desc: "高端商务质感，适合领英与简历，展现专业形象。", preview: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600", prompt: "Professional corporate headshot, high-end business suit, neutral studio background, soft lighting, 8k, LinkedIn style." },
+            { id: 'fashion', category: 'fashion', isRecommended: true, title: '时尚大片', subtitle: 'VOGUE 风格', icon: 'fa-camera-retro', desc: "前卫构图，杂志级高定摄影，大胆的时尚表达。", preview: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=600", prompt: "High-fashion editorial shot, trendy avant-garde clothing, dynamic pose, studio lighting, bold contrast, Vogue aesthetic." },
+            { id: 'gallery', category: 'artistic', isRecommended: true, title: '美术馆', subtitle: '艺术氛围', icon: 'fa-palette', desc: "光影迷离，充满艺术氛围的抓拍，如梦似幻。", preview: "https://images.unsplash.com/photo-1545959828-867373322194?auto=format&fit=crop&q=80&w=600", prompt: "Candid artistic photo in modern art museum, looking at abstract painting, dreamy atmosphere, bokeh effect, cinematic composition." },
+            { id: 'bw_art', category: 'artistic', isRecommended: true, title: '黑白光影', subtitle: '经典黑白', icon: 'fa-moon', desc: "经典伦勃朗光，永恒的黑白质感，强调情绪与光影。", preview: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=600", prompt: "Dramatic black and white fine art portrait, Rembrandt lighting, intense expression, classic Hollywood glamour, film grain." },
+            { id: 'magazine', category: 'fashion', isRecommended: true, title: '封面人物', subtitle: '生活方式', icon: 'fa-book-open', desc: "阳光自信，美式生活方式封面，色彩明快。", preview: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=600", prompt: "Vibrant lifestyle magazine cover, bright sunny lighting, confident smile, bold colors, summer vibes, commercial photography." },
+            { id: 'cinema', category: 'cinematic', isRecommended: true, title: '电影质感', subtitle: '叙事镜头', icon: 'fa-film', desc: "变形宽银幕镜头，叙事感特写，电影级的色彩分级。", preview: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=600", prompt: "Cinematic movie still close-up, anamorphic lens, teal and orange grading, shallow depth of field, dramatic mood." },
+            { id: 'cyberpunk', category: 'cinematic', isRecommended: true, title: '赛博朋克', subtitle: '霓虹未来', icon: 'fa-bolt', desc: "霓虹光影，未来城市的夜行者，高科技美学。", preview: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=600", prompt: "Futuristic cyberpunk portrait, neon lights (pink/blue) reflecting on face, night city rain background, Blade Runner aesthetic." },
+            { id: 'vintage', category: 'vintage', isRecommended: true, title: '胶片记忆', subtitle: '复古 90s', icon: 'fa-clock', desc: "温暖颗粒感，90年代复古风潮，怀旧的色彩。", preview: "https://images.unsplash.com/photo-1552168324-d612d77725e3?auto=format&fit=crop&q=80&w=600", prompt: "Vintage 1990s film aesthetic, warm nostalgia filter, soft flash look, casual retro fashion, Kodak Portra style." },
+            { id: 'fantasy', category: 'fantasy', isRecommended: true, title: '奇幻秘境', subtitle: '空灵梦幻', icon: 'fa-wand-magic-sparkles', desc: "精灵般的梦幻光效与柔焦，魔法森林的氛围。", preview: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600", prompt: "Fantasy portrait, ethereal being, soft glowing light, magical forest, flowing robes, dreamy, angelic, 8k masterpiece." },
+            { id: 'sport', category: 'professional', isRecommended: true, title: '极速时刻', subtitle: '运动活力', icon: 'fa-person-running', desc: "充满张力的运动瞬间与汗水，展现力量与美。", preview: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=600", prompt: "Dynamic sports photography, professional athletic gear, sweat on skin, intense focus, gym/track background, energetic lighting." },
+            { id: 'campus', category: 'cultural', isRecommended: true, title: '青葱岁月', subtitle: '日系青春', icon: 'fa-graduation-cap', desc: "日系清新，校园剧般的纯真，柔和的自然光。", preview: "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&q=80&w=600", prompt: "Fresh Japanese high school drama aesthetic, school hallway or cherry blossoms, natural sunlight, soft pastel colors, youthful." },
+            { id: 'hanfu', category: 'cultural', isRecommended: true, title: '国风雅韵', subtitle: '东方古典', icon: 'fa-fan', desc: "传统汉服，尽显东方古典之美，诗情画意。", preview: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600&saturation=-100", prompt: "Traditional Chinese Hanfu portrait, exquisite embroidery, garden background with bamboo, soft elegant lighting, poetic atmosphere." },
+
+            // --- Professional Extension ---
+            { id: 'career_ceo', category: 'professional', title: '科技 CEO', subtitle: '硅谷精英', icon: 'fa-user-tie', desc: "极简黑色高领衫，舞台演讲风格。", preview: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600", prompt: "Tech CEO keynote speaker style. Minimalist black turtleneck, confident posture, dark stage background with spotlight. Visionary leader." },
+            { id: 'career_doctor', category: 'professional', title: '仁心医者', subtitle: '白大褂', icon: 'fa-user-doctor', desc: "专业医生形象，洁净明亮的医院背景。", preview: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=600", prompt: "Medical doctor portrait. White coat, stethoscope, clean hospital background. Trustworthy, warm smile, professional lighting." },
+            { id: 'career_chef', category: 'professional', title: '星级主厨', subtitle: '米其林', icon: 'fa-utensils', desc: "专业厨师服，繁忙的厨房背景，专注的神情。", preview: "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=600", prompt: "Michelin star chef portrait. Chef whites, professional kitchen background. Focused, passionate, holding a signature dish or tool." },
+            { id: 'career_lawyer', category: 'professional', title: '律政精英', subtitle: '法庭风云', icon: 'fa-gavel', desc: "图书馆背景，深色正装，严谨睿智。", preview: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=600", prompt: "Lawyer portrait in a law library. Book shelves background. Suit and tie, serious, intelligent, reliable expression." },
+            { id: 'career_architect', category: 'professional', title: '建筑师', subtitle: '设计蓝图', icon: 'fa-ruler-combined', desc: "现代工作室背景，拿着蓝图或模型，知性干练。", preview: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=600", prompt: "Architect portrait. Modern studio with blueprints and models. Smart casual wear, glasses, creative and professional vibe." },
+            { id: 'career_pilot', category: 'professional', title: '民航机长', subtitle: '云端之上', icon: 'fa-plane', desc: "机长制服，驾驶舱背景，帅气沉稳。", preview: "https://images.unsplash.com/photo-1542332205-4da1105d05ce?auto=format&fit=crop&q=80&w=600", prompt: "Airline pilot portrait. Captain uniform with hat. Cockpit or airport tarmac background. Confident, heroic, golden hour lighting." },
+            { id: 'career_scientist', category: 'professional', title: '科研专家', subtitle: '实验室', icon: 'fa-flask', desc: "实验室背景，护目镜与实验服，专注探索。", preview: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=600", prompt: "Scientist in a high-tech laboratory. Lab coat, safety glasses, microscope in background. Blue cool lighting, intelligent and focused." },
+            { id: 'career_firefighter', category: 'professional', title: '消防英雄', subtitle: '烈火雄心', icon: 'fa-fire-extinguisher', desc: "消防装备，烟雾背景，坚毅的眼神。", preview: "https://images.unsplash.com/photo-1526487920723-5ab168c8b273?auto=format&fit=crop&q=80&w=600", prompt: "Firefighter portrait. Wearing turnout gear and helmet. Smoky background with hints of fire truck. Brave, gritty, heroic lighting." },
+            { id: 'career_police', category: 'professional', title: '特警精英', subtitle: '守护者', icon: 'fa-shield-halved', desc: "战术装备，城市夜景背景，威严正义。", preview: "https://images.unsplash.com/photo-1599309257608-27b407b99d07?auto=format&fit=crop&q=80&w=600", prompt: "Police SWAT officer portrait. Tactical gear, dark urban background. Serious, protective, strong stance, cinematic lighting." },
+            { id: 'career_musician', category: 'professional', title: '古典乐手', subtitle: '音乐厅', icon: 'fa-music', desc: "礼服，手持乐器，聚光灯下的优雅。", preview: "https://images.unsplash.com/photo-1514117445516-2ec90fa4d84c?auto=format&fit=crop&q=80&w=600", prompt: "Classical musician portrait. Wearing formal evening wear. Holding a cello or violin. Dark concert hall background with spotlight. Elegant and artistic." },
+
+            // --- Fashion Extension ---
+            { id: 'fashion_street', category: 'fashion', title: '街头潮人', subtitle: '原宿风', icon: 'fa-shoe-prints', desc: "都市街头，Oversize 穿搭，充满活力。", preview: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600", prompt: "Streetwear fashion photography. Urban city background with graffiti. Oversized hoodie, trendy sneakers. Candid, energetic, youthful vibe." },
+            { id: 'fashion_minimal', category: 'fashion', title: '极简主义', subtitle: '性冷淡风', icon: 'fa-circle', desc: "纯色背景，素色穿搭，强调线条。", preview: "https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?auto=format&fit=crop&q=80&w=600", prompt: "Minimalist fashion portrait. Plain monochromatic background (beige or grey). Simple, elegant clothing. Soft, diffused lighting. High-end catalog style." },
+            { id: 'fashion_boho', category: 'fashion', title: '波西米亚', subtitle: '流浪诗人', icon: 'fa-guitar', desc: "印花长裙，吉他，自然风景，自由浪漫。", preview: "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&q=80&w=600", prompt: "Bohemian fashion style. Floral dress, hat, acoustic guitar. Nature background (field or beach). Warm sunset lighting, free-spirited, romantic." },
+            { id: 'fashion_grunge', category: 'fashion', title: '复古摇滚', subtitle: 'Grunge', icon: 'fa-bolt', desc: "格纹衬衫，破洞牛仔，颓废美学。", preview: "https://images.unsplash.com/photo-1519699047748-a863842046f9?auto=format&fit=crop&q=80&w=600", prompt: "90s Grunge fashion style. Flannel shirt, ripped jeans, combat boots. Urban alley background. Moody, desaturated, rebellious attitude." },
+            { id: 'fashion_gothic', category: 'fashion', title: '哥特洛丽塔', subtitle: '暗黑萝莉', icon: 'fa-umbrella', desc: "黑色蕾丝洋装，精致妆容，神秘优雅。", preview: "https://images.unsplash.com/photo-1535359737678-7b9c9f692067?auto=format&fit=crop&q=80&w=600", prompt: "Gothic Lolita fashion. Black lace dress with ruffles, bonnet. Dark moody background. Pale skin, dramatic makeup. Mysterious doll-like aesthetic." },
+            { id: 'fashion_steampunk', category: 'fashion', title: '蒸汽朋克', subtitle: '机械美学', icon: 'fa-gears', desc: "护目镜，齿轮配饰，维多利亚风格混搭。", preview: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&q=80&w=600", prompt: "Steampunk fashion. Wearing goggles, corset, gears, leather accessories. Industrial background with steam. Brass and copper tones. Adventurous." },
+            { id: 'fashion_red', category: 'fashion', title: '红磨坊', subtitle: '魅惑红裙', icon: 'fa-wine-glass', desc: "一袭红裙，浓郁的红色背景，极致的性感。", preview: "https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?auto=format&fit=crop&q=80&w=600", prompt: "High fashion in red. Wearing a stunning red haute couture dress. Red background or red lighting. Passionate, bold, dramatic, vogue style." },
+            { id: 'fashion_denim', category: 'fashion', title: '丹宁风暴', subtitle: '经典牛仔', icon: 'fa-shirt', desc: "全身牛仔穿搭，粗犷的质感，美式休闲。", preview: "https://images.unsplash.com/photo-1582533240220-4b2a6f23c7b2?auto=format&fit=crop&q=80&w=600", prompt: "Denim on denim fashion. Jean jacket and jeans. Textured blue background. Cool, casual, americana style. Sharp focus on fabric texture." },
+            { id: 'fashion_safari', category: 'fashion', title: '丛林探险', subtitle: 'Safari', icon: 'fa-binoculars', desc: "卡其色猎装，热带植物背景，野性时尚。", preview: "https://images.unsplash.com/photo-1523307730650-5945347a2a29?auto=format&fit=crop&q=80&w=600", prompt: "Safari fashion editorial. Khaki clothing, animal print accessories. Tropical jungle background. Sunlight filtering through leaves. Adventurous and chic." },
+            { id: 'fashion_gold', category: 'fashion', title: '流金岁月', subtitle: '奢华金', icon: 'fa-gem', desc: "金色礼服，闪耀的妆容，奢华背景。", preview: "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&q=80&w=600", prompt: "Golden luxury fashion. Gold sequin dress, metallic makeup. Dark background with gold bokeh. Opulent, rich, glamorous, high-end editorial." },
+
+            // --- Artistic Extension ---
+            { id: 'art_oil', category: 'artistic', title: '古典油画', subtitle: '博物馆典藏', icon: 'fa-palette', desc: "文艺复兴时期油画质感，厚重笔触。", preview: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&q=80&w=600", prompt: "Classical oil painting portrait like Rembrandt. Rich textures, visible brushstrokes, chiaroscuro lighting, dark background, masterpiece." },
+            { id: 'art_sketch', category: 'artistic', title: '炭笔速写', subtitle: '手绘质感', icon: 'fa-pencil', desc: "黑白炭笔素描，线条粗犷有力。", preview: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=600", prompt: "Charcoal sketch portrait on textured paper. Rough expressive lines, dramatic shading, black and white, hand-drawn style." },
+            { id: 'art_watercolor', category: 'artistic', title: '水彩晕染', subtitle: '清新淡雅', icon: 'fa-droplet', desc: "梦幻水彩，色彩流动，留白艺术。", preview: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=600", prompt: "Watercolor painting portrait. Soft flowing colors, paint splatters, wet-on-wet technique. Dreamy, artistic interpretation on white paper." },
+            { id: 'art_pop', category: 'artistic', title: '波普艺术', subtitle: '安迪沃霍尔', icon: 'fa-burst', desc: "高饱和度色彩拼接，重复网点。", preview: "https://images.unsplash.com/photo-1501472312651-726afe119ff1?auto=format&fit=crop&q=80&w=600", prompt: "Pop art style portrait like Andy Warhol. High contrast, vibrant neon colors, halftone dots, comic book aesthetic, bold and retro." },
+            { id: 'art_ukiyo', category: 'artistic', title: '浮世绘', subtitle: '东瀛版画', icon: 'fa-water', desc: "日本传统浮世绘风格，海浪与樱花。", preview: "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&q=80&w=600", prompt: "Ukiyo-e woodblock print style. Traditional Japanese art aesthetic. Flat colors, clear outlines, Great Wave background. Vintage texture." },
+            { id: 'art_impressionism', category: 'artistic', title: '印象派', subtitle: '莫奈花园', icon: 'fa-paint-brush', desc: "光影斑驳，色彩碎点，朦胧美感。", preview: "https://images.unsplash.com/photo-1505968409348-bd000797c92e?auto=format&fit=crop&q=80&w=600", prompt: "Impressionist painting style like Claude Monet. Dappled light, short brush strokes, vibrant colors, garden background. Soft, dreamy atmosphere." },
+            { id: 'art_surrealism', category: 'artistic', title: '超现实主义', subtitle: '达利梦境', icon: 'fa-eye', desc: "怪诞梦境，融化的时钟，奇幻元素。", preview: "https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80&w=600", prompt: "Surrealist art portrait like Salvador Dali. Dreamlike atmosphere, floating objects, melting clocks, bizarre background. Artistic and strange." },
+            { id: 'art_cubism', category: 'artistic', title: '立体主义', subtitle: '毕加索', icon: 'fa-cubes', desc: "几何解构，多角度拼接，抽象艺术。", preview: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&q=80&w=600", prompt: "Cubism art style like Picasso. Geometric shapes, fragmented face, multiple perspectives, abstract composition. Bold lines and colors." },
+            { id: 'art_pixel', category: 'artistic', title: '像素艺术', subtitle: '8-bit', icon: 'fa-gamepad', desc: "复古游戏风格，像素化人像。", preview: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=600", prompt: "8-bit Pixel art portrait. Retro video game style. Blocky graphics, limited color palette. Digital art aesthetic." },
+            { id: 'art_ink', category: 'artistic', title: '水墨丹青', subtitle: '中国画', icon: 'fa-pen-nib', desc: "黑白水墨，意境留白，东方神韵。", preview: "https://images.unsplash.com/photo-1515405295579-ba7b45403062?auto=format&fit=crop&q=80&w=600", prompt: "Chinese Ink Wash painting style. Black ink on rice paper. Calligraphy brush strokes. Misty mountains background. Minimalist and poetic." },
+            { id: 'art_statue', category: 'artistic', title: '大理石雕像', subtitle: '希腊神话', icon: 'fa-landmark', desc: "纯白大理石质感，古典雕塑风格。", preview: "https://images.unsplash.com/photo-1549887534-1541e9326642?auto=format&fit=crop&q=80&w=600", prompt: "Classical Marble Statue. Subject appears as a white marble sculpture. Greek or Roman style. Museum lighting, smooth stone texture." },
+            { id: 'art_bronze', category: 'artistic', title: '青铜雕塑', subtitle: '历史厚重', icon: 'fa-trophy', desc: "古铜色金属质感，氧化痕迹，艺术品。", preview: "https://images.unsplash.com/photo-1561839561-b13bcfe95249?auto=format&fit=crop&q=80&w=600", prompt: "Bronze bust sculpture. Metallic texture with patina (oxidation). Dramatic museum lighting. Heavy, artistic, historical vibe." },
+
+            // --- Cinematic Extension ---
+            { id: 'cine_hk', category: 'cinematic', title: '港风胶片', subtitle: '王家卫', icon: 'fa-film', desc: "暧昧色彩，摇晃镜头，复古情绪。", preview: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?auto=format&fit=crop&q=80&w=600", prompt: "Wong Kar-wai cinematic style. Hong Kong vintage vibe. Neon green and red lighting, moody, romantic, dreamy, film grain." },
+            { id: 'cine_wes', category: 'cinematic', title: '韦斯安德森', subtitle: '对称美学', icon: 'fa-building-columns', desc: "完美对称，粉彩配色，童话感。", preview: "https://images.unsplash.com/photo-1520052205864-92d242b3a76b?auto=format&fit=crop&q=80&w=600", prompt: "Wes Anderson movie style. Perfect symmetry, center composition. Pastel color palette. Quirky fashion, deadpan expression." },
+            { id: 'cine_noir', category: 'cinematic', title: '黑色电影', subtitle: '侦探故事', icon: 'fa-hat-cowboy', desc: "高对比黑白，百叶窗阴影，悬疑氛围。", preview: "https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?auto=format&fit=crop&q=80&w=600", prompt: "Film Noir style. High contrast black and white. Dramatic shadows from venetian blinds. Smoke, mysterious, suspenseful detective atmosphere." },
+            { id: 'cine_scifi', category: 'cinematic', title: '太空歌剧', subtitle: '沙丘美学', icon: 'fa-user-astronaut', desc: "宏大沙漠背景，极简未来服装，史诗感。", preview: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600", prompt: "Sci-fi movie epic portrait like Dune. Vast desert planet background. Minimalist futuristic robes. Desaturated, dusty colors, cinematic scale." },
+            { id: 'cine_matrix', category: 'cinematic', title: '黑客帝国', subtitle: '代码雨', icon: 'fa-code', desc: "墨镜，黑风衣，绿色代码雨背景。", preview: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=600", prompt: "The Matrix movie style. Wearing sunglasses and black trench coat. Green digital code rain background. Cyberpunk, cool, action hero." },
+            { id: 'cine_jedi', category: 'cinematic', title: '星际武士', subtitle: '光剑', icon: 'fa-jedi', desc: "绝地武士长袍，光剑光辉，科幻背景。", preview: "https://images.unsplash.com/photo-1531694611353-d4758f86fa6d?auto=format&fit=crop&q=80&w=600", prompt: "Star Wars Jedi knight style. Wearing hooded robes. Holding a glowing lightsaber (blue or green). Sci-fi background. Heroic pose." },
+            { id: 'cine_marvel', category: 'cinematic', title: '超级英雄', subtitle: '漫画改编', icon: 'fa-mask', desc: "紧身战衣，城市废墟，史诗级光影。", preview: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?auto=format&fit=crop&q=80&w=600", prompt: "Marvel Superhero movie style. Wearing a high-tech superhero suit. Dramatic city battle background. Epic lighting, intense expression, cinematic color grading." },
+            { id: 'cine_western', category: 'cinematic', title: '西部牛仔', subtitle: '荒野大镖客', icon: 'fa-hat-cowboy-side', desc: "牛仔帽，左轮手枪，荒野夕阳。", preview: "https://images.unsplash.com/photo-1533561797500-4fad4750814e?auto=format&fit=crop&q=80&w=600", prompt: "Spaghetti Western movie style. Cowboy hat, poncho, dust. Desert sunset background. Gritty, intense close-up, Sergio Leone style." },
+            { id: 'cine_horror', category: 'cinematic', title: '惊悚电影', subtitle: '恐怖片', icon: 'fa-ghost', desc: "阴暗灯光，诡异氛围，蓝冷色调。", preview: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?auto=format&fit=crop&q=80&w=600", prompt: "Horror movie atmosphere. Dark, shadowy lighting. Eerie blue or green tint. Foggy background. Frightened or mysterious expression." },
+            { id: 'cine_french', category: 'cinematic', title: '法国新浪潮', subtitle: '文艺黑白', icon: 'fa-video', desc: "随性手持摄影感，黑白胶片，巴黎街头。", preview: "https://images.unsplash.com/photo-1500051638674-ff996a0ec29e?auto=format&fit=crop&q=80&w=600", prompt: "French New Wave cinema style. Black and white grainy film. Paris street background. Casual, artistic, intellectual vibe. Godard style." },
+
+            // --- Vintage Extension ---
+            { id: 'vintage_gatsby', category: 'vintage', title: '奢华盖茨比', subtitle: '爵士时代', icon: 'fa-champagne-glasses', desc: "1920年代华丽风格，香槟金。", preview: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&q=80&w=600", prompt: "1920s Great Gatsby style. Art Deco background. Flapper dress or tuxedo. Gold and black color palette. Luxurious party vibe." },
+            { id: 'vintage_victorian', category: 'vintage', title: '维多利亚', subtitle: '古典优雅', icon: 'fa-crown', desc: "蕾丝与天鹅绒，古堡花园，庄重典雅。", preview: "https://images.unsplash.com/photo-1549050986-77eb6038848d?auto=format&fit=crop&q=80&w=600", prompt: "Victorian era portrait. Antique clothing with lace and velvet. Old manor background. Sepia tones. Elegant, aristocratic vintage photography." },
+            { id: 'vintage_disco', category: 'vintage', title: '80年代迪斯科', subtitle: '复古舞厅', icon: 'fa-compact-disc', desc: "爆炸头，亮片，霓虹灯球，活力舞池。", preview: "https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&q=80&w=600", prompt: "1980s Disco style. Glitter, sequins, neon lights, disco ball. Retro hairstyle. Vibrant colors, soft focus, energetic party atmosphere." },
+            { id: 'vintage_50s', category: 'vintage', title: '50年代风情', subtitle: '海报女郎', icon: 'fa-star-half-stroke', desc: "波点裙或皮衣，美式餐厅背景，色彩鲜艳。", preview: "https://images.unsplash.com/photo-1552168324-d612d77725e3?auto=format&fit=crop&q=80&w=600", prompt: "1950s Americana style. Pin-up or Greaser look. Diner or classic car background. Bright colors, retro hair styling." },
+            { id: 'vintage_60s', category: 'vintage', title: '60年代嬉皮', subtitle: '爱与和平', icon: 'fa-peace', desc: "花环，扎染，音乐节背景，自由精神。", preview: "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&q=80&w=600", prompt: "1960s Hippie style. Flower crown, tie-dye shirt. Woodstock festival background. Psychedelic colors, peace and love vibe." },
+            { id: 'vintage_mafia', category: 'vintage', title: '教父', subtitle: '黑帮风云', icon: 'fa-user-secret', desc: "暗室，雪茄，条纹西装，威严压迫感。", preview: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600", prompt: "The Godfather mafia style. Dark room, holding a cigar. Pinstripe suit. Dramatic top-down lighting. Intimidating, powerful boss vibe." },
+            { id: 'vintage_renaissance', category: 'vintage', title: '文艺复兴', subtitle: '宫廷画师', icon: 'fa-palette', desc: "柔和的光线，天鹅绒服饰，仿佛拉斐尔画作。", preview: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&q=80&w=600", prompt: "Renaissance portrait style. Soft window light. Rich velvet clothing. Landscape in background window. Raphael or Leonardo style painting." },
+            { id: 'vintage_knight', category: 'vintage', title: '中世纪骑士', subtitle: '铁甲荣耀', icon: 'fa-shield-cat', desc: "金属盔甲，剑，城堡背景，英雄气概。", preview: "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&q=80&w=600", prompt: "Medieval Knight portrait. Shiny metal armor, holding a sword. Castle battlements background. Heroic, epic, historical fantasy." },
+            { id: 'vintage_caveman', category: 'vintage', title: '原始人', subtitle: '史前时代', icon: 'fa-bone', desc: "兽皮，乱发，丛林或洞穴背景，野性。", preview: "https://images.unsplash.com/photo-1535930749574-1399327ce78f?auto=format&fit=crop&q=80&w=600", prompt: "Prehistoric Caveman style. Wearing animal furs, messy hair. Jungle or cave background. Wild, primitive, rugged look." },
+
+            // --- Cultural Extension ---
+            { id: 'culture_kimono', category: 'cultural', title: '日式和服', subtitle: '京都漫步', icon: 'fa-umbrella', desc: "精美和服，樱花神社背景，温婉。", preview: "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&q=80&w=600", prompt: "Portrait in Japanese Kimono. Kyoto shrine background with cherry blossoms. Soft lighting. Elegant and peaceful." },
+            { id: 'culture_viking', category: 'cultural', title: '北欧维京', subtitle: '勇士', icon: 'fa-shield-halved', desc: "皮草战纹，冰雪峡湾，野性力量。", preview: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&q=80&w=600", prompt: "Viking warrior. Fur armor, war paint. Snowy fjord background. Gritty, dramatic lighting, cinematic realism." },
+            { id: 'culture_egypt', category: 'cultural', title: '埃及法老', subtitle: '尼罗河', icon: 'fa-pyramid', desc: "金色饰品，沙漠神庙，神秘高贵。", preview: "https://images.unsplash.com/photo-1531306760863-7fb02a41dba2?auto=format&fit=crop&q=80&w=600", prompt: "Ancient Egyptian royalty. Gold jewelry, dramatic eyeliner. Temple background. Warm golden lighting, majestic." },
+            { id: 'culture_saree', category: 'cultural', title: '印度纱丽', subtitle: '宝莱坞', icon: 'fa-om', desc: "色彩鲜艳的纱丽，华丽珠宝，宫殿背景。", preview: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600", prompt: "Indian Bollywood style. Wearing colorful Saree, traditional jewelry. Palace background. Vibrant colors, festive atmosphere." },
+            { id: 'culture_native', category: 'cultural', title: '印第安部落', subtitle: '自然之子', icon: 'fa-feather', desc: "羽毛头饰，面部彩绘，大峡谷背景。", preview: "https://images.unsplash.com/photo-1533561797500-4fad4750814e?auto=format&fit=crop&q=80&w=600", prompt: "Native American tribal style. Feather headdress, face paint. Grand Canyon background. Natural light, spiritual and proud." },
+            { id: 'culture_scot', category: 'cultural', title: '苏格兰风笛', subtitle: '高地风情', icon: 'fa-user-group', desc: "苏格兰裙，风笛，迷雾高地背景。", preview: "https://images.unsplash.com/photo-1530272290466-93774f4b2382?auto=format&fit=crop&q=80&w=600", prompt: "Scottish Highlander. Wearing Kilt and plaid. Misty highlands background. Moody, historical, rugged." },
+            { id: 'culture_arabian', category: 'cultural', title: '一千零一夜', subtitle: '沙漠传说', icon: 'fa-moon', desc: "异域风情长袍，沙漠绿洲，神秘浪漫。", preview: "https://images.unsplash.com/photo-1549144511-30858b341f23?auto=format&fit=crop&q=80&w=600", prompt: "Arabian Nights style. Flowing robes, headscarf. Desert oasis at sunset background. Magical, mysterious, oriental atmosphere." },
+            { id: 'culture_geisha', category: 'cultural', title: '艺伎回忆', subtitle: '浮世', icon: 'fa-fan', desc: "传统白妆，华丽和服，茶室背景。", preview: "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&q=80&w=600", prompt: "Traditional Geisha portrait. White makeup, elaborate hair, kimono. Tea house background. Artistic, cultural, cinematic." },
+            { id: 'culture_samurai', category: 'cultural', title: '日本武士', subtitle: '武士道', icon: 'fa-khanda', desc: "武士铠甲，武士刀，竹林决斗。", preview: "https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80&w=600", prompt: "Samurai warrior. Traditional armor, katana. Bamboo forest background. Intense, disciplined, historical Japanese style." },
+            { id: 'culture_maasai', category: 'cultural', title: '马赛勇士', subtitle: '非洲草原', icon: 'fa-sun', desc: "红色披风，珠饰，大草原背景。", preview: "https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&q=80&w=600", prompt: "Maasai warrior style. Red shuka cloth, beaded jewelry. African savanna background. Vibrant, proud, cultural portrait." },
+
+            // --- Anime Extension ---
+            { id: 'anime_ghibli', category: 'anime', title: '吉卜力风', subtitle: '治愈系', icon: 'fa-cloud-sun', desc: "宫崎骏风格，蓝天白云草地，清新治愈。", preview: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=600", prompt: "Studio Ghibli anime style. Lush green meadow, fluffy clouds. Vibrant, clean colors, heartwarming and peaceful." },
+            { id: 'anime_cyber', category: 'anime', title: '赛博动画', subtitle: '边缘行者', icon: 'fa-vr-cardboard', desc: "高饱和霓虹色，夸张线条，赛博朋克。", preview: "https://images.unsplash.com/photo-1615751072497-5f5169febeca?auto=format&fit=crop&q=80&w=600", prompt: "Cyberpunk anime style (Edgerunners). Neon colors, bold outlines. Futuristic city. Intense, action-packed anime aesthetic." },
+            { id: 'anime_pixar', category: 'anime', title: '皮克斯3D', subtitle: '迪士尼', icon: 'fa-cube', desc: "可爱3D卡通，大眼睛，柔光。", preview: "https://images.unsplash.com/photo-1535581652167-3d6b98c0679c?auto=format&fit=crop&q=80&w=600", prompt: "Pixar/Disney 3D animation style. Cute, big eyes, smooth rendering. Warm lighting, friendly expression. High quality 3D render." },
+            { id: 'anime_shinkai', category: 'anime', title: '新海诚风', subtitle: '光之魔术师', icon: 'fa-star', desc: "绝美光影，星空雨天，细腻背景。", preview: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&q=80&w=600", prompt: "Makoto Shinkai anime style. Breathtaking lighting, lens flares, starry sky. Hyper-detailed background, emotional atmosphere." },
+            { id: 'anime_90s', category: 'anime', title: '90年代动画', subtitle: '美少女战士', icon: 'fa-tv', desc: "复古赛璐璐质感，大眼睛，柔光滤镜。", preview: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=600", prompt: "90s Retro Anime style (Sailor Moon). Cel-shaded, big sparkling eyes, pastel colors. Soft bloom filter. Nostalgic aesthetic." },
+            { id: 'anime_mecha', category: 'anime', title: '机甲驾驶员', subtitle: '高达', icon: 'fa-robot', desc: "驾驶舱背景，紧身战斗服，科幻感。", preview: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?auto=format&fit=crop&q=80&w=600", prompt: "Mecha pilot anime style. Wearing plugsuit. Inside giant robot cockpit. Sci-fi UI screens overlay. Intense, heroic." },
+            { id: 'anime_manga', category: 'anime', title: '黑白漫画', subtitle: '日漫', icon: 'fa-book', desc: "黑白网点，墨线勾勒，漫画分镜感。", preview: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600", prompt: "Japanese Manga style. Black and white ink drawing. Screentones (dots). Action lines background. High contrast comic book art." },
+            { id: 'anime_chibi', category: 'anime', title: 'Q版大头', subtitle: '萌系', icon: 'fa-face-laugh-squint', desc: "两头身比例，超级可爱，简单背景。", preview: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=600", prompt: "Chibi anime style. Super deformed, big head small body. Extremely cute and expressive. Simple pastel background. Kawaii." },
+
+            // --- Fantasy Extension ---
+            { id: 'fantasy_elf', category: 'fantasy', title: '森林精灵', subtitle: '中土世界', icon: 'fa-leaf', desc: "尖耳朵，银发，发光森林，空灵神圣。", preview: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=600", prompt: "Fantasy Elf portrait. Pointy ears, elegant robes, glowing forest. Ethereal, angelic, soft bokeh." },
+            { id: 'fantasy_vampire', category: 'fantasy', title: '吸血鬼', subtitle: '哥特', icon: 'fa-skull', desc: "苍白皮肤，红唇，古堡背景，优雅危险。", preview: "https://images.unsplash.com/photo-1509074758058-29a397838c36?auto=format&fit=crop&q=80&w=600", prompt: "Gothic Vampire. Pale skin, dark elegant clothing, old castle. Moody, dark lighting, mysterious and dangerous." },
+            { id: 'fantasy_angel', category: 'fantasy', title: '圣洁天使', subtitle: '天堂', icon: 'fa-feather-pointed', desc: "巨大白翼，云端圣光，文艺复兴感。", preview: "https://images.unsplash.com/photo-1478479405421-ce83c92fb3ba?auto=format&fit=crop&q=80&w=600", prompt: "Angel portrait with wings. Clouds and heavenly light. Ethereal, holy, divine. Renaissance painting style." },
+            { id: 'fantasy_mermaid', category: 'fantasy', title: '深海人鱼', subtitle: '亚特兰蒂斯', icon: 'fa-fish', desc: "水下光影，鳞片皮肤，梦幻气泡。", preview: "https://images.unsplash.com/photo-1582201943021-e8e194c76879?auto=format&fit=crop&q=80&w=600", prompt: "Mermaid portrait underwater. Bioluminescent scales, floating hair, bubbles. Deep blue ocean background. Magical and aquatic." },
+            { id: 'fantasy_cyborg', category: 'fantasy', title: '生化人', subtitle: '半机械', icon: 'fa-microchip', desc: "半人半机械脸，金属线路，未来科技。", preview: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?auto=format&fit=crop&q=80&w=600", prompt: "Cyborg portrait. Half human half machine face. Exposed metal and wires. Glowing eyes. Futuristic sci-fi style." },
+            { id: 'fantasy_demon', category: 'fantasy', title: '地狱恶魔', subtitle: '深渊', icon: 'fa-fire', desc: "角，红皮肤，火焰背景，邪恶霸气。", preview: "https://images.unsplash.com/photo-1509074758058-29a397838c36?auto=format&fit=crop&q=80&w=600", prompt: "Demon portrait. Horns, red skin texture. Fire and brimstone background. Intimidating, evil, dark fantasy style." },
+            { id: 'fantasy_god', category: 'fantasy', title: '希腊神祗', subtitle: '奥林匹斯', icon: 'fa-bolt', desc: "金色战甲，雷电/海洋元素，神性光辉。", preview: "https://images.unsplash.com/photo-1549887534-1541e9326642?auto=format&fit=crop&q=80&w=600", prompt: "Greek God/Goddess. Golden armor, glowing aura. Mount Olympus background. Powerful, majestic, divine lighting." },
+            { id: 'fantasy_steampunk', category: 'fantasy', title: '蒸汽发明家', subtitle: '机械师', icon: 'fa-glasses', desc: "护目镜，皮手套，机械实验室。", preview: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&q=80&w=600", prompt: "Steampunk Inventor. Goggles, leather gear. Workshop background with gears and steam. Brass tones. Creative and adventurous." },
+
+            // --- Nature/Atmosphere Extension ---
+            { id: 'nature_underwater', category: 'nature', title: '深蓝潜水', subtitle: '静谧', icon: 'fa-water', desc: "完全水下摄影，光束折射，漂浮感。", preview: "https://images.unsplash.com/photo-1582201943021-e8e194c76879?auto=format&fit=crop&q=80&w=600", prompt: "Underwater photography. Light rays refracting through water. Floating hair and clothes. Deep blue peaceful silence." },
+            { id: 'nature_golden', category: 'nature', title: '日落金时', subtitle: '暖阳', icon: 'fa-sun', desc: "夕阳逆光，金色轮廓光，温暖浪漫。", preview: "https://images.unsplash.com/photo-1495567720989-cebdbdd97913?auto=format&fit=crop&q=80&w=600", prompt: "Golden Hour portrait. Backlit by sunset. Warm orange glow, lens flare. Silhouette rim light. Romantic and natural." },
+            { id: 'nature_snow', category: 'nature', title: '冰雪奇缘', subtitle: '极寒', icon: 'fa-snowflake', desc: "雪花飘落，毛皮大衣，纯白世界。", preview: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=600", prompt: "Winter snow portrait. Falling snowflakes. Wearing winter fur coat. White snowy background. Cold, crisp, pure aesthetic." },
+            { id: 'nature_jungle', category: 'nature', title: '丛林探秘', subtitle: '热带', icon: 'fa-tree', desc: "巨大的绿叶，斑驳阳光，湿润气息。", preview: "https://images.unsplash.com/photo-1523307730650-5945347a2a29?auto=format&fit=crop&q=80&w=600", prompt: "Tropical Jungle portrait. Surrounded by large green leaves. Dappled sunlight. Humid, vibrant green atmosphere." },
+            { id: 'nature_aurora', category: 'nature', title: '极光之夜', subtitle: '北极光', icon: 'fa-star', desc: "绚丽的绿色极光背景，夜空，神奇。", preview: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&q=80&w=600", prompt: "Aurora Borealis portrait. Night sky with vibrant green northern lights. Silhouetted against the sky. Magical and breathtaking." },
+            { id: 'nature_desert', category: 'nature', title: '沙漠幻影', subtitle: '荒漠', icon: 'fa-wind', desc: "无尽沙丘，风沙，干燥热烈的色彩。", preview: "https://images.unsplash.com/photo-1544168190-79c17527004f?auto=format&fit=crop&q=80&w=600", prompt: "Desert landscape portrait. Endless sand dunes. Heat haze. Warm, dry, earthy colors. Minimalist nature." },
+            { id: 'nature_space', category: 'nature', title: '太空漫步', subtitle: '宇宙', icon: 'fa-rocket', desc: "身穿宇航服，地球背景，深邃星空。", preview: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600", prompt: "Astronaut in space. Helmet reflection of Earth. Starry deep space background. Zero gravity feel. Sci-fi realism." },
+        ];
+
+        const DIAGRAM_CODE = `
+        graph LR
+            A[用户上传<br/>原始照片] -->|预处理| B(视觉编码器<br/>Vision Encoder)
+            B --> C{风格矩阵<br/>Style Matrix}
+            C -->|Prompt注入| D[职业肖像]
+            C -->|光影重塑| E[赛博朋克]
+            C -->|纹理合成| F[黑白艺术]
+            D & E & F --> G[并行渲染生成]
+            G --> H[最终成片]
+            style A fill:transparent,stroke:#3b82f6,stroke-width:2px,color:#3b82f6
+            style H fill:#3b82f6,stroke:#3b82f6,color:#fff
+            linkStyle default stroke-width:1px,fill:none,stroke:#666
+        `;
+
+        function App() {
+            // ... (Previous logic remains identical) ...
+            const [isDark, setIsDark] = useState(false);
+            const [sourceImage, setSourceImage] = useState(null);
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('ai_studio_api_key') || "");
+            const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+            const [selectedCategory, setSelectedCategory] = useState('recommended');
+            const [selectedStyles, setSelectedStyles] = useState(new Set(PHOTO_STYLES.filter(s => s.isRecommended).slice(0,3).map(s => s.id)));
+            const [isGenerating, setIsGenerating] = useState(false);
+            const [results, setResults] = useState({});
+            const [loadingStates, setLoadingStates] = useState({});
+            const [errors, setErrors] = useState({}); // New Error State
+            const [activeTab, setActiveTab] = useState('home'); 
+
+            useEffect(() => {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setIsDark(true);
+            }, []);
+
+            useEffect(() => {
+                if (isDark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+            }, [isDark]);
+
+            useEffect(() => {
+                if (apiKey) localStorage.setItem('ai_studio_api_key', apiKey);
+            }, [apiKey]);
+
+            const toggleTheme = () => setIsDark(!isDark);
+
+            const filteredStyles = useMemo(() => {
+                if (selectedCategory === 'recommended') return PHOTO_STYLES.filter(style => style.isRecommended);
+                if (selectedCategory === 'all') return PHOTO_STYLES;
+                return PHOTO_STYLES.filter(style => style.category === selectedCategory);
+            }, [selectedCategory]);
+
+            const handleFileChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setSourceImage(reader.result);
+                        setResults({});
+                        setErrors({});
+                        setActiveTab('studio');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const toggleStyle = (id) => {
+                if(isGenerating) return;
+                const newSet = new Set(selectedStyles);
+                if (newSet.has(id)) newSet.delete(id);
+                else newSet.add(id);
+                setSelectedStyles(newSet);
+            };
+
+            // Single Style Generation / Retry Logic
+            const generateSingleStyle = async (style, base64Data, mimeType) => {
+                setLoadingStates(prev => ({ ...prev, [style.id]: true }));
+                setErrors(prev => { const n = {...prev}; delete n[style.id]; return n; }); // Clear specific error
+
+                try {
+                    const payload = {
+                        contents: [{
+                            parts: [
+                                { text: style.prompt + " Keep the facial features consistent with the provided image." }, 
+                                { inlineData: { mimeType: mimeType, data: base64Data } }
+                            ]
+                        }],
+                        generationConfig: { responseModalities: ["IMAGE"] },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    };
+                    
+                    const response = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        }
+                    );
+                    
+                    if(!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        let msg = errData.error?.message || `错误 ${response.status}`;
+                        if (msg.includes('API key')) msg = "API Key 无效或过期";
+                        else if (msg.includes('quota')) msg = "API 配额已耗尽";
+                        else if (msg.includes('safety')) msg = "触发安全拦截，请更换照片";
+                        throw new Error(msg);
+                    }
+                    
+                    const data = await response.json();
+                    const imgData = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                    if (imgData) {
+                        setResults(prev => ({ ...prev, [style.id]: `data:image/jpeg;base64,${imgData}` }));
+                    } else {
+                        throw new Error("生成结果为空");
+                    }
+                } catch (err) { 
+                    console.error("Generation error:", err);
+                    setErrors(prev => ({ ...prev, [style.id]: err.message }));
+                } 
+                finally { setLoadingStates(prev => ({ ...prev, [style.id]: false })); }
+            };
+
+            const retryStyle = (style) => {
+                if (!apiKey) { setShowApiKeyModal(true); return; }
+                let mimeType = "image/jpeg";
+                try {
+                    const header = sourceImage.split(';')[0];
+                    if (header.includes(':')) mimeType = header.split(':')[1];
+                } catch (e) {}
+                const base64Data = sourceImage.split(',')[1];
+                generateSingleStyle(style, base64Data, mimeType);
+            };
+
+            const generatePhotos = async () => {
+                if (!apiKey) { setShowApiKeyModal(true); return; }
+                if (!sourceImage || selectedStyles.size === 0) return;
+
+                setIsGenerating(true);
+                // Reset Errors for selected
+                setErrors(prev => {
+                    const next = {...prev};
+                    selectedStyles.forEach(id => delete next[id]);
+                    return next;
+                });
+                
+                let mimeType = "image/jpeg";
+                try {
+                    const header = sourceImage.split(';')[0];
+                    if (header.includes(':')) mimeType = header.split(':')[1];
+                } catch (e) { console.warn("Could not extract mime type, defaulting to jpeg"); }
+
+                const base64Data = sourceImage.split(',')[1];
+                const stylesToGenerate = PHOTO_STYLES.filter(s => selectedStyles.has(s.id));
+                const batchSize = 3;
+                
+                for (let i = 0; i < stylesToGenerate.length; i += batchSize) {
+                    const batch = stylesToGenerate.slice(i, i + batchSize);
+                    await Promise.all(batch.map(style => generateSingleStyle(style, base64Data, mimeType)));
+                }
+                setIsGenerating(false);
+            };
+
+            const downloadImage = (dataUrl, filename) => {
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col transition-colors duration-500">
+                    <header className="fixed top-0 w-full z-50 glass border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                        {/* Header Content ... Same as before ... */}
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('home')}>
+                                <div className="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-400 rounded-xl flex items-center justify-center text-white text-xl shadow-lg transform group-hover:scale-110 transition-transform">
+                                    <i className="fa-solid fa-camera-retro"></i>
+                                </div>
+                                <div>
+                                    <h1 className="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">AI 智能写真</h1>
+                                    <p className="text-[10px] uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400 font-bold">工作台</p>
+                                </div>
+                            </div>
+                            <nav className="hidden md:flex items-center gap-8">
+                                <button onClick={() => setActiveTab('home')} className={`text-sm font-medium transition-colors border-b-2 py-1 ${activeTab === 'home' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'}`}>首页</button>
+                                <button onClick={() => setActiveTab('studio')} className={`text-sm font-medium transition-colors border-b-2 py-1 ${activeTab === 'studio' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'}`}>工作台</button>
+                                <button onClick={() => setActiveTab('about')} className={`text-sm font-medium transition-colors border-b-2 py-1 ${activeTab === 'about' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'}`}>技术原理</button>
+                            </nav>
+                            <div className="flex items-center gap-4">
+                                <button onClick={() => setShowApiKeyModal(true)} className={`px-4 py-2 rounded-full text-xs font-bold tracking-wide transition-all border ${apiKey ? 'border-green-500/50 text-green-600 dark:text-green-400 bg-green-500/10' : 'border-brand-500/50 text-brand-600 dark:text-brand-400 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}>
+                                    {apiKey ? <span><i className="fa-solid fa-key mr-2"></i>已连接</span> : <span><i className="fa-solid fa-link mr-2"></i>设置 Key</span>}
+                                </button>
+                                <button onClick={toggleTheme} className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    {isDark ? <i className="fa-solid fa-sun text-lg"></i> : <i className="fa-solid fa-moon text-lg"></i>}
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="pt-20 flex-1 relative">
+                        {activeTab === 'home' && (
+                            <div className="animate-fade-in">
+                                {/* ... Home Sections Same as before ... */}
+                                <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+                                    <div className="absolute inset-0 z-0">
+                                        <div className="absolute inset-0 bg-gradient-to-b from-paper-50/80 via-transparent to-paper-50 dark:from-paper-900/80 dark:to-paper-900 z-10"></div>
+                                        <img src="https://images.unsplash.com/photo-1542206395-9feb3edaa68d?auto=format&fit=crop&q=80&w=2070" alt="Hero" className="w-full h-full object-cover opacity-30 dark:opacity-40 grayscale animate-pulse-slow" />
+                                    </div>
+                                    <div className="relative z-20 text-center max-w-5xl px-4 flex flex-col items-center">
+                                        <div className="mb-6 inline-flex items-center gap-2 px-4 py-1 rounded-full border border-brand-500/30 bg-brand-500/5 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+                                            <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                                            新功能：海量风格 V4.0
+                                        </div>
+                                        <h2 className="font-serif text-6xl md:text-8xl font-bold mb-8 text-slate-900 dark:text-slate-100 leading-tight tracking-tight">重塑 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400 italic">光影</span> 之美</h2>
+                                        <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 font-light max-w-2xl mx-auto leading-relaxed">不仅仅是照片，更是<strong className="font-medium text-slate-900 dark:text-white">艺术</strong>的重塑。<br/>上传一张照片，AI 即刻为您定制百变影棚级写真。</p>
+                                        <label className="group relative inline-flex items-center gap-4 px-10 py-5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full font-bold text-xl cursor-pointer overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/40">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-brand-600 to-brand-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            <div className="relative flex items-center gap-3"><i className="fa-solid fa-wand-magic-sparkles"></i><span>立即开始创作</span></div>
+                                            <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                        </label>
+                                        <p className="mt-4 text-sm text-slate-400">无需注册 • 即刻生成 • 隐私安全</p>
+                                    </div>
+                                </section>
+                                <section className="relative py-32 bg-slate-900 text-white overflow-hidden">
+                                    <div className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')` }}></div>
+                                    <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-transparent to-slate-900"></div>
+                                    <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+                                        <h2 className="text-3xl md:text-5xl font-serif font-bold mb-16 min-h-[1.2em]"><Typewriter text="赋予每张照片独一无二的灵魂。" speed={100} delay={300} /></h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left max-w-5xl mx-auto mb-20">
+                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all hover:-translate-y-2 animate-float" style={{ animationDelay: '0s' }}>
+                                                <div className="w-12 h-12 bg-brand-500/20 rounded-lg flex items-center justify-center text-brand-400 mb-4"><i className="fa-solid fa-images text-xl"></i></div>
+                                                <div className="text-5xl font-bold text-white mb-2">120万+</div>
+                                                <div className="text-sm text-slate-400 uppercase tracking-wider font-bold">已生成作品</div>
+                                                <p className="text-slate-500 text-sm mt-4">每日数万次创意裂变，从这里开始。</p>
+                                            </div>
+                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all hover:-translate-y-2 animate-float" style={{ animationDelay: '2s' }}>
+                                                <div className="w-12 h-12 bg-brand-500/20 rounded-lg flex items-center justify-center text-brand-400 mb-4"><i className="fa-solid fa-bolt text-xl"></i></div>
+                                                <div className="text-5xl font-bold text-white mb-2">0.8秒</div>
+                                                <div className="text-sm text-slate-400 uppercase tracking-wider font-bold">极速处理引擎</div>
+                                                <p className="text-slate-500 text-sm mt-4">基于 Google Gemini Vision，实时光影解算。</p>
+                                            </div>
+                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all hover:-translate-y-2 animate-float" style={{ animationDelay: '4s' }}>
+                                                <div className="w-12 h-12 bg-brand-500/20 rounded-lg flex items-center justify-center text-brand-400 mb-4"><i className="fa-solid fa-heart text-xl"></i></div>
+                                                <div className="text-5xl font-bold text-white mb-2">99%</div>
+                                                <div className="text-sm text-slate-400 uppercase tracking-wider font-bold">创作者好评</div>
+                                                <p className="text-slate-500 text-sm mt-4">不仅仅是滤镜，是真正的内容重绘。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className="py-24 max-w-7xl mx-auto px-6">
+                                    <div className="text-center mb-16">
+                                        <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">百变风格矩阵</h2>
+                                        <p className="text-slate-500 dark:text-slate-400">一键解锁多重宇宙的你</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                        {/* Display only recommended styles in home preview */}
+                                        {PHOTO_STYLES.filter(s => s.isRecommended).slice(0, 12).map(style => (
+                                            <div key={style.id} className="group relative aspect-[3/4] rounded-lg overflow-hidden cursor-default">
+                                                <StyleImage src={style.preview} alt={style.title} icon={style.icon} isSelected={false} />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                                                <div className="absolute bottom-3 left-3 text-white">
+                                                    <div className="text-xs font-bold font-serif">{style.title}</div>
+                                                    <div className="text-[9px] uppercase tracking-wider opacity-70">{style.subtitle}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="text-center mt-12">
+                                        <button onClick={() => {document.querySelector('label input').click()}} className="px-8 py-3 border-2 border-slate-900 dark:border-slate-100 text-slate-900 dark:text-slate-100 rounded-full font-bold hover:bg-slate-900 hover:text-white dark:hover:bg-slate-100 dark:hover:text-slate-900 transition-colors">查看全部效果 &rarr;</button>
+                                    </div>
+                                </section>
+                            </div>
+                        )}
+
+                        {activeTab === 'studio' && (
+                            <div className="relative min-h-[calc(100vh-80px)]">
+                                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                                    <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-brand-500/5 dark:bg-brand-500/10 rounded-full blur-[100px] opacity-70"></div>
+                                    <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-[100px] opacity-70"></div>
+                                    <div className="absolute inset-0 opacity-10 dark:opacity-20" style={{ backgroundImage: 'linear-gradient(#64748b 1px, transparent 1px), linear-gradient(90deg, #64748b 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+                                </div>
+
+                                <div className="relative z-10 max-w-[1800px] mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8 animate-slide-up">
+                                    <aside className="lg:sticky lg:top-28 h-fit space-y-6">
+                                        <div className="glass-panel rounded-3xl shadow-2xl overflow-hidden ring-1 ring-white/20 dark:ring-white/5">
+                                            {/* Fixed height container for image preview to prevent overflow */}
+                                            <div className="relative group h-80 bg-slate-100/50 dark:bg-slate-900/50 overflow-hidden flex items-center justify-center">
+                                                <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-brand-400 opacity-50 pointer-events-none"></div>
+                                                <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-brand-400 opacity-50 pointer-events-none"></div>
+                                                <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-brand-400 opacity-50 pointer-events-none"></div>
+                                                <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-brand-400 opacity-50 pointer-events-none"></div>
+
+                                                {sourceImage ? (
+                                                    <label className="w-full h-full cursor-pointer relative flex items-center justify-center">
+                                                        <img src={sourceImage} alt="Source" className="w-full h-full object-contain p-2" />
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-4 backdrop-blur-sm">
+                                                            <button onClick={(e) => { e.preventDefault(); setSourceImage(null); }} className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-sm backdrop-blur-md transition-all border border-white/20 z-20">
+                                                                <i className="fa-solid fa-trash mr-2"></i>清除
+                                                            </button>
+                                                            <div className="px-6 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-full text-sm transition-all shadow-lg shadow-brand-500/20">
+                                                                <i className="fa-solid fa-rotate mr-2"></i>重选图片
+                                                            </div>
+                                                        </div>
+                                                        {isGenerating && <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-500/20 to-transparent h-[10%] w-full animate-scan pointer-events-none"></div>}
+                                                        <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                                    </label>
+                                                ) : (
+                                                    <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors z-10 group">
+                                                        <div className="w-20 h-20 bg-slate-200/50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mb-6 text-slate-400 border border-slate-300 dark:border-slate-700 border-dashed group-hover:scale-110 transition-transform duration-300 group-hover:border-brand-400 group-hover:text-brand-400">
+                                                            <i className="fa-solid fa-plus text-3xl"></i>
+                                                        </div>
+                                                        <p className="text-slate-500 text-sm mb-6 font-mono tracking-wide group-hover:text-slate-400 transition-colors">无信号输入</p>
+                                                        <div className="px-8 py-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-sm font-bold shadow-xl group-hover:shadow-brand-500/20 transition-all transform group-hover:-translate-y-1">上传源文件</div>
+                                                        <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                                    </label>
+                                                )}
+                                            </div>
+                                            
+                                            {sourceImage && (
+                                                <div className="p-6 space-y-6 animate-fade-in bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="bg-white/50 dark:bg-slate-800/50 p-3 rounded-xl border border-white/20 dark:border-white/5 flex flex-col items-center justify-center text-center">
+                                                            <span className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">风格</span>
+                                                            <span className="text-xl font-bold font-mono text-slate-700 dark:text-slate-200">{selectedStyles.size}<span className="text-xs text-slate-400 font-normal">/{PHOTO_STYLES.length}</span></span>
+                                                        </div>
+                                                        <div className="bg-white/50 dark:bg-slate-800/50 p-3 rounded-xl border border-white/20 dark:border-white/5 flex flex-col items-center justify-center text-center">
+                                                            <span className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">引擎</span>
+                                                            <span className={`text-xs font-bold font-mono px-2 py-1 rounded-full ${apiKey ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-red-500/10 text-red-500'}`}>{apiKey ? '在线' : '离线'}</span>
+                                                        </div>
+                                                    </div>
+                                                    <button onClick={generatePhotos} disabled={isGenerating || selectedStyles.size === 0} className={`group w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-3 transition-all shadow-lg relative overflow-hidden ${isGenerating ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-brand-600 to-brand-500 text-white hover:shadow-brand-500/40 hover:-translate-y-0.5'}`}>
+                                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                                        {isGenerating ? <i className="fa-solid fa-circle-notch animate-spin"></i> : <i className="fa-solid fa-power-off"></i>}
+                                                        <span className="relative z-10">{isGenerating ? '处理中...' : `生成 ${selectedStyles.size} 张写真`}</span>
+                                                    </button>
+                                                    <div className="flex gap-3 pt-2">
+                                                        <button onClick={() => setSelectedStyles(new Set(filteredStyles.map(s => s.id)))} className="flex-1 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-xs font-bold uppercase hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300">全选当前</button>
+                                                        <button onClick={() => setSelectedStyles(new Set())} className="flex-1 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-xs font-bold uppercase hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300">清空</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </aside>
+
+                                    <main className="space-y-6">
+                                        {!sourceImage ? (
+                                            <div className="h-full flex flex-col items-center justify-center rounded-3xl border border-slate-200/50 dark:border-slate-700/50 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm p-12 text-center min-h-[500px] relative overflow-hidden">
+                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-slate-300/20 dark:border-slate-600/20 rounded-full animate-pulse-slow"></div>
+                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-slate-300/10 dark:border-slate-600/10 rounded-full"></div>
+                                                <div className="relative z-10">
+                                                    <i className="fa-solid fa-satellite-dish text-6xl text-slate-300 dark:text-slate-600 mb-8 animate-float"></i>
+                                                    <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-3 tracking-tight">等待接入图像信号</h3>
+                                                    <p className="text-slate-500 max-w-md mx-auto">系统待机中。请在左侧控制台上传源图像以激活神经渲染引擎。</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="sticky top-20 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md py-3 -mx-4 px-4 lg:mx-0 lg:px-0 lg:rounded-xl border-b lg:border border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto no-scrollbar">
+                                                    <div className="flex gap-2 min-w-max px-2">
+                                                        {CATEGORIES.map(cat => (
+                                                            <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${selectedCategory === cat.id ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>{cat.label}</button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-between pl-2 border-l-4 border-brand-500 mb-6">
+                                                    <div>
+                                                        <h2 className="font-serif text-2xl font-bold text-slate-800 dark:text-slate-200">{CATEGORIES.find(c => c.id === selectedCategory)?.label}风格矩阵</h2>
+                                                        <span className="text-xs font-mono text-slate-400">显示 {filteredStyles.length} 种风格</span>
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+                                                    {filteredStyles.map(style => {
+                                                        const isSelected = selectedStyles.has(style.id);
+                                                        const result = results[style.id];
+                                                        const isLoading = loadingStates[style.id];
+                                                        const error = errors[style.id]; // Get error for this style
+
+                                                        return (
+                                                            <div key={style.id} onClick={() => toggleStyle(style.id)} className={`relative group rounded-xl overflow-hidden cursor-pointer transition-all duration-300 aspect-[3/4] ${isSelected ? 'ring-2 ring-brand-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] scale-[1.01] z-10' : 'ring-1 ring-slate-200 dark:ring-slate-700 hover:ring-slate-400 dark:hover:ring-slate-500 bg-slate-100 dark:bg-slate-800 opacity-80 hover:opacity-100'}`}>
+                                                                {!result && <StyleImage src={style.preview} alt={style.title} icon={style.icon} isSelected={isSelected} />}
+                                                                
+                                                                <div className="absolute top-4 right-4 z-30">
+                                                                    <div className={`w-5 h-5 rounded flex items-center justify-center transition-all duration-300 ${isSelected ? 'bg-brand-500 text-white' : 'border border-white/30 bg-black/20 text-transparent'}`}><i className="fa-solid fa-check text-xs"></i></div>
+                                                                </div>
+                                                                
+                                                                <div className="absolute inset-x-0 bottom-0 p-5 z-20 flex flex-col justify-end h-full pointer-events-none">
+                                                                    <div className={`transform transition-all duration-300 ${!result && !error ? 'translate-y-0' : 'translate-y-full opacity-0'}`}>
+                                                                        <div className="flex items-center gap-2 text-white mb-1"><i className={`fa-solid ${style.icon} text-brand-400 text-sm`}></i><h3 className="font-serif font-bold text-lg tracking-wide text-shadow">{style.title}</h3></div>
+                                                                        <div className="h-px w-8 bg-brand-500 mb-2"></div>
+                                                                        <p className="text-[10px] text-slate-200 font-mono uppercase tracking-wider line-clamp-1 text-shadow">{style.subtitle}</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                {result && (
+                                                                    <>
+                                                                        <img src={result} alt={style.title} className="absolute inset-0 w-full h-full object-cover animate-fade-in z-10" />
+                                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-30 backdrop-blur-[2px]" onClick={(e) => e.stopPropagation()}>
+                                                                            <button onClick={() => downloadImage(result, `ai-portrait-${style.id}.jpg`)} className="w-12 h-12 rounded-full bg-white text-slate-900 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors transform hover:scale-110 shadow-2xl"><i className="fa-solid fa-download text-lg"></i></button>
+                                                                        </div>
+                                                                    </>
+                                                                )}
+
+                                                                {isLoading && (
+                                                                    <div className="absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center text-brand-400">
+                                                                        <div className="w-12 h-12 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin mb-3"></div>
+                                                                        <span className="text-[10px] font-mono uppercase tracking-widest animate-pulse">渲染中...</span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Error Overlay */}
+                                                                {error && (
+                                                                    <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-30">
+                                                                        <i className="fa-solid fa-triangle-exclamation text-red-500 text-3xl mb-2"></i>
+                                                                        <span className="text-xs text-white mb-3">{error}</span>
+                                                                        <button 
+                                                                            onClick={(e) => { e.stopPropagation(); retryStyle(style); }}
+                                                                            className="px-3 py-1 bg-brand-600 hover:bg-brand-500 text-white text-xs rounded-full transition-colors flex items-center gap-1"
+                                                                        >
+                                                                            <i className="fa-solid fa-rotate-right"></i> 重试
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </>
+                                        )}
+                                    </main>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'about' && (
+                            <section className="max-w-4xl mx-auto px-4 py-16 animate-fade-in">
+                                <div className="text-center mb-12">
+                                    <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">核心技术原理</h2>
+                                    <p className="text-slate-500 dark:text-slate-400">基于 Google Gemini Vision 的多模态图像生成管道</p>
+                                </div>
+                                <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700">
+                                    <MermaidDiagram chart={DIAGRAM_CODE} isDark={isDark} />
+                                </div>
+                                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                                        <div className="text-brand-500 text-2xl mb-3"><i className="fa-solid fa-eye"></i></div>
+                                        <h3 className="font-bold text-lg mb-2 dark:text-white">视觉编码</h3>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">模型首先对上传的图像进行语义理解，提取面部特征、姿态和光照信息。</p>
+                                    </div>
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                                        <div className="text-brand-500 text-2xl mb-3"><i className="fa-solid fa-pen-nib"></i></div>
+                                        <h3 className="font-bold text-lg mb-2 dark:text-white">风格注入</h3>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">将预设的艺术风格 Prompt 与原始图像特征融合，进行潜空间重绘。</p>
+                                    </div>
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                                        <div className="text-brand-500 text-2xl mb-3"><i className="fa-solid fa-image"></i></div>
+                                        <h3 className="font-bold text-lg mb-2 dark:text-white">高保真渲染</h3>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">最终输出 8K 分辨率级别的图像，保留面部一致性的同时实现风格化。</p>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+                    </div>
+
+                    {showApiKeyModal && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowApiKeyModal(false)}></div>
+                            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 w-full max-w-md relative z-10 shadow-2xl animate-slide-up border border-brand-500/20">
+                                <button onClick={() => setShowApiKeyModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white"><i className="fa-solid fa-xmark text-xl"></i></button>
+                                <div className="text-center mb-6">
+                                    <div className="w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-600 dark:text-brand-400"><i className="fa-solid fa-key text-xl"></i></div>
+                                    <h3 className="font-serif text-2xl font-bold dark:text-white">连接您的密钥</h3>
+                                    <p className="text-sm text-slate-500 mt-2">需要 Google Gemini API Key 以驱动 AI 引擎</p>
+                                </div>
+                                <div className="space-y-4">
+                                    <input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="AIzaSy..." className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all dark:text-white font-mono text-sm" />
+                                    <button onClick={() => setShowApiKeyModal(false)} className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-lg shadow-lg shadow-brand-500/30 transition-all hover:scale-[1.02]">确认连接</button>
+                                    <div className="text-center pt-2">
+                                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-xs text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">没有 Key? 前往 Google AI Studio 获取 <i className="fa-solid fa-external-link-alt"></i></a>
+                                        <p className="text-[10px] text-slate-400 mt-2">我们不会存储您的密钥，它仅用于本次会话。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <footer className="py-8 bg-slate-100 dark:bg-slate-950 text-center border-t border-slate-200 dark:border-slate-800">
+                        <div className="font-serif text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">AI 智能写真工作台</div>
+                        <p className="text-xs text-slate-500 font-mono">为创作者设计 • 由 GEMINI 驱动</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
