@@ -39,6 +39,15 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            #title-layer { top: 5%; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+        }
+
         /* 统一控制面板 - 右下角 */
         #control-panel {
             position: absolute;
@@ -82,6 +91,11 @@
             pointer-events: none;
         }
 
+        /* 移动端隐藏摄像头预览 */
+        @media (max-width: 768px) {
+            #cam-preview { display: none !important; }
+        }
+
         /* 手势状态显示 */
         #gesture-status {
             background: rgba(5, 5, 5, 0.85);
@@ -101,6 +115,8 @@
         #button-group {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
         .ctrl-btn {
             background: rgba(20, 20, 20, 0.7); 
@@ -120,6 +136,14 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         }
         input[type="file"] { display: none; }
+
+        /* 移动端按钮适配 */
+        @media (max-width: 768px) {
+            #control-panel { bottom: 15px; right: 15px; left: 15px; align-items: stretch; }
+            #gesture-status { font-size: 0.8rem; padding: 10px 15px; min-width: auto; }
+            #button-group { justify-content: center; }
+            .ctrl-btn { padding: 12px 14px; font-size: 10px; flex: 1; min-width: 70px; text-align: center; }
+        }
 
         /* 说明面板 - 左下角 */
         #help-panel {
@@ -158,6 +182,25 @@
         .help-icon { width: 28px; font-size: 1.1rem; }
         .help-text { flex: 1; }
         .help-desc { font-size: 0.7rem; color: #888; margin-top: 2px; }
+
+        /* 移动端说明面板 - 默认隐藏 */
+        @media (max-width: 768px) {
+            #help-panel {
+                bottom: auto; top: 80px; left: 15px; right: 15px;
+                max-width: none; padding: 15px 18px;
+            }
+            #help-panel.hidden { transform: translateY(-20px); }
+            .help-title { font-size: 0.8rem; }
+            .help-row { font-size: 0.75rem; margin-bottom: 8px; }
+            .help-icon { width: 24px; font-size: 1rem; }
+            .help-desc { font-size: 0.65rem; }
+            /* 移动端显示触摸说明 */
+            .desktop-only { display: none !important; }
+            .mobile-only { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+            .mobile-only { display: none !important; }
+        }
 
         /* 全屏控制栏 - 顶部居中，鼠标悬停显示 */
         #fullscreen-toolbar {
@@ -295,19 +338,37 @@
     </div>
 
     <!-- 左下角说明面板 -->
-    <div id="help-panel">
-        <div class="help-title">🎄 手势操作说明</div>
-        <div class="help-row">
+    <div id="help-panel" class="hidden">
+        <div class="help-title">🎄 <span class="desktop-only" style="display:inline">手势</span><span class="mobile-only" style="display:none">触摸</span>操作说明</div>
+        <!-- 桌面端手势说明 -->
+        <div class="help-row desktop-only">
             <span class="help-icon">🖐</span>
             <div class="help-text">张开手掌 - 散开<div class="help-desc">散开圣诞树，移动手掌旋转视角</div></div>
         </div>
-        <div class="help-row">
+        <div class="help-row desktop-only">
             <span class="help-icon">✊</span>
             <div class="help-text">握拳 - 聚合<div class="help-desc">聚合圣诞树，积累雪花</div></div>
         </div>
-        <div class="help-row">
+        <div class="help-row desktop-only">
             <span class="help-icon">🤏</span>
             <div class="help-text">捏合 - 查看照片<div class="help-desc">散开时捏合查看上传的照片</div></div>
+        </div>
+        <!-- 移动端触摸说明 -->
+        <div class="help-row mobile-only" style="display:none">
+            <span class="help-icon">👆</span>
+            <div class="help-text">单指滑动 - 旋转视角<div class="help-desc">拖动屏幕旋转查看圣诞树</div></div>
+        </div>
+        <div class="help-row mobile-only" style="display:none">
+            <span class="help-icon">👆👆</span>
+            <div class="help-text">双指捏合 - 缩放<div class="help-desc">双指捏合缩放视角</div></div>
+        </div>
+        <div class="help-row mobile-only" style="display:none">
+            <span class="help-icon">👇</span>
+            <div class="help-text">双击屏幕 - 切换模式<div class="help-desc">双击切换聚合/散开状态</div></div>
+        </div>
+        <div class="help-row mobile-only" style="display:none">
+            <span class="help-icon">👆</span>
+            <div class="help-text">长按 - 查看照片<div class="help-desc">散开时长按查看上传的照片</div></div>
         </div>
         <div class="help-row" style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,215,0,0.2);">
             <span class="help-icon">📷</span>
@@ -332,7 +393,8 @@
         import { FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision';
 
         // --- 1. 配置 ---
-        const TOTAL_PARTICLES = 6500;
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        const TOTAL_PARTICLES = isMobile ? 3000 : 6500;  // 移动端减少粒子数量
         const RATIOS = { lights: 0.001, balls: 0.035, gifts: 0.04, canes: 0.03, socks: 0.02, hats: 0.03 };
 
         const CONFIG = {
@@ -344,7 +406,7 @@
                 socks: Math.floor(TOTAL_PARTICLES * RATIOS.socks),
                 hats: Math.floor(TOTAL_PARTICLES * RATIOS.hats),
                 needles: Math.floor(TOTAL_PARTICLES * 0.844),
-                snow: 2500
+                snow: isMobile ? 1200 : 2500
             },
             physics: { needle: 0.15, gift: 0.02, ball: 0.05, light: 0.09, common: 0.04 },
             colors: { needle: 0x004225, gold: 0xFFD700, red: 0x8B0000, palette: [0xFFD700, 0xCC0000, 0x0022AA, 0xC0C0C0, 0x800080] },
@@ -370,9 +432,9 @@
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 6, 65);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+        const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
         container.appendChild(renderer.domElement);
@@ -382,6 +444,9 @@
         controls.dampingFactor = 0.05;
         controls.enablePan = false;
         controls.maxDistance = 150;
+        controls.minDistance = isMobile ? 30 : 20;
+        // 移动端启用触摸旋转
+        controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
 
         const headLight = new THREE.SpotLight(0xFFF8E7, 1800);
         headLight.angle = 0.6; headLight.penumbra = 0.5; headLight.decay = 1.5; headLight.distance = 200;
@@ -768,6 +833,13 @@
         }
 
         async function initAI() {
+            // 移动端跳过摄像头手势识别
+            if (isMobile) {
+                document.getElementById('loading').style.opacity = 0;
+                setTimeout(() => document.getElementById('loading').remove(), 800);
+                return;
+            }
+            
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
             const gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
                 baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task", delegate: "GPU" },
@@ -941,6 +1013,54 @@
 
         document.getElementById('music-btn').addEventListener('click', toggleMusic);
         document.getElementById('tb-music').addEventListener('click', toggleMusic);
+
+        // --- 移动端触摸控制 ---
+        if (isMobile) {
+            let lastTap = 0;
+            let longPressTimer = null;
+            let isLongPress = false;
+            
+            // 双击切换模式
+            renderer.domElement.addEventListener('touchend', (e) => {
+                if (isLongPress) { isLongPress = false; return; }
+                const now = Date.now();
+                if (now - lastTap < 300) {
+                    viewState = viewState === 'TREE_SHAPE' ? 'SCATTERED' : 'TREE_SHAPE';
+                    gestureText.innerText = viewState === 'TREE_SHAPE' ? '🎄 聚合' : '✨ 散开';
+                    if (viewState === 'TREE_SHAPE') { focusedPhotoIndex = -1; isPinching = false; }
+                }
+                lastTap = now;
+            });
+            
+            // 长按查看照片
+            renderer.domElement.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    longPressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        if (viewState === 'SCATTERED' && photoParticles.length > 0) {
+                            focusedPhotoIndex = currentPhotoViewIndex % photoParticles.length;
+                            currentPhotoViewIndex++;
+                            gestureText.innerText = "📷 照片 " + (focusedPhotoIndex + 1);
+                        }
+                    }, 600);
+                }
+            });
+            
+            renderer.domElement.addEventListener('touchmove', () => {
+                if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+            });
+            
+            renderer.domElement.addEventListener('touchend', () => {
+                if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+                // 松开手指时关闭照片查看
+                if (isLongPress && focusedPhotoIndex >= 0) {
+                    setTimeout(() => { focusedPhotoIndex = -1; }, 100);
+                }
+            });
+            
+            // 更新手势状态显示
+            gestureText.innerText = '🎄 聚合';
+        }
 
         // --- 10. 动画循环 ---
         const clock = new THREE.Clock();
