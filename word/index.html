@@ -1,0 +1,1634 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" class="">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Markdown 转 Word 工坊 | 专业版</title>
+
+		<!-- 防止深色模式闪烁 - 必须在最前面 -->
+		<script>
+			(function () {
+				const theme = localStorage.getItem('theme')
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+				if (theme === 'dark' || (!theme && prefersDark)) {
+					document.documentElement.classList.add('dark')
+				}
+			})()
+		</script>
+
+		<!-- Favicon -->
+		<link
+			rel="icon"
+			href="https://ui-avatars.com/api/?name=MD&background=6366f1&color=fff&rounded=true&font-size=0.4"
+			type="image/png"
+		/>
+
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- Tailwind CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			tailwind.config = {
+				darkMode: 'class',
+				theme: {
+					extend: {
+						colors: {
+							primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+							paper: '#ffffff',
+							'paper-dark': '#1e293b'
+						},
+						fontFamily: {
+							sans: ['"Noto Sans SC"', 'sans-serif'],
+							serif: ['"Noto Serif SC"', 'serif'],
+							mono: ['"JetBrains Mono"', 'monospace']
+						},
+						boxShadow: {
+							soft: '0 10px 40px -10px rgba(0,0,0,0.08)',
+							float: '0 20px 50px -12px rgba(0,0,0,0.25)'
+						}
+					}
+				}
+			}
+		</script>
+
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" />
+
+		<!-- Libraries -->
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+		<!-- html2canvas for screenshot -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+		<!-- PDF Export Library -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+		<style>
+			/* 基础滚动条美化 */
+			::-webkit-scrollbar {
+				width: 6px;
+				height: 6px;
+			}
+			::-webkit-scrollbar-track {
+				background: transparent;
+			}
+			::-webkit-scrollbar-thumb {
+				background: #cbd5e1;
+				border-radius: 3px;
+			}
+			.dark ::-webkit-scrollbar-thumb {
+				background: #475569;
+			}
+			::-webkit-scrollbar-thumb:hover {
+				background: #94a3b8;
+			}
+
+			/* 隐藏打印时的 UI */
+			@media print {
+				.no-print {
+					display: none !important;
+				}
+				#preview-container {
+					padding: 0;
+					margin: 0;
+					width: 100%;
+				}
+				body {
+					background: white;
+				}
+				.markdown-preview {
+					box-shadow: none;
+					padding: 0;
+					margin: 0;
+					width: 100%;
+					max-width: 100%;
+				}
+			}
+
+			/* 编辑器样式 */
+			#editor {
+				font-variant-ligatures: none;
+				tab-size: 4;
+				caret-color: #6366f1;
+			}
+
+			/* 预览区核心样式 (模拟纸张) */
+			.paper-shadow {
+				box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+					0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+			}
+			.dark .paper-shadow {
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+			}
+
+			/* Markdown 内容排版 - 动态变量 */
+			:root {
+				/* [更新] 默认变量调整为 仿宋 + 宋体(标题) */
+				--md-font-body: 'FangSong', 'STFangsong', '仿宋', 'SimSun', '宋体';
+				--md-font-heading: 'SimSun', 'STSong', '宋体'; /* 使用宋体加粗模拟小标宋 */
+				--md-size: 16px;
+				--md-color: #1a1a1a;
+				--md-line-height: 1.6;
+				--md-page-width: 210mm;
+				--md-page-padding: 40px;
+			}
+
+			.markdown-preview {
+				font-family: var(--md-font-body), serif;
+				font-size: var(--md-size);
+				color: var(--md-color);
+				line-height: var(--md-line-height);
+				width: 100%;
+				max-width: var(--md-page-width);
+				min-height: 297mm;
+				padding: var(--md-page-padding);
+				margin: 0 auto;
+				background-color: white; /* 纸张永远是白的，除非深色模式特意调整 */
+				transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+				position: relative;
+			}
+
+			/* 深色模式下的纸张预览 */
+			.dark .markdown-preview {
+				background-color: #1e293b;
+				color: #e2e8f0;
+				--md-color: #e2e8f0;
+			}
+
+			/* --- 排版细节 (预览样式) --- */
+			.markdown-preview h1,
+			.markdown-preview h2,
+			.markdown-preview h3,
+			.markdown-preview h4 {
+				font-family: var(--md-font-heading), sans-serif;
+				font-weight: 700;
+				margin-top: 1.5em;
+				margin-bottom: 0.8em;
+				line-height: 1.3;
+			}
+
+			/* [修复] H1 去除边框 */
+			.markdown-preview h1 {
+				font-size: 2.2em;
+				text-align: center;
+				border-bottom: none; /* 去除下划线 */
+				padding-bottom: 0;
+			}
+
+			/* [修复] H2 去除背景色和左边框，回归纯净 */
+			.markdown-preview h2 {
+				font-size: 1.6em;
+				border-left: none;
+				padding-left: 0;
+				background-color: transparent;
+				padding: 0;
+				border-radius: 0;
+			}
+
+			.markdown-preview h3 {
+				font-size: 1.3em;
+			}
+
+			.markdown-preview p {
+				margin-bottom: 1em;
+				text-align: left;
+			}
+
+			/* [修复] 列表样式优化 - 预览时也保持紧凑 */
+			.markdown-preview ul,
+			.markdown-preview ol {
+				margin-bottom: 1em;
+				padding-left: 2em;
+			}
+			.markdown-preview ul {
+				list-style-type: disc;
+			}
+			.markdown-preview ol {
+				list-style-type: decimal;
+			}
+			/* 让列表项内容稍微靠近一点圆点 (浏览器默认样式通常已经够紧凑，但为了视觉一致性可以微调) */
+			.markdown-preview li {
+				padding-left: 4px; /* 微调 */
+			}
+
+			.markdown-preview blockquote {
+				border-left: 4px solid #cbd5e1;
+				padding-left: 1em;
+				margin: 1.5em 0;
+				color: #64748b;
+				font-style: italic;
+				background: #f8fafc;
+				padding: 16px;
+				border-radius: 0 8px 8px 0;
+			}
+			.dark .markdown-preview blockquote {
+				background: #0f172a;
+				border-color: #475569;
+				color: #94a3b8;
+			}
+
+			.markdown-preview code {
+				font-family: 'JetBrains Mono', monospace;
+				background: #f1f5f9;
+				padding: 2px 5px;
+				border-radius: 4px;
+				font-size: 0.9em;
+				color: #ef4444;
+			}
+			.dark .markdown-preview code {
+				background: #334155;
+				color: #fca5a5;
+			}
+
+			.markdown-preview pre {
+				background: #f8fafc;
+				padding: 16px;
+				border-radius: 8px;
+				overflow-x: auto;
+				margin: 1.5em 0;
+				border: 1px solid #e2e8f0;
+			}
+			.dark .markdown-preview pre {
+				background: #0f172a;
+				border-color: #334155;
+			}
+			.markdown-preview pre code {
+				background: transparent;
+				color: inherit;
+				padding: 0;
+			}
+
+			.markdown-preview table {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 1.5em 0;
+				font-size: 0.95em;
+			}
+			.markdown-preview th,
+			.markdown-preview td {
+				border: 1px solid #cbd5e1;
+				padding: 10px;
+			}
+			.dark .markdown-preview th,
+			.dark .markdown-preview td {
+				border-color: #475569;
+			}
+			.markdown-preview th {
+				background-color: #f1f5f9;
+				font-weight: 600;
+			}
+			.dark .markdown-preview th {
+				background-color: #334155;
+			}
+
+			.markdown-preview img {
+				max-width: 100%;
+				border-radius: 8px;
+				margin: 1em auto;
+				display: block;
+			}
+
+			.markdown-preview a {
+				color: #4f46e5;
+				text-decoration: underline;
+				transition: color 0.2s;
+			}
+			.markdown-preview a:hover {
+				color: #6366f1;
+			}
+			.dark .markdown-preview a {
+				color: #818cf8;
+			}
+			.dark .markdown-preview a:hover {
+				color: #a5b4fc;
+			}
+
+			/* Mermaid 图表居中 */
+			.mermaid {
+				display: flex;
+				justify-content: center;
+				margin: 2em 0;
+			}
+
+			/* 动画 */
+			.fade-in-up {
+				animation: fadeInUp 0.5s ease-out;
+			}
+			@keyframes fadeInUp {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			/* 自定义下拉框样式 */
+			select {
+				appearance: none;
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+				background-repeat: no-repeat;
+				background-position: right 8px center;
+				padding-right: 28px !important;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				border-radius: 6px !important;
+			}
+			
+			select:hover {
+				border-color: #6366f1 !important;
+				background-color: #f8fafc;
+			}
+			
+			select:focus {
+				outline: none;
+				border-color: #6366f1 !important;
+				box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+			}
+			
+			.dark select {
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cbd5e1' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+			}
+			
+			.dark select:hover {
+				background-color: #1e293b;
+			}
+			
+			/* 优化 option 样式 */
+			select option {
+				padding: 8px 12px;
+				background-color: white;
+				color: #1e293b;
+				font-size: 13px;
+				line-height: 1.5;
+			}
+			
+			select option:hover,
+			select option:focus,
+			select option:checked {
+				background: linear-gradient(to right, #6366f1, #818cf8);
+				color: white;
+				font-weight: 500;
+			}
+			
+			.dark select option {
+				background-color: #1e293b;
+				color: #e2e8f0;
+			}
+			
+			.dark select option:hover,
+			.dark select option:focus,
+			.dark select option:checked {
+				background: linear-gradient(to right, #4f46e5, #6366f1);
+				color: white;
+			}
+		</style>
+	</head>
+	<body
+		class="bg-gray-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300 h-screen flex flex-col font-sans overflow-hidden"
+	>
+		<!-- 1. 顶部导航栏 (Glassmorphism) -->
+		<header
+			class="no-print relative z-50 flex items-center justify-between px-6 py-3 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md transition-all duration-300"
+		>
+			<div class="flex items-center gap-4">
+				<div
+					class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 text-white"
+				>
+					<i class="fa-solid fa-file-word text-xl"></i>
+				</div>
+				<div>
+					<h1
+						class="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400"
+					>
+						Markdown 转 Word <span class="text-indigo-500">工坊</span>
+					</h1>
+					<p class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide">
+						专业的排版与可视化工具
+					</p>
+				</div>
+			</div>
+
+			<div class="flex items-center gap-3">
+				<!-- 纸张选择 -->
+				<div
+					class="hidden md:flex items-center gap-2 bg-gray-100 dark:bg-slate-800 p-1 rounded-lg border border-gray-200 dark:border-slate-700"
+				>
+					<span class="text-xs text-slate-500 dark:text-slate-400 px-2"
+						><i class="fa-solid fa-file-lines mr-1"></i>纸张</span
+					>
+					<select
+						id="paper-select"
+						onchange="setPaperSize(this.value)"
+						class="text-xs bg-white dark:bg-slate-700 border-0 rounded-md px-2 py-1.5 text-slate-800 dark:text-white outline-none cursor-pointer"
+					>
+						<option value="A4" selected>A4 (210×297mm)</option>
+						<option value="A3">A3 (297×420mm)</option>
+						<option value="B5">B5 (176×250mm)</option>
+						<option value="Letter">Letter (216×279mm)</option>
+						<option value="Legal">Legal (216×356mm)</option>
+						<option value="16K">16K (185×260mm)</option>
+					</select>
+				</div>
+
+				<div class="h-6 w-px bg-gray-300 dark:bg-slate-700 mx-2"></div>
+
+				<!-- 样式设置触发器 -->
+				<button
+					onclick="toggleSettings()"
+					class="group relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+					title="排版设置"
+				>
+					<i
+						class="fa-solid fa-sliders text-slate-600 dark:text-slate-300 transition-transform group-hover:rotate-180 duration-500"
+					></i>
+				</button>
+
+				<!-- 深色模式切换 -->
+				<button
+					onclick="toggleTheme()"
+					class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+					title="切换主题"
+				>
+					<i class="fa-solid fa-moon dark:hidden text-slate-600"></i>
+					<i class="fa-solid fa-sun hidden dark:inline-block text-yellow-400"></i>
+				</button>
+
+				<!-- 导出按钮组 -->
+				<div class="flex gap-2 ml-2">
+					<button
+						onclick="exportToPdf()"
+						class="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-semibold rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+					>
+						<i class="fa-solid fa-file-pdf"></i> PDF
+					</button>
+					<button
+						onclick="exportToWord()"
+						class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+					>
+						<i class="fa-solid fa-file-word"></i> Word
+					</button>
+					<button
+						onclick="exportToHtml()"
+						class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-semibold rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+					>
+						<i class="fa-solid fa-code"></i> HTML
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<!-- 2. 主工作区 -->
+		<main class="flex-1 flex overflow-hidden relative">
+			<!-- 左侧：Markdown 编辑器 -->
+			<div
+				class="w-full md:w-1/2 flex flex-col border-r border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors relative z-10"
+			>
+				<!-- 工具栏 -->
+				<div
+					class="flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 text-xs font-mono text-slate-500"
+				>
+					<div class="flex gap-4">
+						<span><i class="fa-brands fa-markdown text-indigo-500 mr-1"></i>Markdown 源码</span>
+						<span class="hidden sm:inline text-slate-400">支持 Mermaid 图表</span>
+					</div>
+					<button onclick="clearContent()" class="hover:text-red-500 transition-colors">
+						清空 <i class="fa-solid fa-trash-can ml-1"></i>
+					</button>
+				</div>
+
+				<textarea
+					id="editor"
+					class="flex-1 p-6 resize-none outline-none bg-transparent text-slate-800 dark:text-slate-300 text-sm md:text-base leading-relaxed font-mono"
+					placeholder="在此开始创作... 支持 Markdown 语法和 Mermaid 图表..."
+					spellcheck="false"
+				></textarea>
+
+				<!-- 底部图表指南 (满足可视化需求) -->
+				<div
+					class="px-4 py-2 bg-indigo-50 dark:bg-slate-900 border-t border-indigo-100 dark:border-slate-800 text-xs text-indigo-600 dark:text-indigo-400 flex items-center justify-between cursor-pointer hover:bg-indigo-100 dark:hover:bg-slate-800 transition-colors"
+					onclick="insertMermaidTemplate()"
+				>
+					<span class="flex items-center gap-2"
+						><i class="fa-solid fa-wand-magic-sparkles"></i> 点击插入 Mermaid 流程图模板</span
+					>
+					<i class="fa-solid fa-code"></i>
+				</div>
+			</div>
+
+			<!-- 右侧：实时预览 (纸张容器) -->
+			<div class="w-full md:w-1/2 flex flex-col bg-gray-100 dark:bg-slate-900 transition-colors relative">
+				<div
+					class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"
+				></div>
+
+				<div class="flex-1 overflow-y-auto relative z-10" id="preview-scroll-container">
+					<!-- 预览容器：根据模式切换 padding 和 layout -->
+					<div id="preview-wrapper" class="p-8 transition-all duration-300 flex justify-center min-h-full">
+						<div id="preview" class="markdown-preview paper-shadow fade-in-up">
+							<!-- 内容渲染区 -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- 3. 悬浮设置面板 -->
+		<div
+			id="settings-panel"
+			class="fixed top-20 right-6 w-72 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-2xl rounded-lg border border-gray-200 dark:border-slate-700 transform translate-x-full opacity-0 transition-all duration-300 z-40 p-5 pointer-events-none"
+		>
+			<div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-slate-700">
+				<h3 class="text-sm font-bold text-slate-800 dark:text-white">文档排版配置</h3>
+				<button onclick="toggleSettings()" class="text-slate-400 hover:text-slate-600">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+			</div>
+
+			<!-- 字体选择 -->
+			<div class="space-y-4">
+				<!-- 导出设置：纸张、方向与边距 -->
+				<div class="border-b border-gray-100 dark:border-slate-700 pb-4">
+					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+						>页面布局 (导出)</label
+					>
+					<div class="flex items-center justify-between mb-2">
+						<span class="text-xs text-gray-600 dark:text-slate-400">纸张大小</span>
+						<select
+							id="paper-select-panel"
+							onchange="setPaperSize(this.value)"
+							class="text-xs border-gray-300 rounded shadow-sm border p-1 w-32 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+						>
+							<option value="A4" selected>A4 (210×297)</option>
+							<option value="A3">A3 (297×420)</option>
+							<option value="B5">B5 (176×250)</option>
+							<option value="Letter">Letter</option>
+							<option value="Legal">Legal</option>
+							<option value="16K">16K (185×260)</option>
+						</select>
+					</div>
+					<div class="grid grid-cols-2 gap-2 mb-2">
+						<button
+							onclick="setConfig('orientation', 'portrait')"
+							id="btn-portrait"
+							class="layout-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50"
+						>
+							<i class="fa-regular fa-file"></i> 纵向 (标准)
+						</button>
+						<button
+							onclick="setConfig('orientation', 'landscape')"
+							id="btn-landscape"
+							class="layout-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 text-slate-600 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							<i class="fa-regular fa-file-image"></i> 横向 (更宽)
+						</button>
+					</div>
+					<div class="flex items-center justify-between">
+						<span class="text-xs text-gray-600 dark:text-slate-400">页边距</span>
+						<select
+							onchange="setConfig('margin', this.value)"
+							class="text-xs border-gray-300 rounded shadow-sm border p-1 w-24 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+						>
+							<option value="normal" selected>标准</option>
+							<option value="narrow">窄 (更多空间)</option>
+						</select>
+					</div>
+				</div>
+
+				<div>
+					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+						>正文字体</label
+					>
+					<div class="grid grid-cols-2 gap-2">
+						<button
+							onclick="setConfig('bodyFont', 'SimSun')"
+							class="font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							宋体 (标准)
+						</button>
+						<button
+							onclick="setConfig('bodyFont', 'FangSong')"
+							class="font-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50"
+						>
+							仿宋 (公文)
+						</button>
+						<!-- 默认高亮 -->
+						<button
+							onclick="setConfig('bodyFont', 'KaiTi')"
+							class="font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							楷体 (柔和)
+						</button>
+						<button
+							onclick="setConfig('bodyFont', 'Microsoft YaHei')"
+							class="font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							微软雅黑
+						</button>
+					</div>
+				</div>
+
+				<div>
+					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+						>标题风格</label
+					>
+					<select
+						id="heading-font-select"
+						onchange="setConfig('headingFont', this.value)"
+						class="w-full text-xs p-2 rounded border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500/50"
+					>
+						<option value="SimSun" selected>宋体 (仿小标宋)</option>
+						<option value="SimHei">黑体 (常规)</option>
+						<option value="Microsoft YaHei">微软雅黑 (现代)</option>
+					</select>
+				</div>
+
+				<div>
+					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+						>字号大小 (预览 & 导出)</label
+					>
+					<input
+						type="range"
+						min="14"
+						max="20"
+						value="16"
+						step="0.5"
+						class="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+						oninput="setConfig('size', this.value)"
+					/>
+					<div class="flex justify-between text-[10px] text-slate-400 mt-1">
+						<span>小 (五号)</span>
+						<span>标准 (小四)</span>
+						<span>大 (四号)</span>
+					</div>
+				</div>
+
+				<div>
+					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+						>主题色 (标题)</label
+					>
+					<div class="flex gap-2">
+						<button
+							onclick="setConfig('color', '#000000')"
+							class="w-6 h-6 rounded-full bg-black border border-gray-200 shadow-sm hover:scale-110 transition-transform"
+						></button>
+						<button
+							onclick="setConfig('color', '#1e3a8a')"
+							class="w-6 h-6 rounded-full bg-blue-900 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
+						></button>
+						<button
+							onclick="setConfig('color', '#b91c1c')"
+							class="w-6 h-6 rounded-full bg-red-700 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
+						></button>
+						<button
+							onclick="setConfig('color', '#0f766e')"
+							class="w-6 h-6 rounded-full bg-teal-700 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
+						></button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Toast 通知 -->
+		<div
+			id="toast"
+			class="fixed top-20 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-slate-800/95 text-slate-800 dark:text-white px-5 py-3 rounded-lg shadow-lg backdrop-blur-md -translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 border border-gray-200 dark:border-slate-700"
+		>
+			<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+			<span class="text-sm font-medium" id="toast-msg">Notification</span>
+		</div>
+
+		<!-- 自定义确认框 -->
+		<div
+			id="confirm-dialog"
+			class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] opacity-0 pointer-events-none transition-all duration-300"
+		>
+			<div
+				class="bg-white dark:bg-slate-800 rounded-lg shadow-2xl p-6 w-96 transform scale-95 transition-all duration-300 border border-gray-200 dark:border-slate-700"
+				id="confirm-dialog-content"
+			>
+				<div class="flex items-center gap-3 mb-4">
+					<div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+						<i class="fa-solid fa-exclamation-triangle text-orange-600 dark:text-orange-400"></i>
+					</div>
+					<h3 class="text-lg font-bold text-slate-800 dark:text-white">确认操作</h3>
+				</div>
+				<p class="text-slate-600 dark:text-slate-300 mb-6" id="confirm-message">确定要执行此操作吗？</p>
+				<div class="flex gap-3 justify-end">
+					<button
+						onclick="closeConfirm(false)"
+						class="px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+					>
+						取消
+					</button>
+					<button
+						onclick="closeConfirm(true)"
+						class="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+					>
+						确定
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- 逻辑脚本 -->
+		<script>
+			        // 初始化 Mermaid
+			        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+			        // 默认 Markdown 内容
+			        const defaultText = `# 欢迎来到 Markdown 转 Word 工坊
+
+> "设计不仅仅是外观和感觉，设计是运作方式。" —— 史蒂夫·乔布斯
+
+这是一个为您打造的沉浸式文档创作工具。
+
+## 1. 核心特性
+- **所见即所得**：右侧实时预览，还原纸张排版。
+- **多种纸张**：支持 A4、A3、B5、Letter、Legal、16K 等多种纸张规格。
+- **纯净 Word**：导出时自动优化列表间距，去除 Emoji 和多余装饰。
+- **链接支持**：支持 [Markdown 链接](https://www.markdownguide.org) 语法。
+
+## 2. Mermaid 图表演示
+这是一个简单的流程图，展示了从思考到输出的过程：
+
+\`\`\`mermaid
+graph LR
+    A[灵感涌现] --> B{是否值得记录?}
+    B -->|Yes| C[打开本工具]
+    B -->|No| D[喝杯咖啡]
+    C --> E[Markdown 写作]
+    E --> F[导出 Word/PDF]
+\`\`\`
+
+## 3. 表格样式测试
+| 功能模块 | 状态 | 负责人 | 优先级 |
+| :--- | :--- | :--- | :--- |
+| 页面方向 | ✅ 完成 | Designer | High |
+| 页边距 | ✅ 完成 | Dev | High |
+| 样式净化 | ✅ 完成 | Dev | High |
+
+## 4. 排版细节
+我们特别优化了长段落的阅读体验。列表的圆点与文字的间距经过了像素级微调，现在看起来非常紧凑。正文默认采用仿宋字体，标题采用宋体加粗，完美符合公文规范。
+
+开始创作吧！
+`;
+
+			        const editor = document.getElementById('editor');
+			        const preview = document.getElementById('preview');
+			        const settingsPanel = document.getElementById('settings-panel');
+			        const root = document.documentElement;
+
+			        // 状态管理 - 默认修改为公文风格
+			        const state = {
+			            bodyFont: 'FangSong', // 默认仿宋
+			            headingFont: 'SimSun', // 默认宋体 (仿小标宋)
+			            size: 16,
+			            color: '#000000',
+			            paperSize: 'A4', // A4 | A3 | B5 | Letter | Legal | 16K
+			            // 新增导出配置
+			            exportOrientation: 'portrait', // portrait | landscape
+			            exportMargin: 'normal'         // normal | narrow
+			        };
+
+			        // 纸张尺寸配置 (宽 x 高，单位 mm)
+			        const paperSizes = {
+			            'A4': { width: 210, height: 297 },
+			            'A3': { width: 297, height: 420 },
+			            'B5': { width: 176, height: 250 },
+			            'Letter': { width: 216, height: 279 },
+			            'Legal': { width: 216, height: 356 },
+			            '16K': { width: 185, height: 260 }
+			        };
+
+			        // 初始化
+			        window.addEventListener('DOMContentLoaded', () => {
+			            // 加载本地存储的主题
+			            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			                document.documentElement.classList.add('dark');
+			            }
+
+			            editor.value = defaultText;
+			            render();
+
+			            // 绑定输入事件 (防抖)
+			            let timeout;
+			            editor.addEventListener('input', () => {
+			                clearTimeout(timeout);
+			                timeout = setTimeout(render, 300);
+			            });
+			        });
+
+			        // 配置 marked 解析器
+			        const renderer = new marked.Renderer();
+
+			        // 自定义链接渲染
+			        renderer.link = function(href, title, text) {
+			            // 兼容新旧版本 marked
+			            if (typeof href === 'object') {
+			                // 新版本 marked (v5+) 传入对象
+			                const token = href;
+			                href = token.href;
+			                title = token.title;
+			                text = token.text;
+			            }
+			            const titleAttr = title ? ` title="${title}"` : '';
+			            return `<a href="${href}"${titleAttr} target="_blank" rel="noopener">${text}</a>`;
+			        };
+
+			        marked.setOptions({
+			            breaks: true,
+			            gfm: true,
+			            renderer: renderer
+			        });
+
+			        // 渲染 Markdown
+			        async function render() {
+			            const text = editor.value;
+			            try {
+			                // 使用 marked 解析
+			                preview.innerHTML = marked.parse(text);
+
+			                // 渲染 Mermaid
+			                await mermaid.run({
+			                    nodes: preview.querySelectorAll('.language-mermaid'),
+			                });
+			            } catch (e) {
+			                console.error("渲染错误", e);
+			            }
+			        }
+
+			        // 插入 Mermaid 模板
+			        function insertMermaidTemplate() {
+			            const template = `\n\`\`\`mermaid\ngraph LR\n    A[开始] --> B{判断}\n    B -->|是| C[执行操作]\n    B -->|否| D[结束]\n\`\`\`\n`;
+			            editor.value += template;
+			            render();
+			            showToast("已插入图表模板");
+			        }
+
+			        // 设置配置
+			        function setConfig(key, value) {
+			            state[key] = value;
+
+			            const fontMap = {
+			                'SimSun': '"SimSun", "STSong", "宋体"',
+			                'FangSong': '"FangSong", "STFangsong", "仿宋"',
+			                'KaiTi': '"KaiTi", "楷体"',
+			                'SimHei': '"SimHei", "黑体"',
+			                'Microsoft YaHei': '"Microsoft YaHei", "微软雅黑"'
+			            };
+
+			            // 字体/颜色设置
+			            if (key === 'bodyFont') root.style.setProperty('--md-font-body', fontMap[value]);
+			            if (key === 'headingFont') root.style.setProperty('--md-font-heading', fontMap[value]);
+			            if (key === 'size') root.style.setProperty('--md-size', value + 'px');
+			            if (key === 'color') root.style.setProperty('--md-color', value);
+
+			            // UI 状态更新 (仅针对按钮组)
+			            if (key === 'bodyFont') {
+			                document.querySelectorAll('.font-btn').forEach(btn => {
+			                    // 简单的 class 切换逻辑
+			                    if(btn.textContent.includes(value === 'FangSong' ? '仿宋' : (value === 'SimSun' ? '宋体' : value))) {
+			                       // 选中样式
+			                       btn.className = "font-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50";
+			                    } else {
+			                       // 未选中样式
+			                       btn.className = "font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300";
+			                    }
+			                });
+			            }
+
+			            // 导出布局设置 UI 反馈
+			            if (key === 'orientation') {
+			                const btnP = document.getElementById('btn-portrait');
+			                const btnL = document.getElementById('btn-landscape');
+			                const activeClass = "border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50";
+			                const inactiveClass = "border-gray-200 hover:border-indigo-500 text-slate-600 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300";
+
+			                if (value === 'portrait') {
+			                    btnP.className = "layout-btn text-xs p-2 rounded " + activeClass;
+			                    btnL.className = "layout-btn text-xs p-2 rounded " + inactiveClass;
+			                } else {
+			                    btnP.className = "layout-btn text-xs p-2 rounded " + inactiveClass;
+			                    btnL.className = "layout-btn text-xs p-2 rounded " + activeClass;
+			                }
+			            }
+			        }
+
+			        // 设置纸张大小
+			        function setPaperSize(size) {
+			            state.paperSize = size;
+			            const paper = paperSizes[size];
+			            if (paper) {
+			                root.style.setProperty('--md-page-width', paper.width + 'mm');
+			                root.style.setProperty('--md-page-height', paper.height + 'mm');
+
+			                // 同步两个下拉框
+			                document.getElementById('paper-select').value = size;
+			                document.getElementById('paper-select-panel').value = size;
+			            }
+			        }
+
+			        // 自定义确认框
+			        let confirmCallback = null;
+			        
+			        function showConfirm(message) {
+			            return new Promise((resolve) => {
+			                confirmCallback = resolve;
+			                const dialog = document.getElementById('confirm-dialog');
+			                const content = document.getElementById('confirm-dialog-content');
+			                document.getElementById('confirm-message').textContent = message;
+			                
+			                dialog.classList.remove('opacity-0', 'pointer-events-none');
+			                setTimeout(() => {
+			                    content.classList.remove('scale-95');
+			                    content.classList.add('scale-100');
+			                }, 10);
+			            });
+			        }
+			        
+			        function closeConfirm(result) {
+			            const dialog = document.getElementById('confirm-dialog');
+			            const content = document.getElementById('confirm-dialog-content');
+			            
+			            content.classList.remove('scale-100');
+			            content.classList.add('scale-95');
+			            
+			            setTimeout(() => {
+			                dialog.classList.add('opacity-0', 'pointer-events-none');
+			                if (confirmCallback) {
+			                    confirmCallback(result);
+			                    confirmCallback = null;
+			                }
+			            }, 200);
+			        }
+
+			        // 切换面板
+			        function toggleSettings() {
+			            const panel = settingsPanel;
+			            if (panel.classList.contains('translate-x-full')) {
+			                panel.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+			            } else {
+			                panel.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+			            }
+			        }
+			        
+			        // 点击面板外部关闭
+			        document.addEventListener('click', (e) => {
+			            const panel = document.getElementById('settings-panel');
+			            const settingsBtn = e.target.closest('button[onclick="toggleSettings()"]');
+			            
+			            if (!panel.contains(e.target) && !settingsBtn && !panel.classList.contains('translate-x-full')) {
+			                toggleSettings();
+			            }
+			        });
+
+			        // 切换深色模式
+			        function toggleTheme() {
+			            if (document.documentElement.classList.contains('dark')) {
+			                document.documentElement.classList.remove('dark');
+			                localStorage.setItem('theme', 'light');
+			            } else {
+			                document.documentElement.classList.add('dark');
+			                localStorage.setItem('theme', 'dark');
+			            }
+			        }
+
+			        // 清空 (使用自定义确认框)
+			        async function clearContent() {
+			            const confirmed = await showConfirm('确定要清空所有内容吗？此操作无法撤销。');
+			            if (confirmed) {
+			                editor.value = '';
+			                render();
+			                showToast("画布已清空");
+			            }
+			        }
+
+			        function showToast(msg) {
+			            const el = document.getElementById('toast');
+			            document.getElementById('toast-msg').innerText = msg;
+			            el.classList.remove('-translate-y-20', 'opacity-0');
+			            setTimeout(() => el.classList.add('-translate-y-20', 'opacity-0'), 2500);
+			        }
+
+			        // --- PDF 导出逻辑 (使用浏览器打印) ---
+			        function exportToPdf() {
+			            showToast("准备打印预览...");
+			            
+			            // 临时添加打印样式
+			            const printStyle = document.createElement('style');
+			            printStyle.id = 'temp-print-style';
+			            
+			            // 获取纸张配置
+			            const paper = paperSizes[state.paperSize] || paperSizes['A4'];
+			            const orientation = state.exportOrientation || 'portrait';
+			            const margin = state.exportMargin === 'narrow' ? '1.27cm' : '2.54cm';
+			            
+			            printStyle.textContent = `
+			                @media print {
+			                    @page {
+			                        size: ${paper.width}mm ${paper.height}mm;
+			                        margin: ${margin};
+			                    }
+			                    
+			                    * {
+			                        -webkit-print-color-adjust: exact !important;
+			                        print-color-adjust: exact !important;
+			                        color-adjust: exact !important;
+			                    }
+			                    
+			                    body {
+			                        background: white !important;
+			                        margin: 0;
+			                        padding: 0;
+			                    }
+			                    
+			                    /* 隐藏编辑器和其他UI */
+			                    header, 
+			                    main > div:first-child, 
+			                    #settings-panel, 
+			                    #toast,
+			                    .no-print {
+			                        display: none !important;
+			                    }
+			                    
+			                    /* 只显示预览区 */
+			                    main {
+			                        display: block !important;
+			                        overflow: visible !important;
+			                        height: auto !important;
+			                    }
+			                    
+			                    main > div:last-child {
+			                        width: 100% !important;
+			                        background: white !important;
+			                        overflow: visible !important;
+			                    }
+			                    
+			                    #preview-scroll-container {
+			                        overflow: visible !important;
+			                    }
+			                    
+			                    #preview-wrapper {
+			                        padding: 0 !important;
+			                        background: white !important;
+			                        min-height: auto !important;
+			                    }
+			                    
+			                    .markdown-preview {
+			                        box-shadow: none !important;
+			                        max-width: 100% !important;
+			                        width: 100% !important;
+			                        background: white !important;
+			                        min-height: auto !important;
+			                        /* 保留原有的字体、字号、行高等样式 */
+			                    }
+			                    
+			                    /* 确保深色模式下的颜色正确 */
+			                    .markdown-preview,
+			                    .markdown-preview * {
+			                        color: #000 !important;
+			                        background: transparent !important;
+			                    }
+			                    
+			                    .markdown-preview h1,
+			                    .markdown-preview h2,
+			                    .markdown-preview h3,
+			                    .markdown-preview h4 {
+			                        color: #000 !important;
+			                        background: none !important;
+			                    }
+			                    
+			                    /* 保留代码块背景 */
+			                    .markdown-preview pre,
+			                    .markdown-preview code {
+			                        background: #f8f8f8 !important;
+			                        border: 1px solid #e0e0e0 !important;
+			                    }
+			                    
+			                    /* 保留表格样式 */
+			                    .markdown-preview table {
+			                        border-collapse: collapse !important;
+			                    }
+			                    
+			                    .markdown-preview th {
+			                        background: #f0f0f0 !important;
+			                    }
+			                    
+			                    .markdown-preview th,
+			                    .markdown-preview td {
+			                        border: 1px solid #000 !important;
+			                    }
+			                    
+			                    /* 保留引用块样式 */
+			                    .markdown-preview blockquote {
+			                        background: #f8f8f8 !important;
+			                        border-left: 4px solid #ccc !important;
+			                    }
+			                    
+			                    /* 防止内容被截断 */
+			                    .markdown-preview h1,
+			                    .markdown-preview h2,
+			                    .markdown-preview h3,
+			                    .markdown-preview h4 {
+			                        page-break-after: avoid;
+			                        break-after: avoid;
+			                    }
+			                    
+			                    .markdown-preview p,
+			                    .markdown-preview blockquote,
+			                    .markdown-preview pre {
+			                        page-break-inside: avoid;
+			                        break-inside: avoid;
+			                    }
+			                    
+			                    .markdown-preview table {
+			                        page-break-inside: auto;
+			                    }
+			                    
+			                    .markdown-preview tr {
+			                        page-break-inside: avoid;
+			                        break-inside: avoid;
+			                    }
+			                    
+			                    /* 图表和图片 - 保持与预览一致 */
+			                    .markdown-preview img {
+			                        page-break-inside: avoid;
+			                        break-inside: avoid;
+			                        max-width: 100% !important;
+			                        height: auto !important;
+			                    }
+			                    
+			                    /* Mermaid 图表容器 */
+			                    .markdown-preview .mermaid {
+			                        page-break-inside: avoid;
+			                        break-inside: avoid;
+			                        display: flex !important;
+			                        justify-content: center !important;
+			                        margin: 2em 0 !important;
+			                    }
+			                    
+			                    /* SVG 图表尺寸限制 */
+			                    .markdown-preview svg {
+			                        page-break-inside: avoid;
+			                        break-inside: avoid;
+			                        max-width: 600px !important;
+			                        max-height: 400px !important;
+			                        width: auto !important;
+			                        height: auto !important;
+			                        overflow: visible !important;
+			                    }
+			                }
+			            `;
+			            document.head.appendChild(printStyle);
+			            
+			            // 延迟打印，确保样式生效
+			            setTimeout(() => {
+			                window.print();
+			                
+			                // 打印对话框关闭后清理
+			                setTimeout(() => {
+			                    const style = document.getElementById('temp-print-style');
+			                    if (style) {
+			                        document.head.removeChild(style);
+			                    }
+			                }, 1000);
+			            }, 100);
+			        }
+
+			        // --- HTML 导出逻辑 ---
+			        async function exportToHtml() {
+			            showToast("正在生成 HTML...");
+
+			            const element = document.getElementById('preview');
+			            const clone = element.cloneNode(true);
+
+			            // 处理 Mermaid SVG 图表
+			            const svgs = element.querySelectorAll('svg[id^="mermaid-"]');
+			            const cloneSvgs = clone.querySelectorAll('svg[id^="mermaid-"]');
+
+			            for (let i = 0; i < svgs.length && i < cloneSvgs.length; i++) {
+			                const svg = svgs[i];
+			                const cloneSvg = cloneSvgs[i];
+
+			                // 直接复制 SVG 的 outerHTML
+			                const svgContainer = document.createElement('div');
+			                svgContainer.style.cssText = 'text-align: center; margin: 2em 0;';
+			                svgContainer.innerHTML = svg.outerHTML;
+
+			                cloneSvg.parentNode.replaceChild(svgContainer, cloneSvg);
+			            }
+
+			            const content = clone.innerHTML;
+
+			            // 获取当前样式配置
+			            const fontMap = {
+			                'SimSun': '"SimSun", "STSong", "宋体"',
+			                'FangSong': '"FangSong", "STFangsong", "仿宋"',
+			                'KaiTi': '"KaiTi", "楷体"',
+			                'SimHei': '"SimHei", "黑体"',
+			                'Microsoft YaHei': '"Microsoft YaHei", "微软雅黑"'
+			            };
+
+			            const bodyFont = fontMap[state.bodyFont] || fontMap['FangSong'];
+			            const headingFont = fontMap[state.headingFont] || fontMap['SimSun'];
+
+			            const htmlTemplate = `<!DOCTYPE html>
+			<html lang="zh-CN">
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>导出文档</title>
+			    <style>
+			        body {
+			            font-family: ${bodyFont}, serif;
+			            font-size: ${state.size}px;
+			            color: ${state.color};
+			            line-height: 1.6;
+			            max-width: 210mm;
+			            margin: 0 auto;
+			            padding: 40px;
+			            background-color: #f5f5f5;
+			        }
+
+			        .markdown-preview {
+			            background-color: white;
+			            padding: 40px;
+			            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			        }
+
+			        h1, h2, h3, h4 {
+			            font-family: ${headingFont}, sans-serif;
+			            font-weight: 700;
+			            margin-top: 1.5em;
+			            margin-bottom: 0.8em;
+			            line-height: 1.3;
+			        }
+
+			        h1 { font-size: 2.2em; text-align: center; }
+			        h2 { font-size: 1.6em; }
+			        h3 { font-size: 1.3em; }
+
+			        p { margin-bottom: 1em; text-align: left; }
+
+			        ul, ol { margin-bottom: 1em; padding-left: 2em; }
+			        ul { list-style-type: disc; }
+			        ol { list-style-type: decimal; }
+			        li { padding-left: 4px; }
+
+			        blockquote {
+			            border-left: 4px solid #cbd5e1;
+			            padding-left: 1em;
+			            margin: 1.5em 0;
+			            color: #64748b;
+			            font-style: italic;
+			            background: #f8fafc;
+			            padding: 16px;
+			            border-radius: 0 8px 8px 0;
+			        }
+
+			        code {
+			            font-family: 'Courier New', monospace;
+			            background: #f1f5f9;
+			            padding: 2px 5px;
+			            border-radius: 4px;
+			            font-size: 0.9em;
+			            color: #ef4444;
+			        }
+
+			        pre {
+			            background: #f8fafc;
+			            padding: 16px;
+			            border-radius: 8px;
+			            overflow-x: auto;
+			            margin: 1.5em 0;
+			            border: 1px solid #e2e8f0;
+			        }
+
+			        pre code {
+			            background: transparent;
+			            color: inherit;
+			            padding: 0;
+			        }
+
+			        table {
+			            width: 100%;
+			            border-collapse: collapse;
+			            margin: 1.5em 0;
+			            font-size: 0.95em;
+			        }
+
+			        th, td {
+			            border: 1px solid #cbd5e1;
+			            padding: 10px;
+			        }
+
+			        th {
+			            background-color: #f1f5f9;
+			            font-weight: 600;
+			        }
+
+			        img {
+			            max-width: 100%;
+			            border-radius: 8px;
+			            margin: 1em auto;
+			            display: block;
+			        }
+
+			        a {
+			            color: #4f46e5;
+			            text-decoration: underline;
+			            transition: color 0.2s;
+			        }
+
+			        a:hover {
+			            color: #6366f1;
+			        }
+
+			        svg {
+			            max-width: 100%;
+			            height: auto;
+			        }
+			    </style>
+			</head>
+			<body>
+			    <div class="markdown-preview">
+			        ${content}
+			    </div>
+			</body>
+			</html>`;
+
+			            const blob = new Blob([htmlTemplate], { type: 'text/html;charset=utf-8' });
+			            const url = URL.createObjectURL(blob);
+			            const link = document.createElement("a");
+			            link.href = url;
+
+			            let filename = 'Document.html';
+			            const h1 = element.querySelector('h1');
+			            if (h1 && h1.innerText) {
+			                filename = h1.innerText.trim() + '.html';
+			            }
+
+			            link.download = filename;
+			            document.body.appendChild(link);
+			            link.click();
+			            document.body.removeChild(link);
+			            URL.revokeObjectURL(url);
+
+			            showToast("HTML 导出成功");
+			        }
+
+			        // --- 核心：导出 Word 逻辑 (净化版 + 列表重构 + 动态页面设置) ---
+			        async function exportToWord() {
+			            showToast("正在处理图表...");
+
+			            const clone = preview.cloneNode(true);
+
+			            // 0. 处理 Mermaid 图表：查找所有 SVG（Mermaid 生成的）
+			            const mermaidSvgs = preview.querySelectorAll('svg[id^="mermaid-"]');
+			            console.log('找到 Mermaid 图表数量:', mermaidSvgs.length);
+
+			            for (let i = 0; i < mermaidSvgs.length; i++) {
+			                const svg = mermaidSvgs[i];
+
+			                try {
+			                    console.log(`开始处理图表 ${i}, ID:`, svg.id);
+
+			                    // 创建一个临时容器包裹 SVG (放在屏幕外底部，避免用户看到)
+			                    const tempContainer = document.createElement('div');
+			                    tempContainer.style.cssText = 'position: absolute; left: 0; top: -10000px; display: inline-block; background: white; padding: 0; margin: 0;';
+			                    const svgClone = svg.cloneNode(true);
+			                    tempContainer.appendChild(svgClone);
+			                    document.body.appendChild(tempContainer);
+
+			                    // 使用 html2canvas 截图
+			                    const canvas = await html2canvas(tempContainer, {
+			                        scale: 3, // 提高到 3 倍，提升图片质量
+			                        backgroundColor: null, // 透明背景
+			                        logging: false,
+			                        useCORS: true,
+			                        allowTaint: true,
+			                        imageTimeout: 0,
+			                        removeContainer: false
+			                    });
+
+			                    // 移除临时容器
+			                    document.body.removeChild(tempContainer);
+
+			                    console.log(`图表 ${i} Canvas 生成成功:`, canvas.width, 'x', canvas.height);
+
+			                    // 裁剪掉多余的空白边距
+			                    const ctx = canvas.getContext('2d');
+			                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			                    const pixels = imageData.data;
+
+			                    // 查找实际内容的边界
+			                    let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+			                    for (let y = 0; y < canvas.height; y++) {
+			                        for (let x = 0; x < canvas.width; x++) {
+			                            const i = (y * canvas.width + x) * 4;
+			                            const alpha = pixels[i + 3];
+			                            if (alpha > 0) {
+			                                if (x < minX) minX = x;
+			                                if (x > maxX) maxX = x;
+			                                if (y < minY) minY = y;
+			                                if (y > maxY) maxY = y;
+			                            }
+			                        }
+			                    }
+
+			                    // 添加一点内边距
+			                    const padding = 10;
+			                    minX = Math.max(0, minX - padding);
+			                    minY = Math.max(0, minY - padding);
+			                    maxX = Math.min(canvas.width, maxX + padding);
+			                    maxY = Math.min(canvas.height, maxY + padding);
+
+			                    // 创建裁剪后的 canvas
+			                    const croppedWidth = maxX - minX;
+			                    const croppedHeight = maxY - minY;
+			                    const croppedCanvas = document.createElement('canvas');
+			                    croppedCanvas.width = croppedWidth;
+			                    croppedCanvas.height = croppedHeight;
+			                    const croppedCtx = croppedCanvas.getContext('2d');
+
+			                    // 填充白色背景
+			                    croppedCtx.fillStyle = '#ffffff';
+			                    croppedCtx.fillRect(0, 0, croppedWidth, croppedHeight);
+
+			                    // 绘制裁剪后的内容
+			                    croppedCtx.drawImage(canvas, minX, minY, croppedWidth, croppedHeight, 0, 0, croppedWidth, croppedHeight);
+
+			                    // 转换为 PNG Base64 (质量设为 1.0 最高质量)
+			                    const imgDataUrl = croppedCanvas.toDataURL('image/png', 1.0);
+			                    console.log(`图表 ${i} 转换为图片，裁剪后尺寸: ${croppedWidth}x${croppedHeight}`);
+
+			                    // 在 clone 中找到对应的 SVG 并替换
+			                    const cloneSvg = clone.querySelector(`#${svg.id}`);
+			                    if (cloneSvg) {
+			                        const img = document.createElement('img');
+			                        img.src = imgDataUrl;
+			                        img.style.cssText = 'width: 500px; height: auto; display: block; margin: 1em auto; border: none;';
+
+			                        cloneSvg.parentNode.replaceChild(img, cloneSvg);
+			                        console.log(`图表 ${i} 替换成功`);
+			                    }
+			                } catch (e) {
+			                    console.error(`Mermaid 图表 ${i} 转换失败:`, e);
+			                    showToast(`图表 ${i} 转换失败: ${e.message}`);
+			                }
+			            }
+
+			            // 1. Emoji 清除 (更完整的范围)
+			            const emojiRegex = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{3030}\u{303D}\u{3297}\u{3299}\u{200D}\u{FE0F}\u{20E3}\u{E0020}-\u{E007F}]|[\u{D83C}-\u{DBFF}][\u{DC00}-\u{DFFF}]|[\u{2194}-\u{21AA}]|[\u{231A}-\u{231B}]|[\u{23E9}-\u{23F3}]|[\u{23F8}-\u{23FA}]|[\u{25AA}-\u{25AB}]|[\u{25B6}]|[\u{25C0}]|[\u{25FB}-\u{25FE}]|[\u{2614}-\u{2615}]|[\u{2648}-\u{2653}]|[\u{267F}]|[\u{2693}]|[\u{26A1}]|[\u{26AA}-\u{26AB}]|[\u{26BD}-\u{26BE}]|[\u{26C4}-\u{26C5}]|[\u{26CE}]|[\u{26D4}]|[\u{26EA}]|[\u{26F2}-\u{26F3}]|[\u{26F5}]|[\u{26FA}]|[\u{26FD}]|[\u{2702}]|[\u{2705}]|[\u{2708}-\u{270D}]|[\u{270F}]|[\u{2712}]|[\u{2714}]|[\u{2716}]|[\u{271D}]|[\u{2721}]|[\u{2728}]|[\u{2733}-\u{2734}]|[\u{2744}]|[\u{2747}]|[\u{274C}]|[\u{274E}]|[\u{2753}-\u{2755}]|[\u{2757}]|[\u{2763}-\u{2764}]|[\u{2795}-\u{2797}]|[\u{27A1}]|[\u{27B0}]|[\u{27BF}]|[\u{2934}-\u{2935}]|[\u{2B05}-\u{2B07}]|[\u{2B1B}-\u{2B1C}]|[\u{00A9}]|[\u{00AE}]|[\u{203C}]|[\u{2049}]|[\u{2122}]|[\u{2139}]|[\u{2328}]|[\u{23CF}]|[\u{24C2}]|[\u{25AA}]|[\u{25AB}]|[\u{25B6}]|[\u{25C0}]|[\u{2934}]|[\u{2935}]|✅|❌|⭐|✨|💡|📌|📝|🔥|🎉|🚀|👍|👎|❤️|💯|⚡|🔗|📎|✔️|❎|⚠️|🔴|🟢|🟡|🔵|⚪|⚫|🟠|🟣|🟤/gu;
+			            const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT, null, false);
+			            let node;
+			            while(node = walker.nextNode()) {
+			                node.nodeValue = node.nodeValue.replace(emojiRegex, '');
+			            }
+
+			            // 2. 处理链接：保留为蓝色超链接
+			            const links = clone.querySelectorAll('a');
+			            links.forEach(link => {
+			                link.style.color = '#0563c1';
+			                link.style.textDecoration = 'underline';
+			            });
+
+			            // 3. 移除 HR 标签
+			            const hrs = clone.querySelectorAll('hr');
+			            hrs.forEach(hr => hr.remove());
+
+			            // 4. 列表重构 (同之前逻辑)
+			            const lists = clone.querySelectorAll('ul, ol');
+			            lists.forEach(list => {
+			                const isOrdered = list.tagName === 'OL';
+			                const items = list.querySelectorAll('li');
+			                const fragment = document.createDocumentFragment();
+			                items.forEach((item, index) => {
+			                    const p = document.createElement('p');
+			                    p.style.cssText = "margin: 0 0 4pt 2em; text-indent: -1.2em; text-align: left;";
+			                    const bullet = document.createElement('span');
+			                    bullet.textContent = isOrdered ? `${index + 1}. ` : "• ";
+			                    bullet.style.cssText = "font-family: Arial; font-weight: bold; margin-right: 4px;";
+			                    const content = document.createElement('span');
+			                    content.innerHTML = item.innerHTML;
+			                    p.appendChild(bullet);
+			                    p.appendChild(content);
+			                    fragment.appendChild(p);
+			                });
+			                list.parentNode.replaceChild(fragment, list);
+			            });
+
+			            const content = clone.innerHTML;
+			            if (!content.trim()) return showToast('没有内容可导出');
+
+			            const ptSize = parseFloat(state.size);
+			            const sizes = {
+			                h1: (ptSize * 2.2).toFixed(1),
+			                h2: (ptSize * 1.6).toFixed(1),
+			                h3: (ptSize * 1.3).toFixed(1)
+			            };
+
+			            const fontNameMap = {
+			                'SimSun': '宋体', 'FangSong': '仿宋', 'KaiTi': '楷体',
+			                'SimHei': '黑体', 'Microsoft YaHei': '微软雅黑'
+			            };
+			            const fontName = fontNameMap[state.bodyFont] || '仿宋'; // 默认仿宋
+			            const headingFontName = fontNameMap[state.headingFont] || '宋体'; // 默认宋体
+
+			            // 动态页面配置
+			            const paper = paperSizes[state.paperSize] || paperSizes['A4'];
+			            let pageWidth = paper.width / 10; // mm to cm
+			            let pageHeight = paper.height / 10;
+			            let pageMargin = "2.54cm 2.54cm 2.54cm 2.54cm";
+			            let pageOrientation = "portrait";
+
+			            if (state.exportOrientation === 'landscape') {
+			                // 宽高对调
+			                [pageWidth, pageHeight] = [pageHeight, pageWidth];
+			                pageOrientation = "landscape";
+			            }
+
+			            if (state.exportMargin === 'narrow') {
+			                pageMargin = "1.27cm 1.27cm 1.27cm 1.27cm";
+			            }
+
+			            const pageSize = `${pageWidth}cm ${pageHeight}cm`;
+
+			            // 净化样式
+			            const wordStyles = `
+			                <style>
+			                    /* 动态注入页面设置 */
+			                    @page {
+			                        size: ${pageSize};
+			                        margin: ${pageMargin};
+			                        mso-page-orientation: ${pageOrientation};
+			                    }
+
+			                    body { font-family: '${fontName}', serif; font-size: ${state.size}pt; color: #000000; line-height: 1.5; }
+			                    h1, h2, h3, h4 {
+			                        font-family: '${headingFontName}', sans-serif; font-weight: bold;
+			                        background: none !important; border: none !important; padding: 0 !important;
+			                        color: #000000 !important;
+			                    }
+			                    h1 { font-size: ${sizes.h1}pt; text-align: center; margin: 24pt 0 20pt 0; }
+			                    h2 { font-size: ${sizes.h2}pt; margin: 20pt 0 14pt 0; }
+			                    h3 { font-size: ${sizes.h3}pt; margin: 16pt 0 10pt 0; }
+			                    hr { display: none; }
+			                    p { margin: 0 0 8pt 0; text-indent: 2em; text-align: left; }
+
+			                    /* 列表样式 (虽然已经被JS重构，但保留基础以防万一) */
+			                    ul { list-style-type: none !important; padding-left: 2em; margin-left: 0; }
+			                    li { margin-bottom: 2pt; }
+
+			                    blockquote { font-family: '楷体'; border-left: 3pt solid #cbd5e1; padding: 5pt 10pt; background: none; margin-left: 20pt; color: #64748b; }
+			                    table { border-collapse: collapse; width: 100%; margin: 12pt auto; border: 1px solid #000; }
+			                    td, th { border: 1px solid #000; padding: 6pt; }
+			                    th { font-weight: bold; background-color: #f1f5f9; text-align: center; }
+			                    code { font-family: 'Courier New', monospace; background-color: #f1f5f9; padding: 2pt 4pt; }
+			                    pre { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 10pt; font-family: 'Courier New', monospace; }
+			                </style>
+			            `;
+
+			            // [核心修复] 注入 Office XML 强制 Layout
+			            const preHtml = `
+			                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+			                <head>
+			                    <meta charset='utf-8'><title>Document</title>
+			                    <!--[if gte mso 9]>
+			                    <xml>
+			                    <w:WordDocument>
+			                    <w:View>Print</w:View>
+			                    <w:Zoom>100</w:Zoom>
+			                    <w:DoNotOptimizeForBrowser/>
+			                    </w:WordDocument>
+			                    </xml>
+			                    <![endif]-->
+			                    ${wordStyles}
+			                </head><body>
+			            `;
+			            const postHtml = `</body></html>`;
+
+			            const blob = new Blob(['\ufeff', preHtml + content + postHtml], { type: 'application/msword;charset=utf-8' });
+			            const url = URL.createObjectURL(blob);
+			            const link = document.createElement("a");
+			            link.href = url;
+			            let filename = 'Document.doc';
+			            const h1 = preview.querySelector('h1');
+			            if(h1 && h1.innerText) filename = h1.innerText.trim() + '.doc';
+			            link.download = filename;
+			            document.body.appendChild(link);
+			            link.click();
+			            document.body.removeChild(link);
+			            showToast("Word 文档导出成功");
+			        }
+		</script>
+	</body>
+</html>
