@@ -389,6 +389,237 @@
 				background: linear-gradient(to right, #4f46e5, #6366f1);
 				color: white;
 			}
+
+			/* 自定义下拉组件样式 */
+			.custom-select {
+				position: relative;
+				display: inline-block;
+			}
+
+			.custom-select-trigger {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 8px 12px;
+				background: white;
+				border: 1px solid #d1d5db;
+				border-radius: 6px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				font-size: 13px;
+				min-width: 120px;
+				max-width: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				box-sizing: border-box;
+			}
+
+			.custom-select-trigger:hover {
+				border-color: #6366f1;
+				background-color: #f8fafc;
+			}
+
+			.custom-select-trigger.active {
+				border-color: #6366f1;
+				box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+			}
+
+			.custom-select-arrow {
+				transition: transform 0.2s ease;
+				color: #6b7280;
+				margin-left: 8px;
+				flex-shrink: 0;
+			}
+
+			.custom-select-trigger.active .custom-select-arrow {
+				transform: rotate(180deg);
+			}
+
+			.custom-select-dropdown {
+				position: absolute;
+				top: calc(100% + 4px);
+				left: 0;
+				right: 0;
+				background: white;
+				border: 1px solid #e5e7eb;
+				border-radius: 8px;
+				box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+				z-index: 1000;
+				max-height: 200px;
+				overflow-y: auto;
+				opacity: 0;
+				visibility: hidden;
+				transform: translateY(-10px);
+				transition: all 0.2s ease;
+			}
+
+			.custom-select-dropdown.show {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			.custom-select-option {
+				padding: 8px 12px;
+				cursor: pointer;
+				transition: all 0.15s ease;
+				font-size: 13px;
+				border-bottom: 1px solid #f3f4f6;
+				white-space: nowrap;
+			}
+
+			.custom-select-option:first-child {
+				border-radius: 8px 8px 0 0;
+			}
+
+			.custom-select-option:last-child {
+				border-bottom: none;
+				border-radius: 0 0 8px 8px;
+			}
+
+			.custom-select-option:only-child {
+				border-radius: 8px;
+			}
+
+			.custom-select-option:hover {
+				background: #f8fafc;
+				color: #6366f1;
+			}
+
+			.custom-select-option.selected {
+				background: #6366f1;
+				color: white;
+				font-weight: 500;
+			}
+
+			.custom-select-option.selected:hover {
+				background: #4f46e5;
+			}
+
+			/* 深色模式 */
+			.dark .custom-select-trigger {
+				background: #1e293b;
+				border-color: #475569;
+				color: #e2e8f0;
+			}
+
+			.dark .custom-select-trigger:hover {
+				background: #334155;
+				border-color: #6366f1;
+			}
+
+			.dark .custom-select-dropdown {
+				background: #1e293b;
+				border-color: #475569;
+			}
+
+			.dark .custom-select-option {
+				color: #e2e8f0;
+				border-color: #334155;
+			}
+
+			.dark .custom-select-option:hover {
+				background: #334155;
+				color: #818cf8;
+			}
+
+			.dark .custom-select-option.selected {
+				background: #4f46e5;
+				color: white;
+			}
+
+			.dark .custom-select-option.selected:hover {
+				background: #6366f1;
+			}
+
+			.dark .custom-select-arrow {
+				color: #94a3b8;
+			}
+
+			/* 滚动条样式 */
+			.custom-select-dropdown::-webkit-scrollbar {
+				width: 4px;
+			}
+
+			.custom-select-dropdown::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			.custom-select-dropdown::-webkit-scrollbar-thumb {
+				background: #cbd5e1;
+				border-radius: 2px;
+			}
+
+			.dark .custom-select-dropdown::-webkit-scrollbar-thumb {
+				background: #475569;
+			}
+
+			/* 修复文本溢出和对齐问题 */
+			.custom-select-trigger span {
+				flex: 1;
+				text-align: left;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: calc(100% - 24px); /* 为箭头留出空间 */
+			}
+
+			/* 确保下拉框在设置面板中正确显示 */
+			#settings-panel .custom-select-dropdown {
+				z-index: 1001;
+			}
+
+			/* 防止横向滚动条 */
+			.custom-select-dropdown {
+				min-width: 100%;
+				width: max-content;
+				max-width: 300px; /* 限制最大宽度 */
+				box-sizing: border-box;
+			}
+
+			/* 确保所有自定义选择框不会超出容器 */
+			.custom-select {
+				max-width: 100%;
+				box-sizing: border-box;
+			}
+
+
+
+			/* 顶部纸张选择框特殊样式 - 增加宽度避免省略号 */
+			#paper-select-custom .custom-select-trigger {
+				min-width: 160px;
+				width: 160px;
+			}
+
+			#paper-select-custom .custom-select-dropdown {
+				min-width: 160px;
+				width: 160px;
+			}
+
+			/* 响应式调整 */
+			@media (max-width: 768px) {
+				.custom-select-trigger {
+					min-width: 100px;
+					font-size: 12px;
+				}
+				
+				.custom-select-option {
+					padding: 10px 12px;
+					font-size: 12px;
+				}
+
+				/* 移动端时适当缩小顶部纸张选择框 */
+				#paper-select-custom .custom-select-trigger {
+					min-width: 140px;
+					width: 140px;
+				}
+
+				#paper-select-custom .custom-select-dropdown {
+					min-width: 140px;
+					width: 140px;
+				}
+			}
 		</style>
 	</head>
 	<body
@@ -424,18 +655,20 @@
 					<span class="text-xs text-slate-500 dark:text-slate-400 px-2"
 						><i class="fa-solid fa-file-lines mr-1"></i>纸张</span
 					>
-					<select
-						id="paper-select"
-						onchange="setPaperSize(this.value)"
-						class="text-xs bg-white dark:bg-slate-700 border-0 rounded-md px-2 py-1.5 text-slate-800 dark:text-white outline-none cursor-pointer"
-					>
-						<option value="A4" selected>A4 (210×297mm)</option>
-						<option value="A3">A3 (297×420mm)</option>
-						<option value="B5">B5 (176×250mm)</option>
-						<option value="Letter">Letter (216×279mm)</option>
-						<option value="Legal">Legal (216×356mm)</option>
-						<option value="16K">16K (185×260mm)</option>
-					</select>
+					<div class="custom-select" id="paper-select-custom">
+						<div class="custom-select-trigger text-xs" onclick="toggleCustomSelect('paper-select-custom')">
+							<span id="paper-select-text">A4 (210×297mm)</span>
+							<i class="fa-solid fa-chevron-down custom-select-arrow"></i>
+						</div>
+						<div class="custom-select-dropdown">
+							<div class="custom-select-option selected" data-value="A4" onclick="selectCustomOption('paper-select-custom', 'A4', 'A4 (210×297mm)')">A4 (210×297mm)</div>
+							<div class="custom-select-option" data-value="A3" onclick="selectCustomOption('paper-select-custom', 'A3', 'A3 (297×420mm)')">A3 (297×420mm)</div>
+							<div class="custom-select-option" data-value="B5" onclick="selectCustomOption('paper-select-custom', 'B5', 'B5 (176×250mm)')">B5 (176×250mm)</div>
+							<div class="custom-select-option" data-value="Letter" onclick="selectCustomOption('paper-select-custom', 'Letter', 'Letter (216×279mm)')">Letter (216×279mm)</div>
+							<div class="custom-select-option" data-value="Legal" onclick="selectCustomOption('paper-select-custom', 'Legal', 'Legal (216×356mm)')">Legal (216×356mm)</div>
+							<div class="custom-select-option" data-value="16K" onclick="selectCustomOption('paper-select-custom', '16K', '16K (185×260mm)')">16K (185×260mm)</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="h-6 w-px bg-gray-300 dark:bg-slate-700 mx-2"></div>
@@ -561,18 +794,20 @@
 					>
 					<div class="flex items-center justify-between mb-2">
 						<span class="text-xs text-gray-600 dark:text-slate-400">纸张大小</span>
-						<select
-							id="paper-select-panel"
-							onchange="setPaperSize(this.value)"
-							class="text-xs border-gray-300 rounded shadow-sm border p-1 w-32 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
-						>
-							<option value="A4" selected>A4 (210×297)</option>
-							<option value="A3">A3 (297×420)</option>
-							<option value="B5">B5 (176×250)</option>
-							<option value="Letter">Letter</option>
-							<option value="Legal">Legal</option>
-							<option value="16K">16K (185×260)</option>
-						</select>
+						<div class="custom-select" id="paper-select-panel-custom" style="width: 128px;">
+							<div class="custom-select-trigger text-xs" onclick="toggleCustomSelect('paper-select-panel-custom')">
+								<span id="paper-select-panel-text">A4 (210×297)</span>
+								<i class="fa-solid fa-chevron-down custom-select-arrow"></i>
+							</div>
+							<div class="custom-select-dropdown">
+								<div class="custom-select-option selected" data-value="A4" onclick="selectCustomOption('paper-select-panel-custom', 'A4', 'A4 (210×297)')">A4 (210×297)</div>
+								<div class="custom-select-option" data-value="A3" onclick="selectCustomOption('paper-select-panel-custom', 'A3', 'A3 (297×420)')">A3 (297×420)</div>
+								<div class="custom-select-option" data-value="B5" onclick="selectCustomOption('paper-select-panel-custom', 'B5', 'B5 (176×250)')">B5 (176×250)</div>
+								<div class="custom-select-option" data-value="Letter" onclick="selectCustomOption('paper-select-panel-custom', 'Letter', 'Letter')">Letter</div>
+								<div class="custom-select-option" data-value="Legal" onclick="selectCustomOption('paper-select-panel-custom', 'Legal', 'Legal')">Legal</div>
+								<div class="custom-select-option" data-value="16K" onclick="selectCustomOption('paper-select-panel-custom', '16K', '16K (185×260)')">16K (185×260)</div>
+							</div>
+						</div>
 					</div>
 					<div class="grid grid-cols-2 gap-2 mb-2">
 						<button
@@ -590,15 +825,26 @@
 							<i class="fa-regular fa-file-image"></i> 横向 (更宽)
 						</button>
 					</div>
-					<div class="flex items-center justify-between">
-						<span class="text-xs text-gray-600 dark:text-slate-400">页边距</span>
-						<select
-							onchange="setConfig('margin', this.value)"
-							class="text-xs border-gray-300 rounded shadow-sm border p-1 w-24 bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+					<div>
+						<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
+							>页边距</label
 						>
-							<option value="normal" selected>标准</option>
-							<option value="narrow">窄 (更多空间)</option>
-						</select>
+						<div class="grid grid-cols-2 gap-2">
+							<button
+								onclick="setConfig('margin', 'normal')"
+								id="btn-margin-normal"
+								class="margin-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50"
+							>
+								标准 (2.54cm)
+							</button>
+							<button
+								onclick="setConfig('margin', 'narrow')"
+								id="btn-margin-narrow"
+								class="margin-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+							>
+								窄 (1.27cm)
+							</button>
+						</div>
 					</div>
 				</div>
 
@@ -639,15 +885,36 @@
 					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
 						>标题风格</label
 					>
-					<select
-						id="heading-font-select"
-						onchange="setConfig('headingFont', this.value)"
-						class="w-full text-xs p-2 rounded border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500/50"
-					>
-						<option value="SimSun" selected>宋体 (仿小标宋)</option>
-						<option value="SimHei">黑体 (常规)</option>
-						<option value="Microsoft YaHei">微软雅黑 (现代)</option>
-					</select>
+					<div class="grid grid-cols-2 gap-2">
+						<button
+							onclick="setConfig('headingFont', 'SimSun')"
+							id="btn-heading-SimSun"
+							class="heading-font-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50"
+						>
+							宋体 (仿小标宋)
+						</button>
+						<button
+							onclick="setConfig('headingFont', 'SimHei')"
+							id="btn-heading-SimHei"
+							class="heading-font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							黑体 (常规)
+						</button>
+						<button
+							onclick="setConfig('headingFont', 'KaiTi')"
+							id="btn-heading-KaiTi"
+							class="heading-font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							楷体 (优雅)
+						</button>
+						<button
+							onclick="setConfig('headingFont', 'Microsoft YaHei')"
+							id="btn-heading-MicrosoftYaHei"
+							class="heading-font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300"
+						>
+							微软雅黑 (现代)
+						</button>
+					</div>
 				</div>
 
 				<div>
@@ -674,23 +941,100 @@
 					<label class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block"
 						>主题色 (标题)</label
 					>
-					<div class="flex gap-2">
-						<button
-							onclick="setConfig('color', '#000000')"
-							class="w-6 h-6 rounded-full bg-black border border-gray-200 shadow-sm hover:scale-110 transition-transform"
-						></button>
-						<button
-							onclick="setConfig('color', '#1e3a8a')"
-							class="w-6 h-6 rounded-full bg-blue-900 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
-						></button>
-						<button
-							onclick="setConfig('color', '#b91c1c')"
-							class="w-6 h-6 rounded-full bg-red-700 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
-						></button>
-						<button
-							onclick="setConfig('color', '#0f766e')"
-							class="w-6 h-6 rounded-full bg-teal-700 border border-gray-200 shadow-sm hover:scale-110 transition-transform"
-						></button>
+					<div class="space-y-3">
+						<!-- 预设颜色 -->
+						<div class="grid grid-cols-6 gap-2">
+							<button
+								onclick="setConfig('color', '#000000')"
+								class="color-btn w-6 h-6 rounded-full bg-black border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#000000"
+								title="经典黑"
+							></button>
+							<button
+								onclick="setConfig('color', '#1e3a8a')"
+								class="color-btn w-6 h-6 rounded-full bg-blue-900 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#1e3a8a"
+								title="深蓝"
+							></button>
+							<button
+								onclick="setConfig('color', '#b91c1c')"
+								class="color-btn w-6 h-6 rounded-full bg-red-700 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#b91c1c"
+								title="深红"
+							></button>
+							<button
+								onclick="setConfig('color', '#0f766e')"
+								class="color-btn w-6 h-6 rounded-full bg-teal-700 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#0f766e"
+								title="青绿"
+							></button>
+							<button
+								onclick="setConfig('color', '#7c2d12')"
+								class="color-btn w-6 h-6 rounded-full bg-orange-900 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#7c2d12"
+								title="深橙"
+							></button>
+							<button
+								onclick="setConfig('color', '#581c87')"
+								class="color-btn w-6 h-6 rounded-full bg-purple-900 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#581c87"
+								title="深紫"
+							></button>
+						</div>
+						<div class="grid grid-cols-6 gap-2">
+							<button
+								onclick="setConfig('color', '#374151')"
+								class="color-btn w-6 h-6 rounded-full bg-gray-700 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#374151"
+								title="深灰"
+							></button>
+							<button
+								onclick="setConfig('color', '#1d4ed8')"
+								class="color-btn w-6 h-6 rounded-full bg-blue-700 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#1d4ed8"
+								title="标准蓝"
+							></button>
+							<button
+								onclick="setConfig('color', '#dc2626')"
+								class="color-btn w-6 h-6 rounded-full bg-red-600 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#dc2626"
+								title="标准红"
+							></button>
+							<button
+								onclick="setConfig('color', '#059669')"
+								class="color-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#059669"
+								title="翠绿"
+							></button>
+							<button
+								onclick="setConfig('color', '#d97706')"
+								class="color-btn w-6 h-6 rounded-full bg-amber-600 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#d97706"
+								title="琥珀"
+							></button>
+							<button
+								onclick="setConfig('color', '#7c3aed')"
+								class="color-btn w-6 h-6 rounded-full bg-violet-600 border-2 border-gray-200 shadow-sm hover:scale-110 transition-transform"
+								data-color="#7c3aed"
+								title="紫罗兰"
+							></button>
+						</div>
+						
+						<!-- 自定义颜色选择器 -->
+						<div class="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
+							<label class="text-xs text-slate-500 dark:text-slate-400">自定义:</label>
+							<div class="relative">
+								<input
+									type="color"
+									id="custom-color-picker"
+									value="#000000"
+									class="w-8 h-6 rounded border border-gray-300 dark:border-slate-600 cursor-pointer bg-transparent"
+									onchange="setConfig('color', this.value)"
+									title="选择自定义颜色"
+								/>
+							</div>
+							<span class="text-xs text-slate-400 dark:text-slate-500" id="color-value-display">#000000</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -795,7 +1139,8 @@ graph LR
 			            paperSize: 'A4', // A4 | A3 | B5 | Letter | Legal | 16K
 			            // 新增导出配置
 			            exportOrientation: 'portrait', // portrait | landscape
-			            exportMargin: 'normal'         // normal | narrow
+			            exportMargin: 'normal',        // normal | narrow
+			            margin: 'normal'               // 页边距设置
 			        };
 
 			        // 纸张尺寸配置 (宽 x 高，单位 mm)
@@ -889,20 +1234,70 @@ graph LR
 			            if (key === 'bodyFont') root.style.setProperty('--md-font-body', fontMap[value]);
 			            if (key === 'headingFont') root.style.setProperty('--md-font-heading', fontMap[value]);
 			            if (key === 'size') root.style.setProperty('--md-size', value + 'px');
-			            if (key === 'color') root.style.setProperty('--md-color', value);
+			            if (key === 'color') {
+			                root.style.setProperty('--md-color', value);
+			                // 更新颜色选择器和显示
+			                const colorPicker = document.getElementById('custom-color-picker');
+			                const colorDisplay = document.getElementById('color-value-display');
+			                if (colorPicker) colorPicker.value = value;
+			                if (colorDisplay) colorDisplay.textContent = value.toUpperCase();
+			                
+			                // 更新预设颜色按钮的选中状态
+			                document.querySelectorAll('.color-btn').forEach(btn => {
+			                    const btnColor = btn.getAttribute('data-color');
+			                    if (btnColor === value) {
+			                        btn.style.borderColor = '#6366f1';
+			                        btn.style.borderWidth = '3px';
+			                        btn.style.transform = 'scale(1.1)';
+			                    } else {
+			                        btn.style.borderColor = '#d1d5db';
+			                        btn.style.borderWidth = '2px';
+			                        btn.style.transform = 'scale(1)';
+			                    }
+			                });
+			            }
 
-			            // UI 状态更新 (仅针对按钮组)
+			            // UI 状态更新 (针对按钮组)
+			            const activeClass = "text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50";
+			            const inactiveClass = "text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300";
+
 			            if (key === 'bodyFont') {
 			                document.querySelectorAll('.font-btn').forEach(btn => {
 			                    // 简单的 class 切换逻辑
 			                    if(btn.textContent.includes(value === 'FangSong' ? '仿宋' : (value === 'SimSun' ? '宋体' : value))) {
-			                       // 选中样式
-			                       btn.className = "font-btn text-xs p-2 rounded border border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500/50";
+			                       btn.className = "font-btn " + activeClass;
 			                    } else {
-			                       // 未选中样式
-			                       btn.className = "font-btn text-xs p-2 rounded border border-gray-200 hover:border-indigo-500 hover:text-indigo-600 transition-all bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300";
+			                       btn.className = "font-btn " + inactiveClass;
 			                    }
 			                });
+			            }
+
+			            if (key === 'headingFont') {
+			                document.querySelectorAll('.heading-font-btn').forEach(btn => {
+			                    const btnId = btn.id;
+			                    if ((value === 'SimSun' && btnId === 'btn-heading-SimSun') ||
+			                        (value === 'SimHei' && btnId === 'btn-heading-SimHei') ||
+			                        (value === 'KaiTi' && btnId === 'btn-heading-KaiTi') ||
+			                        (value === 'Microsoft YaHei' && btnId === 'btn-heading-MicrosoftYaHei')) {
+			                        btn.className = "heading-font-btn " + activeClass;
+			                    } else {
+			                        btn.className = "heading-font-btn " + inactiveClass;
+			                    }
+			                });
+			            }
+
+			            if (key === 'margin') {
+			                document.querySelectorAll('.margin-btn').forEach(btn => {
+			                    const btnId = btn.id;
+			                    if ((value === 'normal' && btnId === 'btn-margin-normal') ||
+			                        (value === 'narrow' && btnId === 'btn-margin-narrow')) {
+			                        btn.className = "margin-btn " + activeClass;
+			                    } else {
+			                        btn.className = "margin-btn " + inactiveClass;
+			                    }
+			                });
+			                // 同步到导出设置
+			                state.exportMargin = value;
 			            }
 
 			            // 导出布局设置 UI 反馈
@@ -930,9 +1325,33 @@ graph LR
 			                root.style.setProperty('--md-page-width', paper.width + 'mm');
 			                root.style.setProperty('--md-page-height', paper.height + 'mm');
 
-			                // 同步两个下拉框
-			                document.getElementById('paper-select').value = size;
-			                document.getElementById('paper-select-panel').value = size;
+			                // 同步自定义下拉框显示
+			                const paperOptions = {
+			                    'A4': 'A4 (210×297mm)',
+			                    'A3': 'A3 (297×420mm)', 
+			                    'B5': 'B5 (176×250mm)',
+			                    'Letter': 'Letter (216×279mm)',
+			                    'Legal': 'Legal (216×356mm)',
+			                    '16K': '16K (185×260mm)'
+			                };
+			                
+			                const headerText = document.getElementById('paper-select-text');
+			                const panelText = document.getElementById('paper-select-panel-text');
+			                
+			                if (headerText) headerText.textContent = paperOptions[size] || size;
+			                if (panelText) panelText.textContent = paperOptions[size]?.replace('mm)', ')') || size;
+			                
+			                // 更新选中状态
+			                ['paper-select-custom', 'paper-select-panel-custom'].forEach(selectId => {
+			                    const select = document.getElementById(selectId);
+			                    if (select) {
+			                        select.querySelectorAll('.custom-select-option').forEach(option => {
+			                            option.classList.remove('selected');
+			                        });
+			                        const targetOption = select.querySelector(`[data-value="${size}"]`);
+			                        if (targetOption) targetOption.classList.add('selected');
+			                    }
+			                });
 			            }
 			        }
 
@@ -1017,6 +1436,91 @@ graph LR
 			            el.classList.remove('-translate-y-20', 'opacity-0');
 			            setTimeout(() => el.classList.add('-translate-y-20', 'opacity-0'), 2500);
 			        }
+
+			        // 自定义下拉组件函数
+			        function toggleCustomSelect(selectId) {
+			            const select = document.getElementById(selectId);
+			            if (!select) return;
+			            
+			            const trigger = select.querySelector('.custom-select-trigger');
+			            const dropdown = select.querySelector('.custom-select-dropdown');
+			            
+			            const isCurrentlyOpen = dropdown.classList.contains('show');
+			            
+			            // 关闭所有下拉框
+			            document.querySelectorAll('.custom-select').forEach(otherSelect => {
+			                const otherTrigger = otherSelect.querySelector('.custom-select-trigger');
+			                const otherDropdown = otherSelect.querySelector('.custom-select-dropdown');
+			                otherTrigger.classList.remove('active');
+			                otherDropdown.classList.remove('show');
+			            });
+			            
+			            // 如果当前下拉框之前是关闭的，则打开它
+			            if (!isCurrentlyOpen) {
+			                trigger.classList.add('active');
+			                dropdown.classList.add('show');
+			            }
+			        }
+
+			        function selectCustomOption(selectId, value, text, configKey = null) {
+			            const select = document.getElementById(selectId);
+			            if (!select) return;
+			            
+			            const trigger = select.querySelector('.custom-select-trigger');
+			            const dropdown = select.querySelector('.custom-select-dropdown');
+			            const textElement = select.querySelector('.custom-select-trigger span');
+			            
+			            // 更新显示文本
+			            if (textElement) {
+			                textElement.textContent = text;
+			            }
+			            
+			            // 更新选中状态
+			            select.querySelectorAll('.custom-select-option').forEach(option => {
+			                option.classList.remove('selected');
+			            });
+			            const selectedOption = select.querySelector(`[data-value="${value}"]`);
+			            if (selectedOption) {
+			                selectedOption.classList.add('selected');
+			            }
+			            
+			            // 关闭下拉框
+			            trigger.classList.remove('active');
+			            dropdown.classList.remove('show');
+			            
+			            // 调用相应的处理函数
+			            if (selectId.includes('paper-select')) {
+			                setPaperSize(value);
+			            }
+			        }
+
+			        // 点击外部关闭下拉框
+			        document.addEventListener('click', (e) => {
+			            if (!e.target.closest('.custom-select')) {
+			                document.querySelectorAll('.custom-select').forEach(select => {
+			                    const trigger = select.querySelector('.custom-select-trigger');
+			                    const dropdown = select.querySelector('.custom-select-dropdown');
+			                    if (trigger && dropdown) {
+			                        trigger.classList.remove('active');
+			                        dropdown.classList.remove('show');
+			                    }
+			                });
+			            }
+			        });
+
+			        // 键盘支持
+			        document.addEventListener('keydown', (e) => {
+			            if (e.key === 'Escape') {
+			                document.querySelectorAll('.custom-select').forEach(select => {
+			                    const trigger = select.querySelector('.custom-select-trigger');
+			                    const dropdown = select.querySelector('.custom-select-dropdown');
+			                    if (trigger && dropdown) {
+			                        trigger.classList.remove('active');
+			                        dropdown.classList.remove('show');
+			                    }
+			                });
+			            }
+			        });
 
 			        // --- PDF 导出逻辑 (使用浏览器打印) ---
 			        function exportToPdf() {
