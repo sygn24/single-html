@@ -97,6 +97,42 @@
             -webkit-backdrop-filter: blur(20px);
         }
         .dark .glass { background: rgba(15, 23, 42, 0.8); }
+
+        .card-glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        .dark .card-glass {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .icon-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: inherit;
+            filter: blur(8px);
+            opacity: 0.4;
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        .icon-glow:hover::before {
+            opacity: 0.6;
+            filter: blur(12px);
+        }
         
         .text-gradient {
             background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 50%, #06b6d4 100%);
@@ -107,8 +143,42 @@
             animation: gradient 8s ease infinite;
         }
         
-        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-8px) scale(1.02); }
+        .card-hover {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+        }
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        .card-hover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card-hover:hover::after {
+            opacity: 1;
+        }
         
         .bg-blob {
             position: absolute;
@@ -268,135 +338,183 @@
                     <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">每一款应用都经过精心设计，为您提供极致的创作体验</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="apps-grid">
-                    
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="apps-grid">
+
                     <!-- Nova CV -->
-                    <a href="nova/index.html" target="_blank" class="group block reveal">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-primary-500 to-indigo-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-1 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-primary-500/30 group-hover:scale-110 transition-transform">
+                    <a href="nova/index.html" target="_blank" class="group block reveal h-full">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-1 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-blue-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-file-lines"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary-500 transition-colors">Nova CV</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">智能在线简历构建器，内置 Gemini AI 助手，10+ 款专业模版，一键导出高清 PDF。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 润色</span>
-                                    <span class="tag bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"><i class="fa-solid fa-palette mr-1"></i>10+ 模版</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-500">Nova CV</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">智能简历构建器，配备 Gemini AI 助手，12 款专业模版，一键生成精美 PDF</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold border border-blue-100 dark:border-blue-800">
+                                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI 智能润色
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold border border-purple-100 dark:border-purple-800">
+                                        <i class="fa-solid fa-layer-group mr-2"></i>12+ 精选模版
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-primary-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>开始制作</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-blue-500 font-bold text-lg group-hover:text-blue-600 transition-colors">立即开始</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </a>
-                    
+
                     <!-- AI 智能写真 -->
-                    <a href="photos/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.1s;">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-pink-500 to-rose-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-2 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-pink-500/30 group-hover:scale-110 transition-transform">
+                    <a href="photos/index.html" target="_blank" class="group block reveal h-full" style="animation-delay: 0.1s;">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-pink-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-2 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-pink-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-camera-retro"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-pink-500 transition-colors">AI 智能写真</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">专业级影像生成工作台，100+ 种风格选择，从职业肖像到艺术绘画，一键生成。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400"><i class="fa-solid fa-images mr-1"></i>100+ 风格</span>
-                                    <span class="tag bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"><i class="fa-solid fa-bolt mr-1"></i>即时生成</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-pink-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-pink-500 group-hover:to-rose-500">AI 智能写真</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">专业级影像生成工作台，100+ 种风格选择，从职业肖像到艺术绘画，一键生成</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/30 dark:to-rose-900/30 text-pink-600 dark:text-pink-400 rounded-full text-sm font-semibold border border-pink-100 dark:border-pink-800">
+                                        <i class="fa-solid fa-images mr-2"></i>100+ 艺术风格
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-semibold border border-orange-100 dark:border-orange-800">
+                                        <i class="fa-solid fa-bolt mr-2"></i>即时生成
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-pink-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>开始创作</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-pink-500 font-bold text-lg group-hover:text-pink-600 transition-colors">开始创作</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </a>
-                    
+
                     <!-- Bao 复古拍立得 -->
-                    <a href="camera/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.2s;">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-3 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+                    <a href="camera/index.html" target="_blank" class="group block reveal h-full" style="animation-delay: 0.2s;">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-3 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-emerald-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-camera"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-emerald-500 transition-colors">Bao 复古拍立得</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">AI 写真相机应用，多种胶片风格，支持 AI 风格转换，打造独特的复古照片墙。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-film mr-1"></i>胶片风格</span>
-                                    <span class="tag bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 写真馆</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-emerald-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-500">Bao 复古拍立得</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">AI 写真相机应用，多种胶片风格，支持 AI 风格转换，打造独特的复古照片墙</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 rounded-full text-sm font-semibold border border-emerald-100 dark:border-emerald-800">
+                                        <i class="fa-solid fa-film mr-2"></i>胶片风格
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 text-teal-600 dark:text-teal-400 rounded-full text-sm font-semibold border border-teal-100 dark:border-teal-800">
+                                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI 写真馆
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-emerald-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>开始拍摄</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-emerald-500 font-bold text-lg group-hover:text-emerald-600 transition-colors">开始拍摄</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </a>
-                    
+
                     <!-- MD 转 Word -->
-                    <a href="word/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.3s;">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-amber-500 to-orange-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-4 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
+                    <a href="word/index.html" target="_blank" class="group block reveal h-full" style="animation-delay: 0.3s;">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-4 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-amber-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-file-word"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-amber-500 transition-colors">MD 转 Word 工坊</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">专业的 Markdown 排版工具，支持 Mermaid 图表，多种字体与纸张，一键导出 Word/PDF。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"><i class="fa-brands fa-markdown mr-1"></i>Markdown</span>
-                                    <span class="tag bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"><i class="fa-solid fa-diagram-project mr-1"></i>Mermaid</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-amber-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-500">MD 转 Word 工坊</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">专业的 Markdown 排版工具，支持 Mermaid 图表，多种字体与纸张，一键导出 Word/PDF</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-600 dark:text-amber-400 rounded-full text-sm font-semibold border border-amber-100 dark:border-amber-800">
+                                        <i class="fa-brands fa-markdown mr-2"></i>Markdown
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-semibold border border-orange-100 dark:border-orange-800">
+                                        <i class="fa-solid fa-diagram-project mr-2"></i>Mermaid
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-amber-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>开始转换</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-amber-500 font-bold text-lg group-hover:text-amber-600 transition-colors">开始转换</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </a>
-                    
+
                     <!-- 圣诞树 3D -->
-                    <a href="tree/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.4s;">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-5 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
+                    <a href="tree/index.html" target="_blank" class="group block reveal h-full" style="animation-delay: 0.4s;">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-5 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-blue-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-tree"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">圣诞树 3D</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">沉浸式 3D 圣诞树体验，支持手势控制、照片上传，打造专属的冬日记忆宫殿。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"><i class="fa-solid fa-cube mr-1"></i>Three.js</span>
-                                    <span class="tag bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400"><i class="fa-solid fa-hand mr-1"></i>手势控制</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-cyan-500">圣诞树 3D</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">沉浸式 3D 圣诞树体验，支持手势控制、照片上传，打造专属的冬日记忆宫殿</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold border border-blue-100 dark:border-blue-800">
+                                        <i class="fa-solid fa-cube mr-2"></i>Three.js
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-cyan-50 to-sky-50 dark:from-cyan-900/30 dark:to-sky-900/30 text-cyan-600 dark:text-cyan-400 rounded-full text-sm font-semibold border border-cyan-100 dark:border-cyan-800">
+                                        <i class="fa-solid fa-hand mr-2"></i>手势控制
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-blue-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>进入体验</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-blue-500 font-bold text-lg group-hover:text-blue-600 transition-colors">进入体验</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </a>
-                    
+
                     <!-- 年度工作总结 -->
-                    <a href="ndzj/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.5s;">
-                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
-                            <div class="h-2 bg-gradient-to-r from-violet-500 to-purple-500"></div>
-                            <div class="p-8">
-                                <div class="w-16 h-16 rounded-2xl icon-gradient-6 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+                    <a href="ndzj/index.html" target="_blank" class="group block reveal h-full" style="animation-delay: 0.5s;">
+                        <div class="card-hover card-glass relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl h-full flex flex-col">
+                            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500"></div>
+                            <div class="p-9 relative flex-grow flex flex-col">
+                                <div class="absolute top-4 right-4 w-20 h-20 bg-violet-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+                                <div class="w-20 h-20 rounded-3xl icon-gradient-6 flex items-center justify-center text-white text-3xl mb-7 icon-glow shadow-2xl shadow-violet-500/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative">
                                     <i class="fa-solid fa-chart-line"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-violet-500 transition-colors">年度工作总结</h3>
-                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">精美的年度工作总结展示模板，时间线布局，数据可视化，支持深色/浅色模式。</p>
-                                <div class="flex flex-wrap gap-2 mb-6">
-                                    <span class="tag bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"><i class="fa-solid fa-timeline mr-1"></i>时间线</span>
-                                    <span class="tag bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"><i class="fa-solid fa-chart-pie mr-1"></i>数据可视化</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-violet-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-violet-500 group-hover:to-purple-500">年度工作总结</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">精美的年度工作总结展示模板，时间线布局，数据可视化，支持深色/浅色模式</p>
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 text-violet-600 dark:text-violet-400 rounded-full text-sm font-semibold border border-violet-100 dark:border-violet-800">
+                                        <i class="fa-solid fa-timeline mr-2"></i>时间线
+                                    </span>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold border border-purple-100 dark:border-purple-800">
+                                        <i class="fa-solid fa-chart-pie mr-2"></i>数据可视化
+                                    </span>
                                 </div>
-                                <div class="flex items-center text-violet-500 font-medium group-hover:gap-3 gap-2 transition-all">
-                                    <span>查看示例</span>
-                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="text-violet-500 font-bold text-lg group-hover:text-violet-600 transition-colors">查看示例</span>
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-12 transition-transform shadow-lg">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
