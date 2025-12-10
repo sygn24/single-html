@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 创意工坊 | 智能应用导航</title>
+    <meta name="description" content="探索AI驱动的创意工具集合 - 简历构建、智能写真、文档转换、3D互动体验">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6'/%3E%3Cstop offset='100%25' stop-color='%230ea5e9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='65' font-size='50' font-weight='bold' fill='white' text-anchor='middle' font-family='system-ui'%3EAI%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    
+    <script>
+        // 主题初始化 - 防止闪烁
+        (function() {
+            const theme = localStorage.getItem('ai-hub-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (theme === 'dark' || (!theme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+        
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 2s infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        gradient: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 50%, #06b6d4 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 8s ease infinite;
+        }
+        
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-8px) scale(1.02); }
+        
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .bg-grid {
+            background-size: 60px 60px;
+            background-image: 
+                linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+        }
+        .dark .bg-grid {
+            background-image: 
+                linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+        }
+        
+        .icon-gradient-1 { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+        .icon-gradient-2 { background: linear-gradient(135deg, #ec4899, #f43f5e); }
+        .icon-gradient-3 { background: linear-gradient(135deg, #10b981, #14b8a6); }
+        .icon-gradient-4 { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        .icon-gradient-5 { background: linear-gradient(135deg, #3b82f6, #0ea5e9); }
+        .icon-gradient-6 { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        .mermaid { display: flex; justify-content: center; margin: 2rem 0; }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans antialiased transition-colors duration-300">
+    
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="bg-grid absolute inset-0"></div>
+        <div class="bg-blob w-[600px] h-[600px] bg-blue-500/30 top-[-200px] left-[-200px] animate-float"></div>
+        <div class="bg-blob w-[500px] h-[500px] bg-cyan-500/20 top-[30%] right-[-150px] animate-float-delayed"></div>
+        <div class="bg-blob w-[400px] h-[400px] bg-sky-500/20 bottom-[-100px] left-[20%] animate-float"></div>
+    </div>
+    
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/50 dark:border-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="scrollToTop()">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                        AI
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-tight">
+                            <span class="text-slate-900 dark:text-white">创意</span>
+                            <span class="text-primary-500">工坊</span>
+                        </h1>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 -mt-0.5">AI Creative Hub</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#apps" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-colors">应用</a>
+                    <a href="#features" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-colors">特性</a>
+                    <a href="#architecture" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-colors">架构</a>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="切换主题">
+                        <i class="fa-solid fa-moon dark:hidden text-slate-600"></i>
+                        <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 主内容区 -->
+    <main class="relative z-10 pt-16">
+        
+        <!-- Hero 区域 -->
+        <section class="min-h-[90vh] flex flex-col items-center justify-center px-4 py-20">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 text-primary-600 dark:text-primary-400 text-sm font-medium mb-8 animate-fade-in">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                    </span>
+                    <i class="fa-solid fa-sparkles"></i>
+                    AI 驱动的创意工具集
+                </div>
+                
+                <h1 class="hero-title text-5xl md:text-7xl font-bold mb-6 animate-slide-up">
+                    <span class="text-slate-900 dark:text-white">探索</span>
+                    <span class="text-gradient">无限创意</span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.1s;">
+                    六款精心打造的 AI 应用，从简历构建到智能写真，
+                    <br class="hidden md:block">
+                    让创意触手可及
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="animation-delay: 0.2s;">
+                    <a href="#apps" class="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all hover:-translate-y-1">
+                        开始探索
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#architecture" class="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                        <i class="fa-solid fa-diagram-project"></i>
+                        查看架构
+                    </a>
+                </div>
+                
+                <div class="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-wrap justify-center gap-8 md:gap-16 animate-fade-in" style="animation-delay: 0.4s;">
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">6</div>
+                        <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">AI 应用</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">100%</div>
+                        <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">本地运行</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">∞</div>
+                        <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">创意可能</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 应用展示区域 -->
+        <section id="apps" class="py-24 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <span class="inline-block px-4 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm font-medium mb-4">
+                        <i class="fa-solid fa-rocket mr-2"></i>应用矩阵
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">精选 AI 应用</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">每一款应用都经过精心设计，为您提供极致的创作体验</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="apps-grid">
+                    
+                    <!-- Nova CV -->
+                    <a href="nova/index.html" target="_blank" class="group block reveal">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-primary-500 to-indigo-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-1 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-primary-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary-500 transition-colors">Nova CV</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">智能在线简历构建器，内置 Gemini AI 助手，10+ 款专业模版，一键导出高清 PDF。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 润色</span>
+                                    <span class="tag bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"><i class="fa-solid fa-palette mr-1"></i>10+ 模版</span>
+                                </div>
+                                <div class="flex items-center text-primary-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>开始制作</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- AI 智能写真 -->
+                    <a href="photos/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.1s;">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-pink-500 to-rose-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-2 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-pink-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-camera-retro"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-pink-500 transition-colors">AI 智能写真</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">专业级影像生成工作台，100+ 种风格选择，从职业肖像到艺术绘画，一键生成。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400"><i class="fa-solid fa-images mr-1"></i>100+ 风格</span>
+                                    <span class="tag bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"><i class="fa-solid fa-bolt mr-1"></i>即时生成</span>
+                                </div>
+                                <div class="flex items-center text-pink-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>开始创作</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- Bao 复古拍立得 -->
+                    <a href="camera/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.2s;">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-3 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-emerald-500 transition-colors">Bao 复古拍立得</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">AI 写真相机应用，多种胶片风格，支持 AI 风格转换，打造独特的复古照片墙。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-film mr-1"></i>胶片风格</span>
+                                    <span class="tag bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 写真馆</span>
+                                </div>
+                                <div class="flex items-center text-emerald-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>开始拍摄</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- MD 转 Word -->
+                    <a href="word/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.3s;">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-amber-500 to-orange-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-4 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-file-word"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-amber-500 transition-colors">MD 转 Word 工坊</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">专业的 Markdown 排版工具，支持 Mermaid 图表，多种字体与纸张，一键导出 Word/PDF。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"><i class="fa-brands fa-markdown mr-1"></i>Markdown</span>
+                                    <span class="tag bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"><i class="fa-solid fa-diagram-project mr-1"></i>Mermaid</span>
+                                </div>
+                                <div class="flex items-center text-amber-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>开始转换</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- 圣诞树 3D -->
+                    <a href="tree/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.4s;">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-5 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-tree"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">圣诞树 3D</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">沉浸式 3D 圣诞树体验，支持手势控制、照片上传，打造专属的冬日记忆宫殿。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"><i class="fa-solid fa-cube mr-1"></i>Three.js</span>
+                                    <span class="tag bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400"><i class="fa-solid fa-hand mr-1"></i>手势控制</span>
+                                </div>
+                                <div class="flex items-center text-blue-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>进入体验</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- 年度工作总结 -->
+                    <a href="ndzj/index.html" target="_blank" class="group block reveal" style="animation-delay: 0.5s;">
+                        <div class="card-hover relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-2xl">
+                            <div class="h-2 bg-gradient-to-r from-violet-500 to-purple-500"></div>
+                            <div class="p-8">
+                                <div class="w-16 h-16 rounded-2xl icon-gradient-6 flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-violet-500 transition-colors">年度工作总结</h3>
+                                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">精美的年度工作总结展示模板，时间线布局，数据可视化，支持深色/浅色模式。</p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="tag bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"><i class="fa-solid fa-timeline mr-1"></i>时间线</span>
+                                    <span class="tag bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"><i class="fa-solid fa-chart-pie mr-1"></i>数据可视化</span>
+                                </div>
+                                <div class="flex items-center text-violet-500 font-medium group-hover:gap-3 gap-2 transition-all">
+                                    <span>查看示例</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                </div>
+            </div>
+        </section>
+        
+        <!-- 特性区域 -->
+        <section id="features" class="py-24 px-4 bg-white/50 dark:bg-slate-900/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <span class="inline-block px-4 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+                        <i class="fa-solid fa-star mr-2"></i>核心特性
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">为什么选择我们？</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">每一个细节都经过精心打磨，只为给您最好的体验</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal">
+                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-500 text-2xl">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">极速响应</h3>
+                        <p class="text-slate-600 dark:text-slate-400">纯前端架构，无需后端服务器，毫秒级响应，流畅体验</p>
+                    </div>
+                    
+                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.1s;">
+                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500 text-2xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">隐私安全</h3>
+                        <p class="text-slate-600 dark:text-slate-400">所有数据本地存储，不上传任何信息，您的隐私由您掌控</p>
+                    </div>
+                    
+                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.2s;">
+                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-500 text-2xl">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">响应式设计</h3>
+                        <p class="text-slate-600 dark:text-slate-400">完美适配手机、平板、桌面，随时随地开始创作</p>
+                    </div>
+                    
+                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.3s;">
+                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 text-2xl">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">深色模式</h3>
+                        <p class="text-slate-600 dark:text-slate-400">支持深色/浅色模式切换，保护您的眼睛，夜间创作更舒适</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 架构图区域 -->
+        <section id="architecture" class="py-24 px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <span class="inline-block px-4 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-medium mb-4">
+                        <i class="fa-solid fa-sitemap mr-2"></i>系统架构
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">应用关系图</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">六大应用模块，覆盖创意工作流的各个环节</p>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl reveal">
+                    <div class="mermaid" id="architecture-diagram"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer class="py-12 px-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">AI</div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white">AI 创意工坊</h3>
+                            <p class="text-xs text-slate-500">探索无限创意可能</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
+                        <a href="#apps" class="hover:text-primary-500 transition-colors">应用</a>
+                        <a href="#features" class="hover:text-primary-500 transition-colors">特性</a>
+                        <a href="#architecture" class="hover:text-primary-500 transition-colors">架构</a>
+                    </div>
+                    <p class="text-sm text-slate-500">&copy; 2025 AI Creative Hub. Built with <i class="fa-solid fa-heart text-red-500"></i> and Tailwind CSS.</p>
+                </div>
+            </div>
+        </footer>
+        
+    </main>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('ai-hub-theme', html.classList.contains('dark') ? 'dark' : 'light');
+            initMermaid();
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        
+        function initMermaid() {
+            const isDark = document.documentElement.classList.contains('dark');
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: isDark ? 'dark' : 'default',
+                fontFamily: '"Noto Sans SC", sans-serif',
+                themeVariables: isDark ? {
+                    primaryColor: '#3b82f6',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#60a5fa',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                } : {
+                    primaryColor: '#3b82f6',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#93c5fd',
+                    lineColor: '#94a3b8',
+                    secondaryColor: '#f1f5f9',
+                    background: '#ffffff',
+                    mainBkg: '#f8fafc',
+                }
+            });
+            
+            const diagramEl = document.getElementById('architecture-diagram');
+            if (diagramEl) {
+                const graphDefinition = `
+                    graph TB
+                        subgraph HUB["AI 创意工坊"]
+                            A["Nova CV<br/>智能简历构建"]
+                            B["AI 智能写真<br/>100+ 风格生成"]
+                            C["Bao 拍立得<br/>复古相机体验"]
+                            D["MD 转 Word<br/>文档排版工具"]
+                            E["圣诞树 3D<br/>沉浸式体验"]
+                            F["年度总结<br/>数据可视化"]
+                        end
+                        
+                        subgraph TECH["技术栈"]
+                            T1["React / Vue"]
+                            T2["Tailwind CSS"]
+                            T3["Three.js"]
+                            T4["Gemini AI"]
+                        end
+                        
+                        A --> T1
+                        A --> T4
+                        B --> T4
+                        C --> T4
+                        D --> T2
+                        E --> T3
+                        F --> T2
+                `;
+                
+                diagramEl.innerHTML = '';
+                mermaid.render('mermaid-svg', graphDefinition).then(({ svg }) => {
+                    diagramEl.innerHTML = svg;
+                }).catch(err => console.log('Mermaid error:', err));
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            setTimeout(initMermaid, 100);
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
