@@ -227,6 +227,7 @@
 							<a href="#overview" class="hover:text-linear-primary transition-colors">概况</a>
 							<a href="#projects" class="hover:text-linear-primary transition-colors">智慧楼宇</a>
 							<a href="#other-projects" class="hover:text-linear-primary transition-colors">一卡通系统</a>
+							<a href="#yuanwan" class="hover:text-linear-primary transition-colors">元湾村</a>
 							<a href="#tech" class="hover:text-linear-primary transition-colors">技术沉淀</a>
 							<a href="#future" class="hover:text-linear-primary transition-colors">展望</a>
 						</div>
@@ -288,9 +289,9 @@
 				</div>
 
 				<p class="text-lg md:text-xl text-linear-muted max-w-2xl mb-12 leading-relaxed mt-4">
-					本年度主要负责三个大型项目，累计完成代码提交
-					<span class="text-linear-text font-semibold">1000+</span> 次。
-					通过持续迭代优化，显著提升了系统体验、性能表现和功能完整性。
+					本年度主要负责四个项目的前端开发工作，累计完成代码提交
+					<span class="text-linear-text font-semibold">1000+</span> 次，
+					涵盖智慧楼宇管理、餐厅一卡通系统、地市一卡通平台、元湾村网格一张图四大业务领域。
 				</p>
 
 				<!-- Stats Grid -->
@@ -314,10 +315,10 @@
 								<i class="fas fa-layer-group"></i>
 							</div>
 							<span class="text-xs font-medium text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded"
-								>涵盖三大领域</span
+								>涵盖四大领域</span
 							>
 						</div>
-						<div class="text-3xl font-bold mb-1">3</div>
+						<div class="text-3xl font-bold mb-1">4</div>
 						<div class="text-sm text-linear-muted">大型项目落地</div>
 					</div>
 
@@ -349,7 +350,7 @@
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">智慧楼宇项目 (600+)</span>
 								<span class="text-linear-muted font-normal"
-									>核心模块：综合视图、设备管理、监控系统</span
+									>核心模块：综合视图、设备管理、监控系统、驾驶舱大屏</span
 								>
 								<span class="text-linear-primary font-bold">60%</span>
 							</div>
@@ -365,7 +366,7 @@
 						<div>
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">餐厅一卡通项目 (300+)</span>
-								<span class="text-linear-muted font-normal">核心模块：账户管理、周菜单、报表分析</span>
+								<span class="text-linear-muted font-normal">核心模块：账户管理、周菜单管理、报表分析</span>
 								<span class="text-linear-primary font-bold">30%</span>
 							</div>
 							<div class="w-full bg-linear-border rounded-full h-3 overflow-hidden">
@@ -385,6 +386,21 @@
 							</div>
 							<div class="w-full bg-linear-border rounded-full h-3 overflow-hidden">
 								<div class="bg-orange-500 h-3 rounded-full relative group" style="width: 5%">
+									<div
+										class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
+									></div>
+								</div>
+							</div>
+						</div>
+						<!-- Item 4 -->
+						<div>
+							<div class="flex justify-between mb-2 text-sm font-medium items-end">
+								<span class="text-base text-linear-text">元湾村网格一张图 (10+)</span>
+								<span class="text-linear-muted font-normal">核心模块：网格管理、地图可视化、大屏展示</span>
+								<span class="text-linear-primary font-bold">1%</span>
+							</div>
+							<div class="w-full bg-linear-border rounded-full h-3 overflow-hidden">
+								<div class="bg-cyan-500 h-3 rounded-full relative group" style="width: 2%">
 									<div
 										class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
 									></div>
@@ -595,41 +611,63 @@
 						></div>
 						<div class="p-6 rounded-2xl bg-linear-card border border-linear-border hover-card">
 							<div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
-								<h3 class="text-xl font-bold text-orange-400">第四季度：园区总览 & 安消一体化</h3>
+								<h3 class="text-xl font-bold text-orange-400">第四季度：园区总览 & 安消一体化 & 驾驶舱大屏</h3>
 								<span class="text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-400 w-fit"
-									>数据大屏 · 安消联动 · 设备开机率</span
+									>数据大屏 · 安消联动 · 人员管理</span
 								>
 							</div>
-							<ul class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm text-linear-muted">
-								<li class="flex items-start gap-2">
-									<i class="fas fa-caret-right text-orange-500 mt-1"></i>
-									<span
-										><strong class="text-linear-text">园区总览视图：</strong>
-										整合能耗、人员、车辆等多维数据，一屏掌握运营状态。新增环境监测（甲醛/TVOC）。</span
+							<div class="grid md:grid-cols-2 gap-6">
+								<div class="space-y-4">
+									<h4
+										class="font-medium text-linear-text flex items-center gap-2 border-b border-linear-border/50 pb-2"
 									>
-								</li>
-								<li class="flex items-start gap-2">
-									<i class="fas fa-caret-right text-orange-500 mt-1"></i>
-									<span
-										><strong class="text-linear-text">StatCard 重构：</strong>
-										增强数据展示能力，支持增长率显示、图标展示、数据对比。</span
+										<i class="fas fa-building text-linear-muted text-xs"></i> 园区总览 & 安消一体化
+									</h4>
+									<ul class="list-none text-sm text-linear-muted space-y-2 feature-list">
+										<li>
+											<span class="text-linear-text font-medium">园区总览视图：</span
+											>整合能耗、人员、车辆等多维数据，一屏掌握运营状态。新增环境监测（甲醛/TVOC）。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">StatCard 重构：</span
+											>增强数据展示能力，支持增长率显示、图标展示、数据对比、数字动画。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">安消一体化：</span
+											>平面图展示点位，支持楼层切换、告警展示、工单批量处理。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">消防设备管理：</span
+											>新增33类消防设备SVG图标，优化卡片视图展示。
+										</li>
+									</ul>
+								</div>
+								<div class="space-y-4">
+									<h4
+										class="font-medium text-linear-text flex items-center gap-2 border-b border-linear-border/50 pb-2"
 									>
-								</li>
-								<li class="flex items-start gap-2">
-									<i class="fas fa-caret-right text-orange-500 mt-1"></i>
-									<span
-										><strong class="text-linear-text">安消一体化：</strong>
-										平面图展示点位，支持楼层切换、告警展示、工单批量处理。</span
-									>
-								</li>
-								<li class="flex items-start gap-2">
-									<i class="fas fa-caret-right text-orange-500 mt-1"></i>
-									<span
-										><strong class="text-linear-text">消防设备管理：</strong>
-										新增33类消防设备SVG图标，优化卡片视图展示。</span
-									>
-								</li>
-							</ul>
+										<i class="fas fa-tv text-linear-muted text-xs"></i> 驾驶舱大屏 & 人员管理
+									</h4>
+									<ul class="list-none text-sm text-linear-muted space-y-2 feature-list">
+										<li>
+											<span class="text-linear-text font-medium">消防驾驶舱：</span
+											>优化图表展示效果，新增火警处理分布饼图、24小时火警统计图表。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">能耗展示：</span
+											>完善能源消耗数据展示，新增能源消耗详情弹窗，支持柱状图与折线图。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">批量授权：</span
+											>新增批量授权页面，构建部门树和人员列表双栏布局，实现门禁权限批量管理。
+										</li>
+										<li>
+											<span class="text-linear-text font-medium">人员同步：</span
+											>新增人员同步功能模块，支持HR人员快速导入，照片批量导出ZIP。
+										</li>
+									</ul>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -794,11 +832,80 @@
 				</div>
 			</section>
 
+			<!-- 元湾村网格一张图 -->
+			<section id="yuanwan" class="mb-24 reveal">
+				<h2 class="text-3xl font-bold mb-8 flex items-end justify-between">
+					<span>元湾村网格一张图</span>
+					<span class="hidden sm:block text-5xl font-bold text-linear-border/30 select-none">03</span>
+				</h2>
+				<div
+					class="p-8 rounded-2xl bg-linear-card border border-linear-border hover-card"
+				>
+					<div class="mb-6 border-b border-linear-border pb-6">
+						<div class="flex justify-between items-start">
+							<div>
+								<h3 class="text-2xl font-bold mb-2">网格化管理可视化大屏</h3>
+								<p class="text-linear-muted text-sm">10+ Commits · Q4 大屏重构 · 提升基层治理数字化水平</p>
+							</div>
+							<div
+								class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-xl"
+							>
+								<i class="fas fa-map-location-dot"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="space-y-6">
+						<div>
+							<span
+								class="text-xs font-bold text-teal-500 bg-teal-500/10 px-2 py-0.5 rounded uppercase"
+								>Q4 大屏UI重构</span
+							>
+							<ul class="mt-3 text-sm text-linear-muted space-y-2 feature-list">
+								<li>
+									<span class="text-linear-text font-medium">网格总览页面：</span>
+									新增网格总览页面，实现网格层级选择、显示控制、房屋类型和人员标签筛选功能。
+								</li>
+								<li>
+									<span class="text-linear-text font-medium">网格详情页：</span>
+									展示网格长/微网格员信息、居民信息列表，支持重点户特殊颜色标识。
+								</li>
+								<li>
+									<span class="text-linear-text font-medium">大屏样式组件：</span>
+									新增大屏专用样式文件，包含完整的色彩系统、玻璃态效果和动画定义。
+								</li>
+								<li>
+									<span class="text-linear-text font-medium">控制面板组件：</span>
+									创建ControlPanel控制面板组件，实现网格层级选择、显示控制、筛选功能。
+								</li>
+								<li>
+									<span class="text-linear-text font-medium">地图交互优化：</span>
+									重写地图网格交互逻辑，实现悬停时同步高亮地图区域和统计卡片。
+								</li>
+							</ul>
+						</div>
+						<div
+							class="p-4 rounded-xl bg-linear-bg/30 border border-linear-border flex gap-4 items-start"
+						>
+							<div class="text-teal-500 mt-1"><i class="fas fa-lightbulb"></i></div>
+							<div>
+								<h5 class="text-sm font-bold text-linear-text">技术亮点</h5>
+								<p class="text-xs text-linear-muted mt-1 leading-relaxed">
+									<strong class="text-linear-text">样式体系重构</strong>：统一主题色为蓝色系，重构网格卡片颜色系统；
+									<strong class="text-linear-text">性能优化</strong>：重构地图元素渲染逻辑，使用分批处理优化大量数据时的性能表现；
+									<strong class="text-linear-text">视觉层次增强</strong>：优化非重点区域文字透明度，为地图标签添加字体平滑渲染属性。
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			<!-- Technical Highlights -->
 			<section id="tech" class="mb-24 reveal">
 				<h2 class="text-3xl font-bold mb-8 flex items-end justify-between">
 					<span>技术沉淀与复用</span>
-					<span class="hidden sm:block text-5xl font-bold text-linear-border/30 select-none">03</span>
+					<span class="hidden sm:block text-5xl font-bold text-linear-border/30 select-none">04</span>
 				</h2>
 
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -838,11 +945,11 @@
 											<code class="bg-linear-bg px-1 rounded border border-linear-border"
 												>StatCard</code
 											>
-											(数据对比/图表集成),
+											(数据对比/图表集成/数字动画),
 											<code class="bg-linear-bg px-1 rounded border border-linear-border"
 												>Pad通用组件</code
 											>
-											(确认框/选择框/Toast)。
+											(确认框/选择框/Toast)。通用组件在4个项目中复用，减少重复代码60%+。
 										</p>
 									</div>
 								</div>
@@ -855,7 +962,7 @@
 									<div>
 										<strong class="text-linear-text block text-sm">设备图标组件体系</strong>
 										<p class="text-xs text-linear-muted mt-1">
-											迁移至全局目录，覆盖10+类设备（照明、空调、新风、门禁、监控、消防等），支持颜色主题切换和状态显示，实现跨项目复用。
+											迁移至全局目录(src/components/DevicesIcons)，覆盖10+类设备（照明、空调、新风、门禁、电梯、停车、监控、消防、电表、环境监测、排风扇、一氧化碳、风阀等），支持颜色主题切换和状态显示，实现跨页面、跨模块复用。
 										</p>
 									</div>
 								</div>
@@ -935,24 +1042,24 @@
 
 				<!-- Highlights Section -->
 				<div class="mt-8 p-8 rounded-2xl bg-linear-card border border-linear-border">
-					<h3 class="text-xl font-bold mb-4">工作亮点</h3>
+					<h3 class="text-xl font-bold mb-4">工作亮点与创新</h3>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 						<div class="space-y-2">
 							<strong class="text-linear-text text-sm block">系统性重构</strong>
 							<p class="text-xs text-linear-muted">
-								Pad端楼控系统从零重构，打造移动化新体验；地市运行报表重构分析逻辑。
+								Pad端楼控系统从零重构，打造移动化新体验；地市运行报表重构分析逻辑；元湾村网格一张图大屏UI重构。
 							</p>
 						</div>
 						<div class="space-y-2">
 							<strong class="text-linear-text text-sm block">跨项目复用</strong>
 							<p class="text-xs text-linear-muted">
-								监控视频组件、账户管理模块、报表系统在三大项目中高效复用。
+								监控视频组件、账户管理模块、报表系统在四大项目中高效复用，减少重复代码60%+，提升开发效率40%+。
 							</p>
 						</div>
 						<div class="space-y-2">
 							<strong class="text-linear-text text-sm block">可视化突破</strong>
 							<p class="text-xs text-linear-muted">
-								园区总览整合多维数据一屏掌握；综合视图实现数据联动。
+								园区总览整合多维数据一屏掌握；综合视图实现数据联动；驾驶舱大屏多维度数据可视化。
 							</p>
 						</div>
 					</div>
@@ -976,13 +1083,13 @@
 								<i class="fas fa-check-circle"></i> 取得的成绩
 							</h3>
 							<ul class="text-sm text-linear-muted space-y-2 feature-list">
-								<li><span class="text-linear-text">高效交付：</span> 全年1000+次提交，高频迭代。</li>
+								<li><span class="text-linear-text">高效交付：</span> 全年1000+次提交，覆盖4个项目，高频迭代。</li>
 								<li>
-									<span class="text-linear-text">质量保障：</span> 代码复用减少60%冗余，可维护性提升。
+									<span class="text-linear-text">质量保障：</span> 通过组件化开发和代码重构，减少重复代码60%+，可维护性提升。
 								</li>
 								<li>
 									<span class="text-linear-text">核心突破：</span>
-									智能轮播、Pad重构、组件体系、总览视图。
+									监控大屏智能轮播、Pad端楼控重构、设备卡片UI统一、组件化开发体系、综合视图系统、园区总览视图、驾驶舱大屏系统、网格一张图大屏。
 								</li>
 							</ul>
 						</div>
@@ -991,9 +1098,9 @@
 								<i class="fas fa-exclamation-circle"></i> 存在的不足
 							</h3>
 							<ul class="text-sm text-linear-muted space-y-2 feature-list">
-								<li><span class="text-linear-text">流程规范：</span> 部分迭代需加强需求与设计评审。</li>
-								<li><span class="text-linear-text">组件库：</span> 跨项目复用需建立统一组件库文档。</li>
-								<li><span class="text-linear-text">测试覆盖：</span> 需加强单元测试与E2E测试。</li>
+								<li><span class="text-linear-text">流程规范：</span> 部分功能迭代频繁，需要加强需求评审和设计评审。</li>
+								<li><span class="text-linear-text">组件库：</span> 跨项目代码复用度有待提高，需要建立统一组件库文档。</li>
+								<li><span class="text-linear-text">测试覆盖：</span> 自动化测试覆盖率不足，需加强单元测试与E2E测试。</li>
 							</ul>
 						</div>
 					</div>
@@ -1007,17 +1114,17 @@
 							</div>
 							<div class="p-4 rounded-xl bg-linear-bg/30 border border-linear-border">
 								<strong class="block mb-2 text-sm text-linear-text">工程化建设</strong>
-								<p class="text-xs text-linear-muted">建立标准组件库与工具库，完善开发规范文档。</p>
+								<p class="text-xs text-linear-muted">建立统一的组件库，将现有通用组件标准化、文档化；建立工具库，封装常用工具函数；完善组件开发规范和最佳实践文档。</p>
 							</div>
 							<div class="p-4 rounded-xl bg-linear-bg/30 border border-linear-border">
 								<strong class="block mb-2 text-sm text-linear-text">团队与生态</strong>
-								<p class="text-xs text-linear-muted">加强团队协作，完善组件生态，提升整体交付质量。</p>
+								<p class="text-xs text-linear-muted">加强与团队人员的协作，提升交付质量；持续完善组件库，提升组件复用率和开发效率。</p>
 							</div>
 						</div>
 					</div>
 
 					<p class="mt-8 text-sm text-linear-muted italic relative z-10">
-						“2025年是收获满满的一年，未来将继续保持学习热情，为团队和公司创造更大价值。”
+						“2025年是收获满满的一年，通过四个项目的历练，在技术能力、业务理解、项目管理等方面都有了显著提升。未来将继续保持学习热情，为团队和公司创造更大价值。”
 					</p>
 				</div>
 			</section>
