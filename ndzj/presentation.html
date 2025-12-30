@@ -7,12 +7,20 @@
     
     <!-- 网站图标 -->
     <link rel="icon" href="https://ui-avatars.com/api/?name=25&background=6366f1&color=fff&rounded=true&font-size=0.4" type="image/png">
+    
+    <!-- 字体预加载 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <!-- Tailwind CSS 样式框架 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 谷歌字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google 字体 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
 
     <script>
         tailwind.config = {
@@ -20,7 +28,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'Noto Sans SC', 'sans-serif']
+                        sans: ['Inter', 'Noto Sans SC', 'system-ui', '-apple-system', 'sans-serif']
                     },
                     colors: {
                         linear: {
@@ -40,7 +48,9 @@
                         'scale-in': 'scaleIn 0.4s ease-out forwards',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 3s ease-in-out infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate'
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'cursor-blink': 'cursorBlink 1.2s ease-in-out infinite',
+                        'cursor-blink-dark': 'cursorBlinkDark 1.2s ease-in-out infinite'
                     },
                     keyframes: {
                         fadeIn: {
@@ -66,6 +76,40 @@
                         glow: {
                             '0%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' },
                             '100%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.6)' }
+                        },
+                        cursorBlink: {
+                            '0%, 45%': { 
+                                opacity: '1',
+                                boxShadow: '0 0 8px rgba(99, 102, 241, 0.5)',
+                                transform: 'scaleY(1)'
+                            },
+                            '50%, 95%': { 
+                                opacity: '0.1',
+                                boxShadow: '0 0 4px rgba(99, 102, 241, 0.2)',
+                                transform: 'scaleY(0.9)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                boxShadow: '0 0 8px rgba(99, 102, 241, 0.5)',
+                                transform: 'scaleY(1)'
+                            }
+                        },
+                        cursorBlinkDark: {
+                            '0%, 45%': { 
+                                opacity: '1',
+                                boxShadow: '0 0 12px rgba(99, 102, 241, 0.8)',
+                                transform: 'scaleY(1)'
+                            },
+                            '50%, 95%': { 
+                                opacity: '0.1',
+                                boxShadow: '0 0 6px rgba(99, 102, 241, 0.3)',
+                                transform: 'scaleY(0.9)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                boxShadow: '0 0 12px rgba(99, 102, 241, 0.8)',
+                                transform: 'scaleY(1)'
+                            }
                         }
                     }
                 }
@@ -74,6 +118,126 @@
     </script>
 
     <style>
+        /* 字体预加载和防跳动 */
+        body {
+            font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+            font-display: swap;
+        }
+
+        /* 防止字体加载时的布局跳动 */
+        * {
+            font-variant-ligatures: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 确保字体加载期间的稳定性 */
+        .font-loading {
+            visibility: hidden;
+        }
+
+        .fonts-loaded {
+            visibility: visible;
+        }
+
+        /* 打字机光标 */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            background-color: rgb(var(--primary));
+            margin-left: 4px;
+            animation: cursorBlink 1.2s ease-in-out infinite;
+            vertical-align: baseline;
+            height: 1em;
+            border-radius: 1px;
+            box-shadow: 0 0 8px rgba(var(--primary), 0.5);
+            position: relative;
+            top: 0.12em;
+        }
+
+        /* 暗色模式下的光标增强 */
+        .dark .cursor {
+            box-shadow: 0 0 12px rgba(var(--primary), 0.8);
+        }
+
+        /* 光标闪烁动画 - 更平滑的效果 */
+        @keyframes cursorBlink {
+            0%, 45% { 
+                opacity: 1; 
+                box-shadow: 0 0 8px rgba(var(--primary), 0.5);
+                transform: scaleY(1);
+            }
+            50%, 95% { 
+                opacity: 0.1; 
+                box-shadow: 0 0 4px rgba(var(--primary), 0.2);
+                transform: scaleY(0.9);
+            }
+            100% {
+                opacity: 1; 
+                box-shadow: 0 0 8px rgba(var(--primary), 0.5);
+                transform: scaleY(1);
+            }
+        }
+
+        /* 暗色模式下的闪烁动画增强 */
+        .dark .cursor {
+            animation: cursorBlinkDark 1.2s ease-in-out infinite;
+        }
+
+        @keyframes cursorBlinkDark {
+            0%, 45% { 
+                opacity: 1; 
+                box-shadow: 0 0 12px rgba(var(--primary), 0.8);
+                transform: scaleY(1);
+            }
+            50%, 95% { 
+                opacity: 0.1; 
+                box-shadow: 0 0 6px rgba(var(--primary), 0.3);
+                transform: scaleY(0.9);
+            }
+            100% {
+                opacity: 1; 
+                box-shadow: 0 0 12px rgba(var(--primary), 0.8);
+                transform: scaleY(1);
+            }
+        }
+
+        /* 打字机动画 */
+        .typewriter-container {
+            opacity: 1;
+        }
+
+        /* 打字机渐变文字效果 */
+        .text-gradient-primary {
+            background: linear-gradient(135deg, rgb(var(--primary)) 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 首页动画效果 */
+        .home-animate {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* 从0.8s减少到0.6s */
+        }
+
+        /* 首页元素动画延迟 */
+        .home-animate-delay-1 { transition-delay: 0.2s; }
+        .home-animate-delay-2 { transition-delay: 0.4s; }
+        .home-animate-delay-3 { transition-delay: 0.6s; }
+        .home-animate-delay-4 { transition-delay: 0.8s; }
+
+        /* 悬停卡片效果增强 */
+        .hover-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .hover-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.3);
+        }
+
         /* CSS 变量定义 */
         :root {
             --bg: 255 255 255;
@@ -778,7 +942,7 @@
         }
     </style>
 </head>
-<body class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased overflow-hidden">
+<body class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased overflow-hidden font-sans fonts-loaded">
     <!-- 背景网格纹理 -->
     <div class="bg-grid"></div>
     
@@ -1014,8 +1178,8 @@
                     <div class="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[80px] dark:bg-blue-500/20"></div>
                 </div>
 
-                <div class="relative z-10 text-center max-w-4xl animate-fade-in">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-linear-border bg-linear-card/50 text-sm font-medium text-linear-primary mb-8">
+                <div class="relative z-10 text-center max-w-4xl">
+                    <div id="home-badge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-linear-border bg-linear-card/50 text-sm font-medium text-linear-primary mb-8 opacity-0 transform translate-y-4">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-linear-primary opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-linear-primary"></span>
@@ -1023,34 +1187,36 @@
                         前端开发工程师
                     </div>
 
-                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-slide-up">
-                        <span class="text-gradient">2025</span>
-                        <br>
-                        <span class="text-linear-text">年度工作总结</span>
-                    </h1>
+                    <!-- 打字机标题 -->
+                    <div class="h-[160px] md:h-[180px] flex items-center justify-center mb-6 typewriter-container">
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 text-center leading-tight">
+                            <span id="typewriter-line1" class="text-gradient-primary"></span><span id="cursor-line1" class="cursor" style="display: none;"></span><br>
+                            <span id="typewriter-line2" class="text-linear-text"></span><span id="cursor-line2" class="cursor" style="display: none;"></span>
+                        </h1>
+                    </div>
 
-                    <p class="text-lg md:text-xl text-linear-muted max-w-2xl mx-auto mb-12 animate-slide-up stagger-2">
+                    <p id="home-subtitle" class="text-lg md:text-xl text-linear-muted max-w-2xl mx-auto mb-12 opacity-0 transform translate-y-4">
                         回顾过去，展望未来<br>
                         构建卓越数字体验
                     </p>
 
-                    <div class="flex flex-wrap justify-center gap-4 animate-slide-up stagger-3">
-                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border">
+                    <div id="home-stats" class="flex flex-wrap justify-center gap-4 opacity-0 transform translate-y-4">
+                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="text-2xl font-bold text-linear-primary">1100+</div>
                             <div class="text-sm text-linear-muted">代码提交</div>
                         </div>
-                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border">
+                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="text-2xl font-bold text-purple-500">4</div>
                             <div class="text-sm text-linear-muted">大型项目</div>
                         </div>
-                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border">
+                        <div class="px-6 py-3 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="text-2xl font-bold text-green-500">60%+</div>
                             <div class="text-sm text-linear-muted">代码复用</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="absolute bottom-24 left-1/2 -translate-x-1/2 animate-bounce text-linear-muted">
+                <div id="home-arrow" class="absolute bottom-24 left-1/2 -translate-x-1/2 animate-bounce text-linear-muted opacity-0">
                     <i class="fas fa-chevron-down"></i>
                 </div>
             </div>
@@ -1975,43 +2141,133 @@
                     <div class="grid md:grid-cols-3 gap-4 mb-4">
                         <div class="p-4 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mb-2 text-xs font-bold text-blue-500">UI</div>
-                            <h4 class="font-bold mb-2 text-sm">通用UI组件库</h4>
-                            <div class="space-y-1 text-xs text-linear-muted">
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">CustomCard - 标题/操作栏自定义</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">CustomTabs - 响应式/横向滚动</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">DataCard - 图标/增长率显示</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">StatCard - 数据对比/图表集成/数字动画</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">Pad通用组件 - 确认框/选择框/Toast</div>
+                            <h4 class="font-bold mb-3 text-sm">通用UI组件库</h4>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-500/5 to-transparent rounded-lg border-l-2 border-blue-500/30 hover:border-blue-500/50 transition-colors">
+                                    <i class="fas fa-cube text-blue-500 text-xs"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">CustomCard</div>
+                                        <div class="text-linear-muted text-xs">标题/操作栏自定义</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-500/5 to-transparent rounded-lg border-l-2 border-blue-500/30 hover:border-blue-500/50 transition-colors">
+                                    <i class="fas fa-folder-open text-blue-500 text-xs"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">CustomTabs</div>
+                                        <div class="text-linear-muted text-xs">响应式/横向滚动</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-500/5 to-transparent rounded-lg border-l-2 border-blue-500/30 hover:border-blue-500/50 transition-colors">
+                                    <i class="fas fa-chart-bar text-blue-500 text-xs"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">DataCard</div>
+                                        <div class="text-linear-muted text-xs">图标/增长率显示</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-500/5 to-transparent rounded-lg border-l-2 border-blue-500/30 hover:border-blue-500/50 transition-colors">
+                                    <i class="fas fa-tachometer-alt text-blue-500 text-xs"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">StatCard</div>
+                                        <div class="text-linear-muted text-xs">数据对比/图表集成/数字动画</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-500/5 to-transparent rounded-lg border-l-2 border-blue-500/30 hover:border-blue-500/50 transition-colors">
+                                    <i class="fas fa-mobile-alt text-blue-500 text-xs"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">Pad通用组件</div>
+                                        <div class="text-linear-muted text-xs">确认框/选择框/Toast</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="p-4 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mb-2 text-xs font-bold text-purple-500">SVG</div>
-                            <h4 class="font-bold mb-2 text-sm">设备图标组件体系</h4>
-                            <p class="text-xs text-linear-muted mb-2">迁移至全局目录(src/components/DevicesIcons)，支持颜色主题切换和状态显示。</p>
-                            <div class="flex flex-wrap gap-1">
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">照明</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">空调</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">新风</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">门禁</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">电梯</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">停车</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">监控</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">消防</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">电表</span>
-                                <span class="px-1.5 py-0.5 bg-linear-bg rounded text-xs">环境监测</span>
+                            <h4 class="font-bold mb-3 text-sm">设备图标组件体系</h4>
+                            <p class="text-xs text-linear-muted mb-3">迁移至全局目录(src/components/DevicesIcons)，支持颜色主题切换和状态显示。</p>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-lightbulb text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">照明</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-wind text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">空调</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-fan text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">新风</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-door-open text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">门禁</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-elevator text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">电梯</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-car text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">停车</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-video text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">监控</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-fire-extinguisher text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">消防</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-bolt text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">电表</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 p-1.5 bg-gradient-to-r from-purple-500/5 to-transparent rounded border-l-2 border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                                    <i class="fas fa-thermometer-half text-purple-500 text-xs"></i>
+                                    <span class="text-xs font-medium">环境监测</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="p-4 rounded-xl bg-linear-card border border-linear-border hover-card">
                             <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center mb-2 text-xs font-bold text-green-500">Biz</div>
-                            <h4 class="font-bold mb-2 text-sm">业务组件封装</h4>
-                            <div class="space-y-1 text-xs text-linear-muted">
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">门禁/车辆授权对话框、视频告警对话框</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">播控系统组件(PlayboxIcon、programCard等)</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">能耗总览组件(月度统计、对比分析等)</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">天气图标组件(132个彩色SVG图标)</div>
-                                <div class="px-2 py-0.5 bg-linear-bg rounded">全屏切换组件</div>
+                            <h4 class="font-bold mb-3 text-sm">业务组件封装</h4>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex items-start gap-2 p-2 bg-gradient-to-r from-green-500/5 to-transparent rounded-lg border-l-2 border-green-500/30 hover:border-green-500/50 transition-colors">
+                                    <i class="fas fa-shield-alt text-green-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">权限管理组件</div>
+                                        <div class="text-linear-muted text-xs">门禁/车辆授权对话框、视频告警对话框</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2 p-2 bg-gradient-to-r from-green-500/5 to-transparent rounded-lg border-l-2 border-green-500/30 hover:border-green-500/50 transition-colors">
+                                    <i class="fas fa-broadcast-tower text-green-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">播控系统组件</div>
+                                        <div class="text-linear-muted text-xs">PlayboxIcon、programCard等</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2 p-2 bg-gradient-to-r from-green-500/5 to-transparent rounded-lg border-l-2 border-green-500/30 hover:border-green-500/50 transition-colors">
+                                    <i class="fas fa-bolt text-green-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">能耗总览组件</div>
+                                        <div class="text-linear-muted text-xs">月度统计、对比分析等</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2 p-2 bg-gradient-to-r from-green-500/5 to-transparent rounded-lg border-l-2 border-green-500/30 hover:border-green-500/50 transition-colors">
+                                    <i class="fas fa-cloud-sun text-green-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">天气图标组件</div>
+                                        <div class="text-linear-muted text-xs">132个彩色SVG图标</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2 p-2 bg-gradient-to-r from-green-500/5 to-transparent rounded-lg border-l-2 border-green-500/30 hover:border-green-500/50 transition-colors">
+                                    <i class="fas fa-expand-arrows-alt text-green-500 text-xs mt-0.5"></i>
+                                    <div>
+                                        <div class="font-medium text-linear-text">全屏切换组件</div>
+                                        <div class="text-linear-muted text-xs">跨浏览器兼容性处理</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2628,6 +2884,15 @@
             updateSlide(1);
             initTheme();
             bindEvents();
+            
+            // 重置首页动画状态
+            resetHomePageAnimations();
+            
+            // 快速启动动画，减少等待时间
+            setTimeout(() => {
+                startTypewriterAnimation();
+                startHomePageAnimations();
+            }, 200); // 从800ms减少到200ms
         }
 
         // ===== 生成导航圆点 =====
@@ -2657,6 +2922,16 @@
                 
                 if (num === currentSlide) {
                     slide.classList.add('active');
+                    
+                    // 如果是第一张幻灯片，启动打字机动画
+                    if (num === 1) {
+                        // 重置首页动画状态
+                        resetHomePageAnimations();
+                        setTimeout(() => {
+                            startTypewriterAnimation();
+                            startHomePageAnimations();
+                        }, 100); // 从300ms减少到100ms
+                    }
                 } else if (num < currentSlide) {
                     slide.classList.add('prev');
                 }
@@ -3109,6 +3384,7 @@
 
         // ===== 启动应用 =====
         document.addEventListener('DOMContentLoaded', () => {
+            // 直接启动应用
             init();
             
             // 处理图片加载失败
@@ -3164,6 +3440,172 @@
             requestAnimationFrame(animateGlow);
         }
         animateGlow();
+
+        // ===== 打字机效果 =====
+        class Typewriter {
+            constructor(elementId, text, speed = 100, delay = 0, cursorId = null, keepCursorAfterComplete = false) {
+                this.element = document.getElementById(elementId);
+                this.cursorElement = cursorId ? document.getElementById(cursorId) : null;
+                this.text = text;
+                this.speed = speed;
+                this.delay = delay;
+                this.index = 0;
+                this.currentInterval = null;
+                this.currentTimeout = null;
+                this.keepCursorAfterComplete = keepCursorAfterComplete;
+            }
+
+            reset() {
+                if (this.element) {
+                    // 强制清除内容和重置索引
+                    this.element.innerHTML = '';
+                    this.element.textContent = '';
+                    this.index = 0;
+                    
+                    // 清除可能存在的定时器
+                    if (this.currentInterval) {
+                        clearInterval(this.currentInterval);
+                        this.currentInterval = null;
+                    }
+                    if (this.currentTimeout) {
+                        clearTimeout(this.currentTimeout);
+                        this.currentTimeout = null;
+                    }
+                }
+                
+                // 隐藏光标
+                if (this.cursorElement) {
+                    this.cursorElement.style.display = 'none';
+                }
+            }
+
+            type() {
+                if (!this.element) {
+                    return;
+                }
+
+                this.reset(); // 重置内容
+
+                this.currentTimeout = setTimeout(() => {
+                    // 显示光标
+                    if (this.cursorElement) {
+                        this.cursorElement.style.display = 'inline-block';
+                    }
+                    
+                    this.currentInterval = setInterval(() => {
+                        if (this.index < this.text.length) {
+                            this.element.innerHTML += this.text.charAt(this.index);
+                            this.index++;
+                        } else {
+                            clearInterval(this.currentInterval);
+                            this.currentInterval = null;
+                            // 完成时根据设置决定是否隐藏光标
+                            if (this.cursorElement && !this.keepCursorAfterComplete) {
+                                this.cursorElement.style.display = 'none';
+                            }
+                            this.element.dispatchEvent(new Event('typing-complete'));
+                        }
+                    }, this.speed);
+                }, this.delay);
+            }
+        }
+
+        // 打字机实例
+        let typewriterLine1, typewriterLine2;
+
+        // 初始化打字机
+        function initTypewriter() {
+            typewriterLine1 = new Typewriter('typewriter-line1', '2025', 120, 50, 'cursor-line1', false); // 第一行完成后隐藏光标
+            typewriterLine2 = new Typewriter('typewriter-line2', '年度工作总结', 100, 0, 'cursor-line2', true); // 第二行完成后保持光标显示
+        }
+
+        // 启动打字机动画
+        function startTypewriterAnimation() {
+            // 先清除所有可能存在的事件监听器
+            const line1Element = document.getElementById('typewriter-line1');
+            const line2Element = document.getElementById('typewriter-line2');
+            const cursor1Element = document.getElementById('cursor-line1');
+            const cursor2Element = document.getElementById('cursor-line2');
+            
+            if (line1Element) {
+                // 克隆元素来清除所有事件监听器
+                const newLine1Element = line1Element.cloneNode(true);
+                line1Element.parentNode.replaceChild(newLine1Element, line1Element);
+            }
+            
+            if (line2Element) {
+                const newLine2Element = line2Element.cloneNode(true);
+                line2Element.parentNode.replaceChild(newLine2Element, line2Element);
+            }
+            
+            if (cursor1Element) {
+                const newCursor1Element = cursor1Element.cloneNode(true);
+                cursor1Element.parentNode.replaceChild(newCursor1Element, cursor1Element);
+            }
+            
+            if (cursor2Element) {
+                const newCursor2Element = cursor2Element.cloneNode(true);
+                cursor2Element.parentNode.replaceChild(newCursor2Element, cursor2Element);
+            }
+            
+            // 重新初始化打字机（现在指向新的元素）
+            initTypewriter();
+
+            // 开始第一行
+            typewriterLine1.type();
+
+            // 第一行完成后开始第二行
+            document.getElementById('typewriter-line1').addEventListener('typing-complete', () => {
+                typewriterLine2.type();
+            }, { once: true });
+        }
+
+        // 重置首页动画状态
+        function resetHomePageAnimations() {
+            // 清除打字机内容
+            const line1Element = document.getElementById('typewriter-line1');
+            const line2Element = document.getElementById('typewriter-line2');
+            const cursor1Element = document.getElementById('cursor-line1');
+            const cursor2Element = document.getElementById('cursor-line2');
+            
+            if (line1Element) line1Element.innerHTML = '';
+            if (line2Element) line2Element.innerHTML = '';
+            if (cursor1Element) cursor1Element.style.display = 'none';
+            if (cursor2Element) cursor2Element.style.display = 'none';
+            
+            const elements = [
+                document.getElementById('home-badge'),
+                document.getElementById('home-subtitle'),
+                document.getElementById('home-stats'),
+                document.getElementById('home-arrow')
+            ];
+            
+            elements.forEach(el => {
+                if (el) {
+                    el.classList.remove('home-animate', 'home-animate-delay-1', 'home-animate-delay-2', 'home-animate-delay-3', 'home-animate-delay-4');
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(16px)';
+                }
+            });
+        }
+
+        // 启动首页动画
+        function startHomePageAnimations() {
+            const animationSequence = [
+                { element: document.getElementById('home-badge'), delay: 400 }, // 进一步减少延迟
+                { element: document.getElementById('home-subtitle'), delay: 700 }, 
+                { element: document.getElementById('home-stats'), delay: 900 }, 
+                { element: document.getElementById('home-arrow'), delay: 1100 }
+            ];
+
+            animationSequence.forEach(({ element, delay }) => {
+                if (element) {
+                    setTimeout(() => {
+                        element.classList.add('home-animate');
+                    }, delay);
+                }
+            });
+        }
 
         // 背景光晕和线圈的视差效果
         const orbs = document.querySelectorAll('.bg-orb');
