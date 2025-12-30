@@ -5,17 +5,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>2025年度工作总结 | 前端开发</title>
 
-		<!-- Favicon -->
+		<!-- 网站图标 -->
 		<link
 			rel="icon"
 			href="https://ui-avatars.com/api/?name=25&background=6366f1&color=fff&rounded=true&font-size=0.4"
 			type="image/png"
 		/>
-		<!-- Tailwind CSS -->
+		<!-- Tailwind CSS 样式框架 -->
 		<script src="https://cdn.tailwindcss.com"></script>
-		<!-- Font Awesome -->
+		<!-- Font Awesome 图标库 -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-		<!-- Google Fonts -->
+		<!-- Google 字体 -->
 		<link
 			href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap"
 			rel="stylesheet"
@@ -63,9 +63,9 @@
 		</script>
 
 		<style>
-			/* CSS Variables for Theming (RGB format for Tailwind opacity support) */
+			/* 主题 CSS 变量（RGB 格式支持 Tailwind 透明度） */
 			:root {
-				/* Light Mode (Default) */
+				/* 亮色模式（默认） */
 				--bg: 255 255 255;
 				--card: 247 248 249;
 				--border: 225 228 232;
@@ -73,11 +73,11 @@
 				--muted: 101 109 118;
 				--primary: 94 106 210;
 				--primary-hover: 76 89 200;
-				--accent: 245 158 11; /* Amber for highlights */
+				--accent: 245 158 11; /* 高亮色 */
 			}
 
 			.dark {
-				/* Dark Mode */
+				/* 暗色模式 */
 				--bg: 8 9 10;
 				--card: 18 20 23;
 				--border: 42 45 53;
@@ -88,7 +88,7 @@
 				--accent: 251 191 36;
 			}
 
-			/* Custom Scrollbar */
+			/* 自定义滚动条 */
 			::-webkit-scrollbar {
 				width: 8px;
 			}
@@ -103,7 +103,7 @@
 				background: rgb(var(--primary));
 			}
 
-			/* Glassmorphism utilities */
+			/* 毛玻璃效果 */
 			.glass {
 				background: rgba(var(--card), 0.7);
 				backdrop-filter: blur(12px);
@@ -111,35 +111,35 @@
 				border-bottom: 1px solid rgba(var(--border), 0.5);
 			}
 
-			/* Gradient Text - Theme Specific */
+			/* 渐变文字 - 主题适配 */
 			.text-gradient {
 				background: linear-gradient(135deg, rgb(var(--text)) 0%, rgb(var(--muted)) 100%);
 				-webkit-background-clip: text;
 				-webkit-text-fill-color: transparent;
 			}
 
-			/* Dynamic Gradient for Typewriter */
+			/* 打字机动态渐变 */
 			.text-gradient-primary-class {
 				background: linear-gradient(135deg, rgb(var(--primary)) 0%, #9f9ff8 100%);
 				-webkit-background-clip: text;
 				-webkit-text-fill-color: transparent;
 			}
 
-			/* Card Hover Effects */
+			/* 卡片悬停效果 */
 			.hover-card {
 				transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 			}
 			.hover-card:hover {
 				transform: translateY(-4px);
-				box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15); /* Softer shadow for generic use */
+				box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15); /* 通用柔和阴影 */
 				border-color: rgb(var(--primary));
 			}
-			/* Dark mode specific shadow enhancement */
+			/* 暗色模式阴影增强 */
 			.dark .hover-card:hover {
 				box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
 			}
 
-			/* Timeline connector */
+			/* 时间线连接器 */
 			.timeline-line::before {
 				content: '';
 				position: absolute;
@@ -151,7 +151,7 @@
 				z-index: 0;
 			}
 
-			/* Smooth reveal animation classes */
+			/* 平滑显示动画 */
 			.reveal {
 				opacity: 0;
 				transform: translateY(30px);
@@ -162,7 +162,7 @@
 				transform: translateY(0);
 			}
 
-			/* Feature List Bullet */
+			/* 功能列表圆点 */
 			.feature-list li {
 				position: relative;
 				padding-left: 1.25rem;
@@ -179,7 +179,7 @@
 				background-color: rgb(var(--primary));
 			}
 
-			/* Typewriter Cursor */
+			/* 打字机光标 */
 			.cursor {
 				display: inline-block;
 				width: 3px;
@@ -190,7 +190,7 @@
 				height: 1em;
 			}
 
-			/* Image Error Placeholder */
+			/* 图片加载失败占位 */
 			.img-error-placeholder {
 				display: flex;
 				flex-direction: column;
@@ -217,7 +217,7 @@
 	<body
 		class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased selection:bg-linear-primary selection:text-white dark overflow-x-hidden relative"
 	>
-		<!-- Parallax Background Elements -->
+		<!-- 视差背景元素 -->
 		<div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
 			<div
 				id="blob1"
@@ -233,7 +233,7 @@
 			></div>
 		</div>
 
-		<!-- Navbar -->
+		<!-- 导航栏 -->
 		<nav class="fixed w-full z-50 top-0 glass transition-colors duration-300">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex justify-between h-16 items-center">
@@ -254,7 +254,7 @@
 							<a href="#tech" class="hover:text-linear-primary transition-colors">技术沉淀</a>
 							<a href="#future" class="hover:text-linear-primary transition-colors">展望</a>
 						</div>
-						<!-- Theme Toggle Button -->
+						<!-- 主题切换按钮 -->
 						<div class="flex items-center gap-2">
 							<!-- 更新快捷键提示区域 -->
 							<div class="hidden md:flex gap-2 items-center mr-1">
@@ -275,9 +275,9 @@
 								class="w-9 h-9 rounded-full flex items-center justify-center border border-linear-border hover:border-linear-muted transition-colors text-linear-muted hover:text-linear-text bg-linear-card hover:bg-linear-border/20 cursor-pointer"
 								aria-label="Toggle Dark Mode"
 							>
-								<!-- Sun Icon (Show in Dark Mode) -->
+								<!-- 太阳图标（暗色模式显示） -->
 								<i class="fas fa-sun hidden dark:block text-yellow-500"></i>
-								<!-- Moon Icon (Show in Light Mode) -->
+								<!-- 月亮图标（亮色模式显示） -->
 								<i class="fas fa-moon block dark:hidden text-linear-primary"></i>
 							</button>
 						</div>
@@ -286,9 +286,9 @@
 			</div>
 		</nav>
 
-		<!-- Main Content -->
+		<!-- 主要内容 -->
 		<main class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-			<!-- Hero Section -->
+			<!-- 首屏区域 -->
 			<section id="overview" class="mb-24 flex flex-col items-center text-center animate-fade-in-up">
 				<div
 					class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-linear-border bg-linear-card/50 text-xs font-medium text-linear-primary mb-6"
@@ -302,7 +302,7 @@
 					前端开发工程师
 				</div>
 
-				<!-- Typewriter Heading -->
+				<!-- 打字机标题 -->
 				<div class="h-[160px] md:h-[180px] flex items-center justify-center mb-6">
 					<h1 class="text-5xl md:text-7xl font-bold tracking-tight text-gradient leading-tight">
 						<span id="typewriter-line1"></span><br />
@@ -324,7 +324,7 @@
 					</span>
 				</p>
 
-				<!-- Stats Grid -->
+				<!-- 统计数据网格 -->
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
 					<div class="group relative p-6 rounded-2xl bg-linear-card border border-linear-border hover-card">
 						<div class="flex items-center justify-between mb-4">
@@ -367,7 +367,7 @@
 				</div>
 			</section>
 
-			<!-- Project Distribution Chart (Visual) -->
+			<!-- 项目投入分布图 -->
 			<section class="mb-24 reveal">
 				<h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
 					<i class="fas fa-chart-pie text-linear-primary"></i>
@@ -375,7 +375,7 @@
 				</h2>
 				<div class="p-8 rounded-2xl bg-linear-card border border-linear-border">
 					<div class="space-y-8">
-						<!-- Item 1 -->
+						<!-- 项目1 -->
 						<div>
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">智慧楼宇项目 (800+)</span>
@@ -392,7 +392,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- Item 2 -->
+						<!-- 项目2 -->
 						<div>
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">餐厅一卡通项目 (300+)</span>
@@ -409,7 +409,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- Item 3 -->
+						<!-- 项目3 -->
 						<div>
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">地市一卡通项目 (30+)</span>
@@ -424,7 +424,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- Item 4 -->
+						<!-- 项目4 -->
 						<div>
 							<div class="flex justify-between mb-2 text-sm font-medium items-end">
 								<span class="text-base text-linear-text">元湾村网格一张图 (10+)</span>
@@ -445,7 +445,7 @@
 				</div>
 			</section>
 
-			<!-- Smart Building Project (Timeline) -->
+			<!-- 智慧楼宇项目（时间线） -->
 			<section id="projects" class="mb-24 reveal">
 				<div class="flex items-end justify-between mb-8 border-b border-linear-border pb-4">
 					<div>
@@ -456,7 +456,7 @@
 				</div>
 
 				<div class="relative timeline-line ml-2 md:ml-0 space-y-12">
-					<!-- Q1 -->
+					<!-- 第一季度 -->
 					<div class="relative pl-12">
 						<div
 							class="absolute left-[9px] top-2 w-3.5 h-3.5 bg-linear-bg border-2 border-blue-500 rounded-full z-10"
@@ -545,7 +545,7 @@
 						</div>
 					</div>
 
-					<!-- Q2 -->
+					<!-- 第二季度 -->
 					<div class="relative pl-12">
 						<div
 							class="absolute left-[9px] top-2 w-3.5 h-3.5 bg-linear-bg border-2 border-purple-500 rounded-full z-10"
@@ -622,7 +622,7 @@
 						</div>
 					</div>
 
-					<!-- Q3 -->
+					<!-- 第三季度 -->
 					<div class="relative pl-12">
 						<div
 							class="absolute left-[9px] top-2 w-3.5 h-3.5 bg-linear-bg border-2 border-green-500 rounded-full z-10"
@@ -766,7 +766,7 @@
 						</div>
 					</div>
 
-					<!-- Q4 -->
+					<!-- 第四季度 -->
 					<div class="relative pl-12">
 						<div
 							class="absolute left-[9px] top-2 w-3.5 h-3.5 bg-linear-bg border-2 border-orange-500 rounded-full z-10"
@@ -950,14 +950,14 @@
 				</div>
 			</section>
 
-			<!-- Other Projects (Cards Grid) -->
+			<!-- 其他项目（卡片网格） -->
 			<section id="other-projects" class="mb-24 reveal">
 				<h2 class="text-3xl font-bold mb-8 flex items-end justify-between">
 					<span>其他一卡通系统</span>
 					<span class="hidden sm:block text-5xl font-bold text-linear-border/30 select-none">02</span>
 				</h2>
 				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-					<!-- Restaurant -->
+					<!-- 餐厅一卡通 -->
 					<div
 						class="p-8 rounded-2xl bg-linear-card border border-linear-border hover-card flex flex-col h-full"
 					>
@@ -1047,7 +1047,7 @@
 						</div>
 					</div>
 
-					<!-- City One Card -->
+					<!-- 地市一卡通 -->
 					<div
 						class="p-8 rounded-2xl bg-linear-card border border-linear-border hover-card flex flex-col h-full"
 					>
@@ -1232,7 +1232,7 @@
 				</div>
 			</section>
 
-			<!-- Technical Highlights -->
+			<!-- 技术亮点 -->
 			<section id="tech" class="mb-24 reveal">
 				<h2 class="text-3xl font-bold mb-8 flex items-end justify-between">
 					<span>技术沉淀与复用</span>
@@ -1240,7 +1240,7 @@
 				</h2>
 
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-					<!-- Component Reuse -->
+					<!-- 组件复用 -->
 					<div
 						class="relative overflow-hidden rounded-2xl bg-linear-card border border-linear-border group h-full"
 					>
@@ -1316,7 +1316,7 @@
 						</div>
 					</div>
 
-					<!-- Module Reuse & Performance -->
+					<!-- 模块复用与性能 -->
 					<div class="flex flex-col gap-8 h-full">
 						<div
 							class="relative overflow-hidden rounded-2xl bg-linear-card border border-linear-border group flex-1"
@@ -1377,7 +1377,7 @@
 					</div>
 				</div>
 
-				<!-- Highlights Section -->
+				<!-- 亮点区域 -->
 				<div class="mt-8 p-8 rounded-2xl bg-linear-card border border-linear-border">
 					<h3 class="text-xl font-bold mb-6">工作亮点与创新</h3>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1426,7 +1426,7 @@
 				</div>
 			</section>
 
-			<!-- Summary & Future -->
+			<!-- 总结与展望 -->
 			<section id="future" class="mb-24 reveal">
 				<div
 					class="bg-gradient-to-br from-linear-card to-linear-bg border border-linear-border rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
@@ -1522,7 +1522,7 @@
 			</section>
 		</main>
 
-		<!-- Image Modal -->
+		<!-- 图片模态框 -->
 		<div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm" onclick="closeImageModal(event)">
 			<button class="absolute top-4 right-4 text-white/80 hover:text-white text-3xl z-10 cursor-pointer" onclick="closeImageModal(event)">&times;</button>
 			<!-- 左箭头 -->
@@ -1540,7 +1540,7 @@
 			</div>
 		</div>
 
-		<!-- Footer -->
+		<!-- 页脚 -->
 		<footer class="border-t border-linear-border/50 bg-linear-card/30 backdrop-blur-lg mt-auto">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 				<div class="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -1566,7 +1566,7 @@
 		</footer>
 
 		<script>
-			// --- Image Modal Functions ---
+			// --- 图片模态框功能 ---
 			let currentImageGroup = [];
 			let currentImageIndex = 0;
 			
@@ -1645,7 +1645,7 @@
 			}
 			
 			function closeImageModal(event) {
-				// Only close if clicking on the backdrop or close button
+				// 仅在点击背景或关闭按钮时关闭
 				const isCloseBtn = event.target.closest('button') && event.target.closest('button').textContent.includes('\u00D7');
 				if (event.target.id === 'imageModal' || isCloseBtn) {
 					const modal = document.getElementById('imageModal');
@@ -1655,7 +1655,7 @@
 				}
 			}
 			
-			// Close modal on Escape key, navigate with arrow keys
+			// 按 Escape 关闭模态框，方向键导航图片
 			document.addEventListener('keydown', function(e) {
 				const modal = document.getElementById('imageModal');
 				if (!modal.classList.contains('hidden')) {
@@ -1681,11 +1681,11 @@
 				}
 			});
 
-			// --- 1. Theme Toggle Logic (with Keyboard Shortcut) ---
+			// --- 1. 主题切换逻辑（含键盘快捷键） ---
 			const themeToggleBtn = document.getElementById('theme-toggle')
 			const body = document.body
 
-			// Helper to set theme
+			// 设置主题辅助函数
 			function setTheme(isDark) {
 				if (isDark) {
 					body.classList.remove('light')
@@ -1704,17 +1704,17 @@
 				}
 			}
 
-			// Check system preference
+			// 检测系统主题偏好
 			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
 				setTheme(false)
 			}
 
-			// Button Click
+			// 按钮点击事件
 			themeToggleBtn.addEventListener('click', toggleTheme)
 
-			// Keyboard Shortcut: Press 'D' or 'T', and Arrows
+			// 键盘快捷键：按 'D' 或 'T' 切换主题，方向键滚动
 			document.addEventListener('keydown', e => {
-				// Check if user is typing in an input field
+				// 检查用户是否在输入框中输入
 				const tagName = e.target.tagName.toLowerCase()
 				if (tagName === 'input' || tagName === 'textarea' || e.target.isContentEditable) {
 					return
@@ -1723,19 +1723,19 @@
 				const key = e.key
 				const lowerKey = key.toLowerCase()
 
-				// Allow 'd' (dark) or 't' (theme)
+				// 按 'd' 或 't' 切换主题
 				if (lowerKey === 'd' || lowerKey === 't') {
 					toggleTheme()
 				}
 
-				// Scroll Down (ArrowDown, ArrowRight)
+				// 向下滚动（ArrowDown, ArrowRight）
 				// 替换原有的 'j' 键逻辑
 				if (key === 'ArrowDown' || key === 'ArrowRight') {
 					e.preventDefault() // 防止默认滚动冲突
 					window.scrollBy({ top: 300, behavior: 'smooth' })
 				}
 
-				// Scroll Up (ArrowUp, ArrowLeft)
+				// 向上滚动（ArrowUp, ArrowLeft）
 				// 替换原有的 'k' 键逻辑
 				if (key === 'ArrowUp' || key === 'ArrowLeft') {
 					e.preventDefault() // 防止默认滚动冲突
@@ -1743,7 +1743,7 @@
 				}
 			})
 
-			// --- 2. Scroll Animation (Intersection Observer) ---
+			// --- 2. 滚动动画（Intersection Observer） ---
 			const observerOptions = {
 				root: null,
 				rootMargin: '0px',
@@ -1763,7 +1763,7 @@
 				observer.observe(el)
 			})
 
-			// --- 3. Parallax Effect ---
+			// --- 3. 视差效果 ---
 			const blob1 = document.getElementById('blob1')
 			const blob2 = document.getElementById('blob2')
 			const blob3 = document.getElementById('blob3')
@@ -1771,11 +1771,11 @@
 			window.addEventListener('scroll', () => {
 				const scrollY = window.scrollY
 				if (blob1) blob1.style.transform = `translate(0px, ${scrollY * 0.2}px)`
-				if (blob2) blob2.style.transform = `translate(0px, ${scrollY * 0.3}px)` // Moves faster
+				if (blob2) blob2.style.transform = `translate(0px, ${scrollY * 0.3}px)` // 移动更快
 				if (blob3) blob3.style.transform = `translate(0px, ${scrollY * 0.15}px)`
 			})
 
-			// --- 4. Typewriter Effect ---
+			// --- 4. 打字机效果 ---
 			class Typewriter {
 				constructor(elementId, text, speed = 100, delay = 0) {
 					this.element = document.getElementById(elementId)
@@ -1795,7 +1795,7 @@
 								this.index++
 							} else {
 								clearInterval(interval)
-								// Dispatch event when done
+								// 完成时触发事件
 								this.element.dispatchEvent(new Event('typing-complete'))
 							}
 						}, this.speed)
@@ -1803,36 +1803,42 @@
 				}
 			}
 
-			// Initialize Typewriters
+			// 初始化打字机效果
 			window.addEventListener('DOMContentLoaded', () => {
 				const line1 = new Typewriter('typewriter-line1', '回顾 2025，', 100, 500)
 				const line2 = new Typewriter('typewriter-line2', '构建卓越数字体验', 80, 0)
 
-				// Start first line
+				// 开始第一行
 				line1.type()
 
-				// When first line is done, start second line
+				// 第一行完成后开始第二行
 				document.getElementById('typewriter-line1').addEventListener('typing-complete', () => {
 					line2.type()
 				})
 
-				// Handle image load errors
+				// 处理图片加载失败
 				document.querySelectorAll('img').forEach(img => {
 					img.addEventListener('error', function() {
 						handleImageError(this);
 					});
-					// Check if image already failed to load
-					if (img.complete && img.naturalHeight === 0) {
-						handleImageError(img);
-					}
 				});
 			})
 
-			// Image error handler function
+			// 图片加载失败处理函数
 			function handleImageError(img) {
 				const placeholder = document.createElement('div');
 				placeholder.className = 'img-error-placeholder rounded-xl';
 				placeholder.innerHTML = '<i class="fas fa-image"></i><span>图片加载失败</span>';
+				// 保存原始图片信息
+				placeholder.dataset.originalSrc = img.src;
+				placeholder.dataset.originalAlt = img.alt;
+				// 移除图片的点击事件
+				img.removeAttribute('onclick');
+				// 移除父元素的点击样式
+				const parentDiv = img.closest('.group\\/img');
+				if (parentDiv) {
+					parentDiv.style.cursor = 'default';
+				}
 				img.parentNode.replaceChild(placeholder, img);
 			}
 		</script>

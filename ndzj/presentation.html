@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2025年度工作总结 | 前端开发</title>
     
-    <!-- Favicon -->
+    <!-- 网站图标 -->
     <link rel="icon" href="https://ui-avatars.com/api/?name=25&background=6366f1&color=fff&rounded=true&font-size=0.4" type="image/png">
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS 样式框架 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
+    <!-- Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <!-- 谷歌字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
@@ -74,7 +74,7 @@
     </script>
 
     <style>
-        /* CSS Variables */
+        /* CSS 变量定义 */
         :root {
             --bg: 255 255 255;
             --card: 250 250 252;
@@ -95,7 +95,7 @@
             --accent: 251 191 36;
         }
 
-        /* Hide scrollbar but keep functionality */
+        /* 隐藏滚动条但保留功能 */
         .slide-container {
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -104,7 +104,7 @@
             display: none;
         }
 
-        /* Slide transitions */
+        /* 幻灯片过渡效果 */
         .slide {
             opacity: 0;
             transform: translateX(100%) scale(0.8) rotateY(-15deg);
@@ -132,13 +132,13 @@
             z-index: 5;
         }
 
-        /* Add perspective to container */
+        /* 为容器添加3D透视效果 */
         #slide-container {
             perspective: 1500px;
             transform-style: preserve-3d;
         }
 
-        /* Slide inner content animation */
+        /* 幻灯片内容进入动画 */
         .slide.active .animate-on-enter {
             animation: contentFadeIn 0.8s ease-out 0.2s forwards;
             opacity: 0;
@@ -155,7 +155,7 @@
             }
         }
 
-        /* Glowing effect during transition */
+        /* 过渡时的发光效果 */
         .slide::before {
             content: '';
             position: absolute;
@@ -175,7 +175,7 @@
             opacity: 1;
         }
 
-        /* Progress bar */
+        /* 进度条样式 */
         .progress-bar {
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
@@ -199,7 +199,7 @@
             100% { opacity: 0; }
         }
 
-        /* Card hover effects */
+        /* 卡片悬停效果 */
         .hover-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -227,7 +227,7 @@
             left: 100%;
         }
 
-        /* Feature list */
+        /* 功能列表样式 */
         .feature-item {
             position: relative;
             padding-left: 1.25rem;
@@ -243,7 +243,7 @@
             background: rgb(var(--primary));
         }
 
-        /* Gradient text */
+        /* 渐变文字效果 */
         .text-gradient {
             background: linear-gradient(135deg, rgb(var(--primary)) 0%, #a855f7 100%);
             -webkit-background-clip: text;
@@ -251,7 +251,7 @@
             background-clip: text;
         }
 
-        /* Timeline */
+        /* 时间线样式 */
         .timeline-dot {
             position: relative;
         }
@@ -269,7 +269,7 @@
             display: none;
         }
 
-        /* Navigation dots */
+        /* 导航圆点样式 */
         .nav-dot {
             transition: all 0.3s ease;
         }
@@ -279,7 +279,7 @@
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
         }
 
-        /* Navigation arrows animation */
+        /* 导航箭头动画 */
         #prev-btn, #next-btn {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -293,7 +293,16 @@
             transform: translateY(-50%) scale(0.95);
         }
 
-        /* Page transition overlay */
+        /* 沉浸式模式下禁用箭头按钮的悬停效果 */
+        .immersive-mode #prev-btn:disabled,
+        .immersive-mode #next-btn:disabled {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(-50%) !important;
+            box-shadow: none !important;
+        }
+
+        /* 页面过渡遮罩效果 */
         .page-transition-overlay {
             position: fixed;
             inset: 0;
@@ -308,7 +317,7 @@
             opacity: 1;
         }
 
-        /* Stagger animation */
+        /* 交错动画延迟设置 */
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
@@ -316,19 +325,19 @@
         .stagger-5 { animation-delay: 0.5s; }
         .stagger-6 { animation-delay: 0.6s; }
 
-        /* Image modal */
+        /* 图片模态框样式 */
         .image-modal {
             backdrop-filter: blur(8px);
         }
 
-        /* Touch feedback */
+        /* 触摸设备反馈效果 */
         @media (hover: none) {
             .hover-card:active {
                 transform: scale(0.98);
             }
         }
 
-        /* Background orbs animation */
+        /* 背景光晕动画效果 */
         .bg-orb {
             position: fixed;
             border-radius: 50%;
@@ -367,7 +376,7 @@
             animation: orbPulse3 12s ease-in-out infinite;
         }
 
-        /* Soft ring effects - 柔和线圈 */
+        /* 柔和线圈效果 - 增强视觉层次 */
         .bg-ring {
             position: fixed;
             border-radius: 50%;
@@ -416,7 +425,7 @@
             animation: ringFade4 9s ease-in-out infinite;
         }
 
-        /* Floating particles - 漂浮粒子 */
+        /* 漂浮粒子效果 - 增加动态感 */
         .bg-particle {
             position: fixed;
             border-radius: 50%;
@@ -504,7 +513,7 @@
             animation: particleFloat8 11s ease-in-out infinite;
         }
 
-        /* Grid pattern overlay - 网格纹理 */
+        /* 网格纹理背景 - 增强科技感 */
         .bg-grid {
             position: fixed;
             inset: 0;
@@ -609,7 +618,7 @@
             75% { opacity: 0.85; }
         }
 
-        /* Dark mode enhancements */
+        /* 暗色模式下的背景效果增强 */
         .dark .bg-orb-1 {
             background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.15) 40%, transparent 70%);
         }
@@ -659,7 +668,7 @@
                 linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
         }
 
-        /* Mouse follow glow */
+        /* 鼠标跟随光效 */
         .mouse-glow {
             position: fixed;
             width: 400px;
@@ -681,7 +690,7 @@
             background: radial-gradient(circle, rgba(129, 140, 248, 0.12) 0%, transparent 70%);
         }
 
-        /* Print styles */
+        /* 打印样式优化 */
         @media print {
             .slide { 
                 position: relative !important;
@@ -692,7 +701,31 @@
             .nav-controls, .progress-container, #toc-toggle, #toc-panel { display: none !important; }
         }
 
-        /* Floating TOC */
+        /* 沉浸式模式样式 */
+        .immersive-mode .ui-element {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .immersive-mode .ui-element.spotlight {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 禁用状态的按钮在沉浸式模式下完全隐藏 */
+        .immersive-mode .ui-element:disabled,
+        .immersive-mode .ui-element.disabled {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* UI元素标识 */
+        .ui-element {
+            transition: opacity 0.3s ease;
+        }
+
+        /* 浮动目录面板 */
         #toc-panel.open {
             transform: translateX(0);
             opacity: 1;
@@ -721,7 +754,7 @@
             color: white !important;
         }
 
-        /* Image Error Placeholder */
+        /* 图片加载失败时的占位样式 */
         .img-error-placeholder {
             display: flex;
             flex-direction: column;
@@ -746,21 +779,21 @@
     </style>
 </head>
 <body class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased overflow-hidden">
-    <!-- Background Grid Pattern -->
+    <!-- 背景网格纹理 -->
     <div class="bg-grid"></div>
     
-    <!-- Background Orbs - 柔和光晕 -->
+    <!-- 背景光晕效果 - 柔和光晕 -->
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
     <div class="bg-orb bg-orb-3"></div>
     
-    <!-- Background Rings - 柔和线圈 -->
+    <!-- 背景线圈效果 - 柔和线圈 -->
     <div class="bg-ring bg-ring-1"></div>
     <div class="bg-ring bg-ring-2"></div>
     <div class="bg-ring bg-ring-3"></div>
     <div class="bg-ring bg-ring-4"></div>
     
-    <!-- Floating Particles - 漂浮粒子 -->
+    <!-- 漂浮粒子效果 - 增加动态感 -->
     <div class="bg-particle bg-particle-1"></div>
     <div class="bg-particle bg-particle-2"></div>
     <div class="bg-particle bg-particle-3"></div>
@@ -770,64 +803,91 @@
     <div class="bg-particle bg-particle-7"></div>
     <div class="bg-particle bg-particle-8"></div>
     
-    <!-- Mouse Follow Glow -->
+    <!-- 鼠标跟随光效 -->
     <div id="mouse-glow" class="mouse-glow"></div>
 
-    <!-- Progress Bar -->
-    <div class="progress-container fixed top-0 left-0 right-0 h-1 bg-linear-border z-50">
+    <!-- 进度条 -->
+    <div class="progress-container ui-element fixed top-0 left-0 right-0 h-1 bg-linear-border z-50">
         <div id="progress-bar" class="progress-bar h-full bg-gradient-to-r from-linear-primary to-purple-500" style="width: 0%"></div>
     </div>
 
-    <!-- Navigation Controls -->
-    <div class="nav-controls fixed top-4 right-4 z-50 flex items-center gap-3">
-        <!-- Slide Counter -->
+    <!-- 导航控制按钮 -->
+    <div class="nav-controls ui-element fixed top-4 right-4 z-50 flex items-center gap-3">
+        <!-- 幻灯片计数器 -->
         <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border text-sm">
             <span id="current-slide" class="font-semibold text-linear-primary">1</span>
             <span class="text-linear-muted">/</span>
             <span id="total-slides" class="text-linear-muted">20</span>
         </div>
         
-        <!-- Theme Toggle -->
+        <!-- 主题切换按钮 -->
         <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center border border-linear-border bg-linear-card/80 backdrop-blur hover:border-linear-primary transition-all cursor-pointer" aria-label="切换主题">
             <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
             <i class="fas fa-moon block dark:hidden text-linear-primary"></i>
         </button>
 
-        <!-- Fullscreen Toggle -->
+        <!-- 全屏切换按钮 -->
         <button id="fullscreen-toggle" class="w-10 h-10 rounded-full flex items-center justify-center border border-linear-border bg-linear-card/80 backdrop-blur hover:border-linear-primary transition-all cursor-pointer" aria-label="全屏">
             <i class="fas fa-expand text-linear-muted"></i>
         </button>
     </div>
 
-    <!-- Navigation Arrows -->
-    <button id="prev-btn" class="fixed left-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border flex items-center justify-center hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="上一页">
+    <!-- 导航箭头按钮 -->
+    <button id="prev-btn" class="ui-element fixed left-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border flex items-center justify-center hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="上一页">
         <i class="fas fa-chevron-left"></i>
     </button>
-    <button id="next-btn" class="fixed right-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border flex items-center justify-center hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="下一页">
+    <button id="next-btn" class="ui-element fixed right-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border flex items-center justify-center hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="下一页">
         <i class="fas fa-chevron-right"></i>
     </button>
 
-    <!-- Slide Navigation Dots -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border">
+    <!-- 幻灯片导航圆点 -->
+    <div class="ui-element fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-linear-card/80 backdrop-blur border border-linear-border">
         <div id="nav-dots" class="flex items-center gap-1.5">
-            <!-- Dots will be generated by JS -->
+            <!-- 圆点将由JS生成 -->
         </div>
     </div>
 
-    <!-- Keyboard Hints -->
-    <div class="fixed bottom-6 right-4 z-40 hidden lg:flex items-center gap-2 text-xs text-linear-muted">
-        <span class="px-2 py-1 rounded bg-linear-card border border-linear-border font-mono">←</span>
-        <span class="px-2 py-1 rounded bg-linear-card border border-linear-border font-mono">→</span>
-        <span class="ml-1">导航</span>
+    <!-- 键盘快捷键提示 -->
+    <div class="ui-element fixed bottom-6 right-4 z-40 hidden xl:flex items-center gap-2 text-xs text-linear-muted bg-linear-card/80 backdrop-blur border border-linear-border rounded-full px-3 py-2">
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">←</span>
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">→</span>
+            <span class="text-xs">导航</span>
+        </div>
+        <div class="w-px h-3 bg-linear-border mx-1"></div>
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">Space</span>
+            <span class="text-xs">下一页</span>
+        </div>
+        <div class="w-px h-3 bg-linear-border mx-1"></div>
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">T</span>
+            <span class="text-xs">目录</span>
+        </div>
+        <div class="w-px h-3 bg-linear-border mx-1"></div>
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">D</span>
+            <span class="text-xs">主题</span>
+        </div>
+        <div class="w-px h-3 bg-linear-border mx-1"></div>
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">F</span>
+            <span class="text-xs">全屏</span>
+        </div>
+        <div class="w-px h-3 bg-linear-border mx-1"></div>
+        <div class="flex items-center gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-linear-bg border border-linear-border font-mono text-xs">I</span>
+            <span class="text-xs">沉浸</span>
+        </div>
     </div>
 
-    <!-- Floating TOC Button -->
-    <button id="toc-toggle" class="fixed top-4 left-4 z-50 w-10 h-10 rounded-full flex items-center justify-center border border-linear-border bg-linear-card/80 backdrop-blur hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer" aria-label="目录">
+    <!-- 浮动目录按钮 -->
+    <button id="toc-toggle" class="ui-element fixed top-4 left-4 z-50 w-10 h-10 rounded-full flex items-center justify-center border border-linear-border bg-linear-card/80 backdrop-blur hover:border-linear-primary hover:bg-linear-primary hover:text-white transition-all cursor-pointer" aria-label="目录">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Floating TOC Panel -->
-    <div id="toc-panel" class="fixed top-16 left-4 z-50 w-72 max-h-[80vh] overflow-y-auto rounded-2xl bg-linear-card/95 backdrop-blur-lg border border-linear-border shadow-2xl transform -translate-x-full opacity-0 transition-all duration-300 pointer-events-none">
+    <!-- 浮动目录面板 -->
+    <div id="toc-panel" class="ui-element fixed top-16 left-4 z-50 w-72 max-h-[80vh] overflow-y-auto rounded-2xl bg-linear-card/95 backdrop-blur-lg border border-linear-border shadow-2xl transform -translate-x-full opacity-0 transition-all duration-300 pointer-events-none">
         <div class="p-4 border-b border-linear-border sticky top-0 bg-linear-card/95 backdrop-blur-lg rounded-t-2xl">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-lg flex items-center gap-2">
@@ -940,13 +1000,15 @@
         </div>
     </div>
 
-    <!-- Main Slide Container -->
+    <!-- 移除沉浸式模式提示 -->
+
+    <!-- 主幻灯片容器 -->
     <main id="slide-container" class="slide-container w-full h-screen relative">
 
-        <!-- Slide 1: Title -->
+        <!-- 幻灯片 1: 标题页 -->
         <section class="slide active" data-slide="1">
             <div class="w-full h-full flex flex-col items-center justify-center px-6 md:px-12 relative overflow-hidden">
-                <!-- Background decoration -->
+                <!-- 背景装饰 -->
                 <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
                     <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[100px] dark:bg-purple-500/20"></div>
                     <div class="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[80px] dark:bg-blue-500/20"></div>
@@ -994,7 +1056,7 @@
             </div>
         </section>
 
-        <!-- Slide 2: Table of Contents -->
+        <!-- 幻灯片 2: 目录 -->
         <section class="slide" data-slide="2">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-5xl mx-auto w-full">
@@ -1123,7 +1185,7 @@
             </div>
         </section>
 
-        <!-- Slide 3: Overview -->
+        <!-- 幻灯片 3: 总体概况 -->
         <section class="slide" data-slide="3">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1245,7 +1307,7 @@
             </div>
         </section>
 
-        <!-- Slide 4: Smart Building Q1 -->
+        <!-- 幻灯片 4: 智慧楼宇 Q1 -->
         <section class="slide" data-slide="4">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1314,7 +1376,7 @@
             </div>
         </section>
 
-        <!-- Slide 5: Smart Building Q2 -->
+        <!-- 幻灯片 5: 智慧楼宇 Q2 -->
         <section class="slide" data-slide="5">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1382,7 +1444,7 @@
             </div>
         </section>
 
-        <!-- Slide 6: Smart Building Q3 -->
+        <!-- 幻灯片 6: 智慧楼宇 Q3 -->
         <section class="slide" data-slide="6">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1513,7 +1575,7 @@
             </div>
         </section>
 
-        <!-- Slide 7: Smart Building Q4 - 园区总览 & 智慧播控 & 能耗总览 -->
+        <!-- 幻灯片 7: 智慧楼宇 Q4 - 园区总览 & 智慧播控 & 能耗总览 -->
         <section class="slide" data-slide="7">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1530,7 +1592,7 @@
                         <span class="text-6xl font-bold text-linear-border/30 hidden md:block">Q4</span>
                     </div>
 
-                    <!-- Two Column Text -->
+                    <!-- 两列文本内容 -->
                     <div class="grid md:grid-cols-2 gap-6 mb-4">
                         <div class="p-6 rounded-2xl bg-linear-card border border-linear-border hover-card">
                             <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
@@ -1558,7 +1620,7 @@
                         </div>
                     </div>
 
-                    <!-- 新增核心功能 Tags -->
+                    <!-- 新增核心功能标签 -->
                     <div class="p-3 rounded-xl bg-linear-bg/30 border border-linear-border mb-4">
                         <h5 class="text-sm font-bold text-linear-text mb-2">新增核心功能</h5>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
@@ -1569,7 +1631,7 @@
                         </div>
                     </div>
 
-                    <!-- 园区总览 Screenshots -->
+                    <!-- 园区总览功能截图 -->
                     <h4 class="text-xs font-medium text-linear-muted mb-2">园区总览</h4>
                     <div class="grid grid-cols-4 gap-3">
                         <div class="group relative overflow-hidden rounded-xl border border-linear-border cursor-pointer" onclick="openImageModal('img/yuanquzonglan1.png', '园区总览')">
@@ -1601,7 +1663,7 @@
             </div>
         </section>
 
-        <!-- Slide 8: Smart Building Q4 - 功能截图 -->
+        <!-- 幻灯片 8: 智慧楼宇 Q4 - 功能截图 -->
         <section class="slide" data-slide="8">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1618,7 +1680,7 @@
                         <span class="text-6xl font-bold text-linear-border/30 hidden md:block">Q4</span>
                     </div>
 
-                    <!-- 智慧播控系统 -->
+                    <!-- 智慧播控系统截图 -->
                     <h4 class="text-xs font-medium text-linear-text mb-3">智慧播控系统</h4>
                     <div class="grid grid-cols-4 gap-3 mb-6">
                         <div class="group relative overflow-hidden rounded-xl border border-linear-border cursor-pointer" onclick="openImageModal('img/bokong3.png', '素材管理')">
@@ -1647,7 +1709,7 @@
                         </div>
                     </div>
 
-                    <!-- 驾驶舱大屏 & 能耗总览 & 批量授权 -->
+                    <!-- 驾驶舱大屏 & 能耗总览 & 批量授权截图 -->
                     <h4 class="text-xs font-medium text-linear-text mb-3">驾驶舱大屏 & 能耗总览 & 批量授权</h4>
                     <div class="grid grid-cols-4 gap-3">
                         <div class="group relative overflow-hidden rounded-xl border border-linear-border cursor-pointer" onclick="openImageModal('img/jiashicang1.png', '智慧客流')">
@@ -1679,7 +1741,7 @@
             </div>
         </section>
 
-        <!-- Slide 9: Restaurant One Card -->
+        <!-- 幻灯片 9: 餐厅一卡通项目 -->
         <section class="slide" data-slide="9">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1754,7 +1816,7 @@
             </div>
         </section>
 
-        <!-- Slide 10: City One Card -->
+        <!-- 幻灯片 10: 地市一卡通项目 -->
         <section class="slide" data-slide="10">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1829,7 +1891,7 @@
             </div>
         </section>
 
-        <!-- Slide 11: Yuanwan Village -->
+        <!-- 幻灯片 11: 元湾村网格一张图 -->
         <section class="slide" data-slide="11">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-20 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1891,7 +1953,7 @@
             </div>
         </section>
 
-        <!-- Slide 12: Technical - Component Development -->
+        <!-- 幻灯片 12: 技术能力 - 组件化开发 -->
         <section class="slide" data-slide="12">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -1954,7 +2016,7 @@
                         </div>
                     </div>
 
-                    <!-- 组件复用成果 -->
+                    <!-- 组件复用成果展示 -->
                     <div class="p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-linear-border mb-4">
                         <h4 class="font-bold text-sm mb-3 flex items-center gap-2">
                             <i class="fas fa-trophy text-yellow-500"></i>
@@ -1980,7 +2042,7 @@
                         </div>
                     </div>
 
-                    <!-- 数据可视化 -->
+                    <!-- 数据可视化能力展示 -->
                     <div class="p-4 rounded-xl bg-linear-card border border-linear-border">
                         <h4 class="font-bold text-sm mb-3 flex items-center gap-2">
                             <i class="fas fa-chart-bar text-blue-500"></i>
@@ -2010,7 +2072,7 @@
             </div>
         </section>
 
-        <!-- Slide 13: Technical - Performance & UX -->
+        <!-- 幻灯片 13: 技术能力 - 性能优化 & 用户体验 -->
         <section class="slide" data-slide="13">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -2059,7 +2121,7 @@
                         </div>
                     </div>
 
-                    <!-- 技术亮点标签 -->
+                    <!-- 技术亮点标签展示 -->
                     <div class="mt-6 p-4 rounded-xl bg-linear-card border border-linear-border">
                         <h4 class="font-bold text-sm mb-3 flex items-center gap-2">
                             <i class="fas fa-lightbulb text-yellow-500"></i>
@@ -2080,7 +2142,7 @@
             </div>
         </section>
 
-        <!-- Slide 14: Highlights -->
+        <!-- 幻灯片 14: 工作亮点与创新 -->
         <section class="slide" data-slide="14">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -2155,7 +2217,7 @@
             </div>
         </section>
 
-        <!-- Slide 15: Achievements -->
+        <!-- 幻灯片 15: 取得的成绩 -->
         <section class="slide" data-slide="15">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -2222,7 +2284,7 @@
                         </div>
                     </div>
 
-                    <!-- 核心突破 -->
+                    <!-- 核心突破展示 -->
                     <div class="p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
                         <h4 class="font-bold mb-3 flex items-center gap-2">
                             <i class="fas fa-star text-purple-500"></i>
@@ -2267,7 +2329,7 @@
             </div>
         </section>
 
-        <!-- Slide 16: Shortcomings -->
+        <!-- 幻灯片 16: 存在的不足 -->
         <section class="slide" data-slide="16">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -2337,7 +2399,7 @@
             </div>
         </section>
 
-        <!-- Slide 17: Future Plans -->
+        <!-- 幻灯片 17: 未来规划 -->
         <section class="slide" data-slide="17">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-6xl mx-auto w-full">
@@ -2409,7 +2471,7 @@
             </div>
         </section>
 
-        <!-- Slide 18: Summary -->
+        <!-- 幻灯片 18: 总结 -->
         <section class="slide" data-slide="18">
             <div class="w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 overflow-y-auto">
                 <div class="max-w-4xl mx-auto w-full text-center">
@@ -2454,10 +2516,10 @@
             </div>
         </section>
 
-        <!-- Slide 19: Thank You & Author -->
+        <!-- 幻灯片 19: 感谢聆听 & 作者信息 -->
         <section class="slide" data-slide="19">
             <div class="w-full h-full flex flex-col items-center justify-center px-6 md:px-12 relative overflow-hidden">
-                <!-- Background decoration -->
+                <!-- 背景装饰 -->
                 <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
                     <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[100px] dark:bg-purple-500/20"></div>
                     <div class="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[80px] dark:bg-blue-500/20"></div>
@@ -2486,7 +2548,7 @@
                         </div>
                     </div>
 
-                    <!-- Author Info -->
+                    <!-- 作者信息 -->
                     <div class="p-5 rounded-2xl bg-linear-card/50 border border-linear-border backdrop-blur-sm mb-6">
                         <div class="flex items-center justify-center gap-4 mb-4">
                             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-linear-primary to-purple-500 flex items-center justify-center shadow-lg shadow-linear-primary/20">
@@ -2518,7 +2580,7 @@
         </section>
     </main>
 
-    <!-- Image Modal -->
+    <!-- 图片模态框 -->
     <div id="imageModal" class="image-modal fixed inset-0 z-[200] hidden items-center justify-center bg-black/80" onclick="closeImageModal(event)">
         <button class="absolute top-4 right-4 text-white/80 hover:text-white text-3xl z-10 cursor-pointer" onclick="closeImageModal(event)">&times;</button>
         <!-- 左箭头 -->
@@ -2537,12 +2599,13 @@
     </div>
 
     <script>
-        // ===== Configuration =====
+        // ===== 配置参数 =====
         const TOTAL_SLIDES = 19;
         let currentSlide = 1;
         let isAnimating = false;
+        let isImmersiveMode = false;
 
-        // ===== DOM Elements =====
+        // ===== DOM 元素 =====
         const slides = document.querySelectorAll('.slide');
         const progressBar = document.getElementById('progress-bar');
         const currentSlideEl = document.getElementById('current-slide');
@@ -2556,8 +2619,9 @@
         const tocPanel = document.getElementById('toc-panel');
         const tocClose = document.getElementById('toc-close');
         const tocItems = document.querySelectorAll('.toc-item');
+        const uiElements = document.querySelectorAll('.ui-element');
 
-        // ===== Initialize =====
+        // ===== 初始化 =====
         function init() {
             totalSlidesEl.textContent = TOTAL_SLIDES;
             generateNavDots();
@@ -2566,7 +2630,7 @@
             bindEvents();
         }
 
-        // ===== Generate Navigation Dots =====
+        // ===== 生成导航圆点 =====
         function generateNavDots() {
             for (let i = 1; i <= TOTAL_SLIDES; i++) {
                 const dot = document.createElement('button');
@@ -2578,7 +2642,7 @@
             }
         }
 
-        // ===== Update Slide =====
+        // ===== 更新幻灯片 =====
         function updateSlide(slideNum, direction = 'next') {
             if (isAnimating || slideNum < 1 || slideNum > TOTAL_SLIDES) return;
             
@@ -2586,7 +2650,7 @@
             const prevSlideNum = currentSlide;
             currentSlide = slideNum;
 
-            // Update slides
+            // 更新幻灯片
             slides.forEach((slide, index) => {
                 const num = index + 1;
                 slide.classList.remove('active', 'prev');
@@ -2598,34 +2662,44 @@
                 }
             });
 
-            // Update progress bar
+            // 更新进度条
             const progress = ((currentSlide - 1) / (TOTAL_SLIDES - 1)) * 100;
             progressBar.style.width = `${progress}%`;
 
-            // Update counter
+            // 更新计数器
             currentSlideEl.textContent = currentSlide;
 
-            // Update nav dots
+            // 更新导航圆点
             document.querySelectorAll('.nav-dot').forEach((dot, index) => {
                 dot.classList.toggle('active', index + 1 === currentSlide);
                 dot.classList.toggle('bg-linear-primary', index + 1 === currentSlide);
                 dot.classList.toggle('bg-linear-border', index + 1 !== currentSlide);
             });
 
-            // Update buttons
+            // 更新按钮状态
             prevBtn.disabled = currentSlide === 1;
             nextBtn.disabled = currentSlide === TOTAL_SLIDES;
 
-            // Update TOC active state
+            // 在沉浸式模式下，确保禁用的按钮完全隐藏
+            if (isImmersiveMode) {
+                if (prevBtn.disabled) {
+                    prevBtn.classList.remove('spotlight');
+                }
+                if (nextBtn.disabled) {
+                    nextBtn.classList.remove('spotlight');
+                }
+            }
+
+            // 更新目录激活状态
             updateTocActiveState();
 
-            // Reset animation lock
+            // 重置动画锁
             setTimeout(() => {
                 isAnimating = false;
             }, 500);
         }
 
-        // ===== Navigation Functions =====
+        // ===== 导航功能函数 =====
         function goToSlide(num) {
             const direction = num > currentSlide ? 'next' : 'prev';
             updateSlide(num, direction);
@@ -2643,7 +2717,7 @@
             }
         }
 
-        // ===== Theme Toggle =====
+        // ===== 主题切换 =====
         function initTheme() {
             // 默认使用暗色模式
             document.documentElement.classList.add('dark');
@@ -2653,7 +2727,7 @@
             document.documentElement.classList.toggle('dark');
         }
 
-        // ===== Fullscreen Toggle =====
+        // ===== 全屏切换 =====
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
@@ -2664,7 +2738,7 @@
             }
         }
 
-        // ===== Floating TOC =====
+        // ===== 浮动目录 =====
         function toggleToc() {
             tocPanel.classList.toggle('open');
             tocToggle.classList.toggle('bg-linear-primary');
@@ -2682,7 +2756,7 @@
                 const target = parseInt(item.getAttribute('data-target'));
                 if (target === currentSlide) {
                     item.classList.add('active');
-                    // Scroll into view if needed
+                    // 需要时滚动到可视区域
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
                     item.classList.remove('active');
@@ -2690,7 +2764,58 @@
             });
         }
 
-        // ===== Image Modal with Navigation =====
+        // ===== 沉浸式模式 =====
+        function toggleImmersiveMode() {
+            isImmersiveMode = !isImmersiveMode;
+            document.body.classList.toggle('immersive-mode', isImmersiveMode);
+            
+            if (isImmersiveMode) {
+                // 关闭目录面板
+                closeToc();
+            } else {
+                // 退出沉浸式模式时清除所有UI元素的spotlight状态
+                uiElements.forEach(element => {
+                    element.classList.remove('spotlight');
+                });
+            }
+        }
+
+        // 检查UI元素可见性 - 简化版，鼠标经过直接淡入显示
+        function checkUIElementsVisibility(mouseX, mouseY) {
+            if (!isImmersiveMode) return;
+            
+            uiElements.forEach(element => {
+                // 跳过禁用的元素
+                if (element.disabled || element.classList.contains('disabled')) {
+                    element.classList.remove('spotlight');
+                    return;
+                }
+                
+                const rect = element.getBoundingClientRect();
+                let buffer = 60; // 默认检测缓冲区域
+                
+                // 对于目录面板，使用更小的缓冲区域，避免与其他元素冲突
+                if (element.id === 'toc-panel') {
+                    buffer = 30;
+                }
+                
+                // 计算鼠标到元素中心的距离
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+                
+                // 使用距离和边界框双重检测
+                const isNearElement = (
+                    mouseX >= rect.left - buffer &&
+                    mouseX <= rect.right + buffer &&
+                    mouseY >= rect.top - buffer &&
+                    mouseY <= rect.bottom + buffer &&
+                    distance <= 100 // 额外的距离限制
+                );
+                
+                element.classList.toggle('spotlight', isNearElement);
+            });
+        }
         let currentImageGroup = [];
         let currentImageIndex = 0;
 
@@ -2797,23 +2922,23 @@
             }
         }
 
-        // ===== Event Bindings =====
+        // ===== 事件绑定 =====
         function bindEvents() {
-            // Navigation buttons
+            // 导航按钮
             prevBtn.addEventListener('click', prevSlide);
             nextBtn.addEventListener('click', nextSlide);
 
-            // Theme toggle
+            // 主题切换
             themeToggle.addEventListener('click', toggleTheme);
 
-            // Fullscreen toggle
+            // 全屏切换
             fullscreenToggle.addEventListener('click', toggleFullscreen);
 
-            // TOC toggle
+            // 目录切换
             tocToggle.addEventListener('click', toggleToc);
             tocClose.addEventListener('click', closeToc);
 
-            // TOC item clicks
+            // 目录项点击
             tocItems.forEach(item => {
                 item.addEventListener('click', () => {
                     const target = parseInt(item.getAttribute('data-target'));
@@ -2824,21 +2949,21 @@
                 });
             });
 
-            // Close TOC when clicking outside
+            // 点击外部关闭目录
             document.addEventListener('click', (e) => {
                 if (!tocPanel.contains(e.target) && !tocToggle.contains(e.target) && tocPanel.classList.contains('open')) {
                     closeToc();
                 }
             });
 
-            // Prevent wheel event from bubbling when scrolling TOC panel
+            // 阻止滚动目录面板时的事件冒泡
             tocPanel.addEventListener('wheel', (e) => {
                 const isScrollable = tocPanel.scrollHeight > tocPanel.clientHeight;
                 if (isScrollable) {
                     const atTop = tocPanel.scrollTop === 0;
                     const atBottom = tocPanel.scrollTop + tocPanel.clientHeight >= tocPanel.scrollHeight;
                     
-                    // Prevent page scroll only when not at boundaries, or scrolling into content
+                    // 仅在非边界或滚动到内容时阻止页面滚动
                     if (!(atTop && e.deltaY < 0) && !(atBottom && e.deltaY > 0)) {
                         e.stopPropagation();
                     } else {
@@ -2851,9 +2976,9 @@
                 }
             }, { passive: false });
 
-            // Keyboard navigation
+            // 键盘导航
             document.addEventListener('keydown', (e) => {
-                // Don't navigate if modal is open
+                // 模态框打开时不导航
                 const modal = document.getElementById('imageModal');
                 if (!modal.classList.contains('hidden')) {
                     if (e.key === 'Escape') {
@@ -2899,25 +3024,33 @@
                         e.preventDefault();
                         goToSlide(TOTAL_SLIDES);
                         break;
+                    case 'i':
+                    case 'I':
+                        toggleImmersiveMode();
+                        break;
                     case 'd':
                     case 'D':
-                        toggleTheme();
+                        if (!isImmersiveMode) toggleTheme();
                         break;
                     case 'f':
                     case 'F':
-                        toggleFullscreen();
+                        if (!isImmersiveMode) toggleFullscreen();
                         break;
                     case 't':
                     case 'T':
-                        toggleToc();
+                        if (!isImmersiveMode) toggleToc();
                         break;
                     case 'Escape':
-                        closeToc();
+                        if (isImmersiveMode) {
+                            toggleImmersiveMode();
+                        } else {
+                            closeToc();
+                        }
                         break;
                 }
             });
 
-            // Touch/Swipe support
+            // 触摸/滑动支持
             let touchStartX = 0;
             let touchEndX = 0;
 
@@ -2943,10 +3076,10 @@
                 }
             }
 
-            // Mouse wheel navigation
+            // 鼠标滚轮导航 - 沉浸式模式下依然可用
             let wheelTimeout;
             document.addEventListener('wheel', (e) => {
-                // Don't navigate if TOC panel is open
+                // 目录面板打开时不导航
                 if (tocPanel.classList.contains('open')) return;
                 
                 clearTimeout(wheelTimeout);
@@ -2958,33 +3091,52 @@
                     }
                 }, 50);
             }, { passive: true });
+
+            // 鼠标移动事件 - 沉浸式模式UI元素显示
+            document.addEventListener('mousemove', (e) => {
+                checkUIElementsVisibility(e.clientX, e.clientY);
+            });
+
+            // 鼠标离开页面时隐藏所有UI元素
+            document.addEventListener('mouseleave', () => {
+                if (isImmersiveMode) {
+                    uiElements.forEach(element => {
+                        element.classList.remove('spotlight');
+                    });
+                }
+            });
         }
 
-        // ===== Start =====
+        // ===== 启动应用 =====
         document.addEventListener('DOMContentLoaded', () => {
             init();
             
-            // Handle image load errors
+            // 处理图片加载失败
             document.querySelectorAll('img').forEach(img => {
                 img.addEventListener('error', function() {
                     handleImageError(this);
                 });
-                // Check if image already failed to load
-                if (img.complete && img.naturalHeight === 0) {
-                    handleImageError(img);
-                }
             });
         });
 
-        // Image error handler function
+        // 图片加载失败处理函数
         function handleImageError(img) {
             const placeholder = document.createElement('div');
             placeholder.className = 'img-error-placeholder rounded-xl';
             placeholder.innerHTML = '<i class="fas fa-image"></i><span>图片加载失败</span>';
+            // 保存原始图片信息
+            placeholder.dataset.originalSrc = img.src;
+            placeholder.dataset.originalAlt = img.alt;
+            // 移除父元素的点击事件
+            const parentDiv = img.closest('div[onclick]');
+            if (parentDiv) {
+                parentDiv.removeAttribute('onclick');
+                parentDiv.style.cursor = 'default';
+            }
             img.parentNode.replaceChild(placeholder, img);
         }
 
-        // ===== Mouse Follow Glow =====
+        // ===== 鼠标跟随光效 =====
         const mouseGlow = document.getElementById('mouse-glow');
         let mouseX = 0, mouseY = 0;
         let glowX = 0, glowY = 0;
@@ -2992,14 +3144,18 @@
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            mouseGlow.classList.add('active');
+            
+            // 只在非沉浸式模式下显示鼠标光效
+            if (!isImmersiveMode) {
+                mouseGlow.classList.add('active');
+            }
         });
 
         document.addEventListener('mouseleave', () => {
             mouseGlow.classList.remove('active');
         });
 
-        // Smooth follow animation
+        // 平滑跟随动画
         function animateGlow() {
             glowX += (mouseX - glowX) * 0.1;
             glowY += (mouseY - glowY) * 0.1;
@@ -3009,7 +3165,7 @@
         }
         animateGlow();
 
-        // Parallax effect for background orbs and rings
+        // 背景光晕和线圈的视差效果
         const orbs = document.querySelectorAll('.bg-orb');
         const rings = document.querySelectorAll('.bg-ring');
         document.addEventListener('mousemove', (e) => {
