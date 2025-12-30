@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN" class="scroll-smooth scroll-pt-28">
 	<head>
 		<meta charset="UTF-8" />
@@ -172,7 +172,7 @@
 				content: '';
 				position: absolute;
 				left: 0;
-				top: 0.6rem;
+				top: 0.3rem;
 				width: 6px;
 				height: 6px;
 				border-radius: 50%;
@@ -188,6 +188,29 @@
 				animation: blink 1s step-end infinite;
 				vertical-align: middle;
 				height: 1em;
+			}
+
+			/* Image Error Placeholder */
+			.img-error-placeholder {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				background: rgb(var(--card));
+				border: 1px dashed rgb(var(--border));
+				color: rgb(var(--muted));
+				min-height: 120px;
+				width: 100%;
+				height: 100%;
+			}
+			.img-error-placeholder i {
+				font-size: 2rem;
+				margin-bottom: 0.5rem;
+				opacity: 0.5;
+			}
+			.img-error-placeholder span {
+				font-size: 0.75rem;
+				opacity: 0.7;
 			}
 		</style>
 	</head>
@@ -493,6 +516,32 @@
 									</ul>
 								</div>
 							</div>
+							<!-- 截图展示 -->
+							<div class="mt-6 pt-6 border-t border-linear-border/50">
+								<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+									<i class="fas fa-images"></i> 功能截图
+								</h4>
+								<div class="grid grid-cols-3 gap-4">
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/monitor1.png" alt="监控配置" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">监控配置</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/monitor2.png" alt="监控大屏" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">监控大屏</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/monitor3.png" alt="监控回看" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">监控回看</span>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -542,6 +591,32 @@
 											>封装权限选择组件，优化角色与门禁/车辆权限控制。
 										</li>
 									</ul>
+								</div>
+							</div>
+							<!-- 截图展示 -->
+							<div class="mt-6 pt-6 border-t border-linear-border/50">
+								<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+									<i class="fas fa-images"></i> Pad端楼控截图
+								</h4>
+								<div class="grid grid-cols-3 gap-4">
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/pad0.png" alt="旧版Pad" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">旧版Pad</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/pad1.png" alt="设备控制" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">设备控制</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/pad2.png" alt="设备详情" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+											<span class="text-xs text-white">设备详情</span>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -609,6 +684,82 @@
 											>（照明、空调、新风、电梯等），
 											迁移至全局目录实现跨项目复用。优化加载状态（骨架屏）、空状态显示及按钮悬停交互。
 										</p>
+									</div>
+								</div>
+								<!-- 设备卡片截图 -->
+								<div class="mt-4">
+									<h5 class="text-xs font-medium text-linear-muted mb-3 flex items-center gap-2">
+										<i class="fas fa-id-card"></i> 设备卡片样式对比
+									</h5>
+									<div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/old-card.png" alt="旧版卡片" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">旧版卡片</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/new-card.png" alt="新版卡片1" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">新版卡片1</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/new-card2.png" alt="新版卡片2" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">新版卡片2</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/new-card3.png" alt="新版卡片3" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">新版卡片3</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/new-card4.png" alt="新版卡片4" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">新版卡片4</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 截图展示 -->
+							<div class="mt-6 pt-6 border-t border-linear-border/50">
+								<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+									<i class="fas fa-images"></i> 综合视图截图
+								</h4>
+								<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/person1.png" alt="人员通行" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+											<span class="text-xs text-white">人员通行</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/car1.png" alt="车辆通行" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+											<span class="text-xs text-white">车辆通行</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/anxiao1.png" alt="安消总览" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+											<span class="text-xs text-white">安消总览</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/bokong1.png" alt="智慧播控" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+											<span class="text-xs text-white">智慧播控</span>
+										</div>
+									</div>
+									<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+										<img src="img/meet1.png" alt="会议看板" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+										<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+											<span class="text-xs text-white">会议看板</span>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -682,7 +833,7 @@
 								</div>
 							</div>
 							<div class="mt-4 p-4 rounded-xl bg-linear-bg/30 border border-linear-border">
-								<h5 class="text-sm font-bold text-linear-text mb-2">新增核心系统</h5>
+								<h5 class="text-sm font-bold text-linear-text mb-2">新增核心功能</h5>
 								<div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
 									<div class="flex items-center gap-1">
 										<i class="fas fa-broadcast-tower text-orange-500"></i> 智慧播控系统
@@ -695,6 +846,102 @@
 									</div>
 									<div class="flex items-center gap-1">
 										<i class="fas fa-cloud-sun text-orange-500"></i> 天气图标组件
+									</div>
+								</div>
+							</div>
+							<!-- 截图展示 -->
+							<div class="mt-6 pt-6 border-t border-linear-border/50">
+								<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+									<i class="fas fa-images"></i> 第四季度功能截图
+								</h4>
+								<!-- 园区总览 -->
+								<div class="mb-6">
+									<h5 class="text-xs font-medium text-linear-text mb-3">园区总览</h5>
+									<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/yuanquzonglan1.png" alt="园区总览" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">园区总览</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/yaunquzonglan2.png" alt="园区总览" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">园区总览</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/anxiao2.png" alt="安消视图" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">安消视图</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/yuanquzonglan2.png" alt="园区大屏" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">园区大屏</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- 智慧播控 -->
+								<div class="mb-6">
+									<h5 class="text-xs font-medium text-linear-text mb-3">智慧播控系统</h5>
+									<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/bokong3.png" alt="素材管理" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">素材管理</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/bokong4.png" alt="节目管理" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">节目管理</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/bokong2.png" alt="一站式工作台" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">一站式工作台</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/bokong5.png" alt="节目编排" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">节目编排</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- 驾驶舱 & 能耗 & 批量授权 -->
+								<div>
+									<h5 class="text-xs font-medium text-linear-text mb-3">驾驶舱大屏 & 能耗总览 & 批量授权</h5>
+									<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/jiashicang1.png" alt="智慧客流" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">智慧客流</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/jiashicang2.png" alt="智慧消防" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">智慧消防</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/nenghao1.png" alt="能耗总览" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">能耗总览</span>
+											</div>
+										</div>
+										<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+											<img src="img/piliangshouquan.png" alt="批量授权" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+											<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+												<span class="text-xs text-white">批量授权</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -784,6 +1031,20 @@
 								</div>
 							</div>
 						</div>
+						<!-- 截图展示 -->
+						<div class="mt-6 pt-6 border-t border-linear-border/50">
+							<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+								<i class="fas fa-images"></i> 周菜单管理
+							</h4>
+							<div class="grid grid-cols-2 gap-3">
+								<div class="group/img relative overflow-hidden rounded-xl border border-linear-border col-span-2">
+									<img src="img/zhoucaidan1.png" alt="周菜单管理" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+									<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+										<span class="text-xs text-white">周菜单管理</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<!-- City One Card -->
@@ -858,6 +1119,26 @@
 								</div>
 							</div>
 						</div>
+						<!-- 截图展示 -->
+						<div class="mt-6 pt-6 border-t border-linear-border/50">
+							<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+								<i class="fas fa-images"></i> 运行报表
+							</h4>
+							<div class="grid grid-cols-2 gap-3">
+								<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+									<img src="img/yikatong1.png" alt="运行报表" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+									<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+										<span class="text-xs text-white">运行报表</span>
+									</div>
+								</div>
+								<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+									<img src="img/yikatong2.png" alt="运行报表" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+									<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+										<span class="text-xs text-white">运行报表</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -925,6 +1206,26 @@
 									<strong class="text-linear-text">视觉层次增强</strong
 									>：优化非重点区域文字透明度，为地图标签添加字体平滑渲染属性。
 								</p>
+							</div>
+						</div>
+						<!-- 截图展示 -->
+						<div class="pt-6 border-t border-linear-border/50">
+							<h4 class="text-sm font-medium text-linear-muted mb-4 flex items-center gap-2">
+								<i class="fas fa-images"></i> 大屏截图
+							</h4>
+							<div class="grid grid-cols-2 gap-4">
+								<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+									<img src="img/yaunwancun1.png" alt="网格总览" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+									<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+										<span class="text-xs text-white">网格总览</span>
+									</div>
+								</div>
+								<div class="group/img relative overflow-hidden rounded-xl border border-linear-border">
+									<img src="img/yuanwancun2.png" alt="网格详情" class="w-full h-auto object-cover transition-transform duration-300 group-hover/img:scale-105 cursor-pointer" onclick="openImageModal(this.src, this.alt, this)">
+									<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+										<span class="text-xs text-white">网格详情</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -1078,25 +1379,48 @@
 
 				<!-- Highlights Section -->
 				<div class="mt-8 p-8 rounded-2xl bg-linear-card border border-linear-border">
-					<h3 class="text-xl font-bold mb-4">工作亮点与创新</h3>
+					<h3 class="text-xl font-bold mb-6">工作亮点与创新</h3>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-						<div class="space-y-2">
-							<strong class="text-linear-text text-sm block">系统性重构</strong>
-							<p class="text-xs text-linear-muted">
-								Pad端楼控系统从零重构，打造移动化新体验；设备卡片UI统一和图标定制开发；综合视图系统整合多系统数据；园区总览视图实现一屏掌握；地市运行报表重构分析逻辑；元湾村网格一张图大屏UI重构；驾驶舱大屏系统多维度数据可视化；智慧播控系统全新构建；能耗总览页面建设。
-							</p>
+						<div class="space-y-3">
+							<strong class="text-linear-text text-sm block border-b border-linear-border pb-2">系统性重构</strong>
+							<ul class="text-xs text-linear-muted space-y-2 feature-list">
+								<li>Pad端楼控系统从零重构，打造移动化新体验</li>
+								<li>设备卡片UI统一和图标定制开发</li>
+								<li>综合视图系统整合多系统数据</li>
+								<li>园区总览视图实现一屏掌握</li>
+								<li>地市运行报表重构分析逻辑</li>
+								<li>元湾村网格一张图大屏UI重构</li>
+								<li>驾驶舱大屏系统多维度数据可视化</li>
+								<li>智慧播控系统全新构建</li>
+								<li>能耗总览页面建设</li>
+							</ul>
 						</div>
-						<div class="space-y-2">
-							<strong class="text-linear-text text-sm block">跨项目复用</strong>
-							<p class="text-xs text-linear-muted">
-								监控视频组件、账户管理模块、报表系统在四大项目中高效复用，减少重复代码60%+，提升开发效率40%+。通用组件在4个项目中复用，设备图标组件在15+个页面中复用，统一视觉风格。播控系统组件实现跨模块复用，能耗总览组件支持多维度数据展示。
-							</p>
+						<div class="space-y-3">
+							<strong class="text-linear-text text-sm block border-b border-linear-border pb-2">跨项目复用</strong>
+							<ul class="text-xs text-linear-muted space-y-2 feature-list">
+								<li>监控视频组件在四大项目中高效复用</li>
+								<li>账户管理模块跨项目复用</li>
+								<li>报表系统统一架构设计</li>
+								<li>减少重复代码60%+，提升开发效率40%+</li>
+								<li>通用组件在4个项目中复用</li>
+								<li>设备图标组件在15+个页面中复用</li>
+								<li>统一视觉风格和交互规范</li>
+								<li>播控系统组件实现跨模块复用</li>
+								<li>能耗总览组件支持多维度数据展示</li>
+							</ul>
 						</div>
-						<div class="space-y-2">
-							<strong class="text-linear-text text-sm block">技术创新突破</strong>
-							<p class="text-xs text-linear-muted">
-								监控大屏智能轮播机制实现预加载和流畅切换；周菜单PDF预览界面直接编辑功能；组件化开发体系建设封装15+个通用组件；安消一体化系统整合安防消防；人员管理系统增强批量授权功能；图表轮播功能创新；天气图标组件封装支持132个彩色SVG图标；能耗总览页面环比功能。
-							</p>
+						<div class="space-y-3">
+							<strong class="text-linear-text text-sm block border-b border-linear-border pb-2">技术创新突破</strong>
+							<ul class="text-xs text-linear-muted space-y-2 feature-list">
+								<li>监控大屏智能轮播机制实现预加载和流畅切换</li>
+								<li>周菜单PDF预览界面直接编辑功能</li>
+								<li>组件化开发体系建设封装15+个通用组件</li>
+								<li>安消一体化系统整合安防消防</li>
+								<li>人员管理系统增强批量授权功能</li>
+								<li>图表轮播功能创新</li>
+								<li>天气图标组件封装支持132个彩色SVG图标</li>
+								<li>能耗总览页面环比功能</li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -1198,6 +1522,24 @@
 			</section>
 		</main>
 
+		<!-- Image Modal -->
+		<div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm" onclick="closeImageModal(event)">
+			<button class="absolute top-4 right-4 text-white/80 hover:text-white text-3xl z-10 cursor-pointer" onclick="closeImageModal(event)">&times;</button>
+			<!-- 左箭头 -->
+			<button id="prevBtn" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl cursor-pointer transition-colors z-10" onclick="navigateImage(-1, event)">
+				<i class="fas fa-chevron-left"></i>
+			</button>
+			<!-- 右箭头 -->
+			<button id="nextBtn" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl cursor-pointer transition-colors z-10" onclick="navigateImage(1, event)">
+				<i class="fas fa-chevron-right"></i>
+			</button>
+			<div class="relative max-w-[90vw] max-h-[90vh]">
+				<img id="modalImage" src="" alt="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
+				<p id="modalCaption" class="text-center text-white/80 mt-4 text-sm"></p>
+				<p id="modalCounter" class="text-center text-white/50 mt-1 text-xs"></p>
+			</div>
+		</div>
+
 		<!-- Footer -->
 		<footer class="border-t border-linear-border/50 bg-linear-card/30 backdrop-blur-lg mt-auto">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -1224,6 +1566,121 @@
 		</footer>
 
 		<script>
+			// --- Image Modal Functions ---
+			let currentImageGroup = [];
+			let currentImageIndex = 0;
+			
+			function openImageModal(src, alt, imgElement) {
+				const modal = document.getElementById('imageModal');
+				const modalImage = document.getElementById('modalImage');
+				const modalCaption = document.getElementById('modalCaption');
+				const modalCounter = document.getElementById('modalCounter');
+				
+				// 找到当前图片所在的组（父级grid容器）
+				const gridContainer = imgElement ? imgElement.closest('.grid') : null;
+				if (gridContainer) {
+					// 获取该组内所有图片
+					const images = gridContainer.querySelectorAll('img[onclick]');
+					currentImageGroup = Array.from(images).map(img => ({
+						src: img.src,
+						alt: img.alt
+					}));
+					// 找到当前图片的索引
+					currentImageIndex = currentImageGroup.findIndex(img => img.src === src);
+				} else {
+					currentImageGroup = [{ src, alt }];
+					currentImageIndex = 0;
+				}
+				
+				updateModalImage();
+				
+				modal.classList.remove('hidden');
+				modal.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+				
+				// 更新箭头显示状态
+				updateNavigationButtons();
+			}
+			
+			function updateModalImage() {
+				const modalImage = document.getElementById('modalImage');
+				const modalCaption = document.getElementById('modalCaption');
+				const modalCounter = document.getElementById('modalCounter');
+				
+				const current = currentImageGroup[currentImageIndex];
+				modalImage.src = current.src;
+				modalImage.alt = current.alt;
+				modalCaption.textContent = current.alt;
+				
+				if (currentImageGroup.length > 1) {
+					modalCounter.textContent = (currentImageIndex + 1) + ' / ' + currentImageGroup.length;
+				} else {
+					modalCounter.textContent = '';
+				}
+			}
+			
+			function updateNavigationButtons() {
+				const prevBtn = document.getElementById('prevBtn');
+				const nextBtn = document.getElementById('nextBtn');
+				
+				if (currentImageGroup.length <= 1) {
+					prevBtn.style.display = 'none';
+					nextBtn.style.display = 'none';
+				} else {
+					prevBtn.style.display = 'flex';
+					nextBtn.style.display = 'flex';
+					prevBtn.style.opacity = currentImageIndex === 0 ? '0.3' : '1';
+					nextBtn.style.opacity = currentImageIndex === currentImageGroup.length - 1 ? '0.3' : '1';
+				}
+			}
+			
+			function navigateImage(direction, event) {
+				event.stopPropagation();
+				const newIndex = currentImageIndex + direction;
+				if (newIndex >= 0 && newIndex < currentImageGroup.length) {
+					currentImageIndex = newIndex;
+					updateModalImage();
+					updateNavigationButtons();
+				}
+			}
+			
+			function closeImageModal(event) {
+				// Only close if clicking on the backdrop or close button
+				const isCloseBtn = event.target.closest('button') && event.target.closest('button').textContent.includes('\u00D7');
+				if (event.target.id === 'imageModal' || isCloseBtn) {
+					const modal = document.getElementById('imageModal');
+					modal.classList.add('hidden');
+					modal.classList.remove('flex');
+					document.body.style.overflow = '';
+				}
+			}
+			
+			// Close modal on Escape key, navigate with arrow keys
+			document.addEventListener('keydown', function(e) {
+				const modal = document.getElementById('imageModal');
+				if (!modal.classList.contains('hidden')) {
+					if (e.key === 'Escape') {
+						modal.classList.add('hidden');
+						modal.classList.remove('flex');
+						document.body.style.overflow = '';
+					} else if (e.key === 'ArrowLeft') {
+						e.preventDefault();
+						if (currentImageIndex > 0) {
+							currentImageIndex--;
+							updateModalImage();
+							updateNavigationButtons();
+						}
+					} else if (e.key === 'ArrowRight') {
+						e.preventDefault();
+						if (currentImageIndex < currentImageGroup.length - 1) {
+							currentImageIndex++;
+							updateModalImage();
+							updateNavigationButtons();
+						}
+					}
+				}
+			});
+
 			// --- 1. Theme Toggle Logic (with Keyboard Shortcut) ---
 			const themeToggleBtn = document.getElementById('theme-toggle')
 			const body = document.body
@@ -1358,7 +1815,26 @@
 				document.getElementById('typewriter-line1').addEventListener('typing-complete', () => {
 					line2.type()
 				})
+
+				// Handle image load errors
+				document.querySelectorAll('img').forEach(img => {
+					img.addEventListener('error', function() {
+						handleImageError(this);
+					});
+					// Check if image already failed to load
+					if (img.complete && img.naturalHeight === 0) {
+						handleImageError(img);
+					}
+				});
 			})
+
+			// Image error handler function
+			function handleImageError(img) {
+				const placeholder = document.createElement('div');
+				placeholder.className = 'img-error-placeholder rounded-xl';
+				placeholder.innerHTML = '<i class="fas fa-image"></i><span>图片加载失败</span>';
+				img.parentNode.replaceChild(placeholder, img);
+			}
 		</script>
 	</body>
 </html>
