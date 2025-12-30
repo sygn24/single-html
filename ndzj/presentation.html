@@ -832,26 +832,41 @@
                 linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
         }
 
-        /* 鼠标跟随光效 */
+        /* 鼠标跟随光晕团效果 */
         .mouse-glow {
             position: fixed;
-            width: 400px;
-            height: 400px;
+            width: 800px;
+            height: 800px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.2) 20%, transparent 50%);
             pointer-events: none;
             z-index: -1;
             transform: translate(-50%, -50%);
             transition: opacity 0.3s ease;
             opacity: 0;
+            filter: blur(80px);
         }
 
         .mouse-glow.active {
             opacity: 1;
+            animation: glowPulse 4s ease-in-out infinite;
         }
 
         .dark .mouse-glow {
-            background: radial-gradient(circle, rgba(129, 140, 248, 0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.6) 0%, rgba(129, 140, 248, 0.3) 20%, transparent 50%);
+            filter: blur(100px);
+        }
+
+        /* 光晕脉冲动画 */
+        @keyframes glowPulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
         }
 
         /* 打印样式优化 */
@@ -3412,7 +3427,7 @@
             img.parentNode.replaceChild(placeholder, img);
         }
 
-        // ===== 鼠标跟随光效 =====
+        // ===== 鼠标跟随光晕效果 =====
         const mouseGlow = document.getElementById('mouse-glow');
         let mouseX = 0, mouseY = 0;
         let glowX = 0, glowY = 0;
@@ -3421,7 +3436,7 @@
             mouseX = e.clientX;
             mouseY = e.clientY;
             
-            // 只在非沉浸式模式下显示鼠标光效
+            // 只在非沉浸式模式下显示鼠标光晕
             if (!isImmersiveMode) {
                 mouseGlow.classList.add('active');
             }
@@ -3433,8 +3448,8 @@
 
         // 平滑跟随动画
         function animateGlow() {
-            glowX += (mouseX - glowX) * 0.1;
-            glowY += (mouseY - glowY) * 0.1;
+            glowX += (mouseX - glowX) * 0.08;
+            glowY += (mouseY - glowY) * 0.08;
             mouseGlow.style.left = glowX + 'px';
             mouseGlow.style.top = glowY + 'px';
             requestAnimationFrame(animateGlow);
