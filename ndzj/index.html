@@ -215,7 +215,7 @@
 		</style>
 	</head>
 	<body
-		class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased selection:bg-linear-primary selection:text-white dark overflow-x-hidden relative"
+		class="bg-linear-bg text-linear-text transition-colors duration-300 antialiased selection:bg-linear-primary selection:text-white overflow-x-hidden relative"
 	>
 		<!-- 视差背景元素 -->
 		<div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
@@ -1701,30 +1701,10 @@
 
 			// --- 1. 主题切换逻辑（含键盘快捷键） ---
 			const themeToggleBtn = document.getElementById('theme-toggle')
-			const body = document.body
-
-			// 设置主题辅助函数
-			function setTheme(isDark) {
-				if (isDark) {
-					body.classList.remove('light')
-					body.classList.add('dark')
-				} else {
-					body.classList.remove('dark')
-					body.classList.add('light')
-				}
-			}
+			const html = document.documentElement
 
 			function toggleTheme() {
-				if (body.classList.contains('dark')) {
-					setTheme(false)
-				} else {
-					setTheme(true)
-				}
-			}
-
-			// 检测系统主题偏好
-			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-				setTheme(false)
+				html.classList.toggle('dark')
 			}
 
 			// 按钮点击事件
