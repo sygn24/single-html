@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth scroll-pt-28">
+<html lang="zh-CN" class="dark scroll-smooth scroll-pt-28">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -254,6 +254,11 @@
 							<a href="#tech" class="hover:text-linear-primary transition-colors">技术沉淀</a>
 							<a href="#future" class="hover:text-linear-primary transition-colors">展望</a>
 						</div>
+						<!-- 演示文稿按钮 -->
+						<a href="presentation.html" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-linear-primary text-white text-sm font-medium hover:bg-linear-primaryHover transition-colors cursor-pointer">
+							<i class="fas fa-presentation-screen text-xs"></i>
+							<span>演示文稿</span>
+						</a>
 						<!-- 主题切换按钮 -->
 						<div class="flex items-center gap-2">
 							<!-- 更新快捷键提示区域 -->
@@ -325,7 +330,7 @@
 				</p>
 
 				<!-- 统计数据网格 -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-8">
 					<div class="group relative p-6 rounded-2xl bg-linear-card border border-linear-border hover-card">
 						<div class="flex items-center justify-between mb-4">
 							<div class="p-2 rounded-lg bg-blue-500/10 text-blue-500">
@@ -363,6 +368,19 @@
 						</div>
 						<div class="text-3xl font-bold mb-1">60%</div>
 						<div class="text-sm text-linear-muted">代码重复率降低</div>
+					</div>
+				</div>
+
+				<!-- 演示文稿入口 -->
+				<div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+					<a href="presentation.html" class="group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-linear-primary to-purple-600 text-white font-medium hover:from-linear-primaryHover hover:to-purple-700 transition-all duration-300 shadow-lg shadow-linear-primary/20 hover:shadow-linear-primary/30 hover:scale-105 cursor-pointer">
+						<i class="fas fa-presentation-screen text-lg group-hover:scale-110 transition-transform"></i>
+						<span>查看演示文稿</span>
+						<i class="fas fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
+					</a>
+					<div class="flex items-center gap-2 text-sm text-linear-muted">
+						<i class="fas fa-info-circle"></i>
+						<span>支持全屏演示、键盘导航、沉浸模式</span>
 					</div>
 				</div>
 			</section>
