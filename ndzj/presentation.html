@@ -268,53 +268,42 @@
             display: none;
         }
 
-        /* 炫技版：量子跃迁 (Quantum Warp) - 稳定且更流畅 */
+        /* 3D转场动画效果 */
         
-        /* 容器透视 - 增强冲击力 */
+        /* 容器透视 */
         #slide-container {
-            perspective: 1200px; /* Keep this for strong 3D */
+            perspective: 1200px;
             transform-style: preserve-3d;
             overflow: hidden;
         }
 
-        /* 默认状态（未来的幻灯片 - 等待进场） */
+        /* 默认状态（未来的幻灯片） */
         .slide {
             opacity: 0;
-            /* 调整起始状态，减少渲染负担：Z轴稍近，旋转减小，模糊和亮度降低 */
-            transform: translate3d(0, 0, -1000px) rotateX(15deg) rotateZ(5deg) scale(0.2);
-            /* 极速流体曲线：快进慢出，精准悬停，无回弹震荡 */
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); /* 缩短过渡时间，提升响应速度 */
+            transform: translate3d(100%, 0, -600px) rotateY(-25deg);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             position: absolute;
             inset: 0;
             pointer-events: none;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            will-change: transform, opacity, filter;
-            /* 深空模糊与暗度 */
-            filter: blur(10px) brightness(0.2); /* 降低模糊强度和亮度，减少计算量 */
+            will-change: transform, opacity;
             z-index: 1;
         }
 
         /* 激活状态（当前幻灯片） */
         .slide.active {
             opacity: 1;
-            /* 归位：零点，正常比例 */
-            transform: translate3d(0, 0, 0) rotateX(0) rotateZ(0) scale(1);
+            transform: translate3d(0, 0, 0) rotateY(0);
             pointer-events: auto;
             z-index: 100;
-            filter: blur(0) brightness(1);
         }
 
         /* 离开状态（过去的幻灯片） */
         .slide.prev {
             opacity: 0;
-            /* 向屏幕外(观众方向)极速飞出，产生"穿越"感 */
-            transform: translate3d(0, 0, 600px) rotateZ(-10deg) scale(1.8); /* 调整飞出参数，减少极端值 */
+            transform: translate3d(-100%, 0, -600px) rotateY(25deg);
             z-index: 50;
-            /* 离场时过曝，模拟光速穿越 - 降低过曝强度，减少渲染压力 */
-            filter: blur(5px) brightness(2) contrast(1.5);
-            /* 离场使用加速曲线，模拟逃逸速度 */
-            transition: all 0.5s cubic-bezier(0.7, 0, 1, 1); /* 离场更快 */
         }
 
         /* 点击波纹效果 */
