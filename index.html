@@ -86,71 +86,181 @@
     </script>
     
     <style>
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        /* ============ 高级玻璃拟态设计系统 ============ */
 
-        .card-glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow:
-                0 8px 32px rgba(31, 38, 135, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8));
+            border-radius: 10px;
         }
-        .dark .card-glass {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .dark ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #94a3b8, #64748b);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #475569, #334155);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #64748b, #475569);
+        }
+
+        /* 高级玻璃效果 - 导航栏 */
+        .glass {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(255, 255, 255, 0.65) 50%,
+                rgba(248, 250, 252, 0.75) 100%
+            );
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 4px 30px rgba(0, 0, 0, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        .dark .glass {
+            background: linear-gradient(
+                135deg,
+                rgba(15, 23, 42, 0.85) 0%,
+                rgba(30, 41, 59, 0.75) 50%,
+                rgba(15, 23, 42, 0.85) 100%
+            );
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 4px 30px rgba(0, 0, 0, 0.3),
+                0 1px 3px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
-        .icon-glow {
+        /* 超级玻璃卡片效果 */
+        .card-glass {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.85) 25%,
+                rgba(248, 250, 252, 0.9) 50%,
+                rgba(255, 255, 255, 0.88) 100%
+            );
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.12),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+                0 1px 0 rgba(255, 255, 255, 0.8) inset;
             position: relative;
             overflow: hidden;
+        }
+        .card-glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.4) 0%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            pointer-events: none;
+        }
+        .dark .card-glass {
+            background: linear-gradient(
+                135deg,
+                rgba(30, 41, 59, 0.95) 0%,
+                rgba(15, 23, 42, 0.9) 25%,
+                rgba(30, 41, 59, 0.92) 50%,
+                rgba(15, 23, 42, 0.95) 100%
+            );
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                0 1px 0 rgba(255, 255, 255, 0.08) inset;
+        }
+        .dark .card-glass::before {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.02) 100%
+            );
+        }
+
+        /* 图标光晕效果 - 增强版 */
+        .icon-glow {
+            position: relative;
+            overflow: visible;
         }
         .icon-glow::before {
             content: '';
             position: absolute;
-            inset: -2px;
+            inset: -4px;
             background: inherit;
-            filter: blur(8px);
-            opacity: 0.4;
+            filter: blur(16px);
+            opacity: 0.5;
             z-index: -1;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: inherit;
+        }
+        .icon-glow::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            background: inherit;
+            filter: blur(32px);
+            opacity: 0.2;
+            z-index: -2;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: inherit;
         }
         .icon-glow:hover::before {
-            opacity: 0.6;
-            filter: blur(12px);
+            opacity: 0.7;
+            filter: blur(20px);
+            transform: scale(1.1);
         }
-        
+        .icon-glow:hover::after {
+            opacity: 0.4;
+            filter: blur(40px);
+        }
+
+        /* 渐变文字效果 */
         .text-gradient {
-            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 50%, #06b6d4 100%);
+            background: linear-gradient(
+                135deg,
+                #3b82f6 0%,
+                #0ea5e9 25%,
+                #06b6d4 50%,
+                #0ea5e9 75%,
+                #3b82f6 100%
+            );
             background-size: 200% 200%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: gradient 8s ease infinite;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
         }
-        
+
+        /* 卡片悬停效果 - 升级版 */
         .card-hover {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
         }
         .card-hover:hover {
-            transform: translateY(-12px) scale(1.02);
+            transform: translateY(-16px) scale(1.03);
         }
+        /* 光泽扫过效果 */
         .card-hover::before {
             content: '';
             position: absolute;
@@ -158,75 +268,275 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                transparent 100%
+            );
+            transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 1;
         }
         .card-hover:hover::before {
             left: 100%;
         }
+        /* 边框光效 */
         .card-hover::after {
             content: '';
             position: absolute;
             inset: 0;
             border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            padding: 2px;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(59, 130, 246, 0.5) 50%,
+                transparent 100%
+            );
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask-composite: xor;
+            -webkit-mask-composite: xor;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease;
+            z-index: 2;
+            pointer-events: none;
         }
         .card-hover:hover::after {
             opacity: 1;
         }
-        
+        .dark .card-hover:hover::after {
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(99, 102, 241, 0.6) 50%,
+                transparent 100%
+            );
+        }
+
+        /* 背景光斑 - 增强版 */
         .bg-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
+            filter: blur(100px);
+            opacity: 0.5;
             pointer-events: none;
+            animation: blobFloat 20s ease-in-out infinite;
         }
-        
+        @keyframes blobFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+
+        /* 背景网格 - 升级版 */
         .bg-grid {
-            background-size: 60px 60px;
-            background-image: 
-                linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            background-image:
+                linear-gradient(to right, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
         }
         .dark .bg-grid {
-            background-image: 
-                linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+            background-image:
+                linear-gradient(to right, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
         }
-        
-        .icon-gradient-1 { background: linear-gradient(135deg, #3b82f6, #6366f1); }
-        .icon-gradient-2 { background: linear-gradient(135deg, #ec4899, #f43f5e); }
-        .icon-gradient-3 { background: linear-gradient(135deg, #10b981, #14b8a6); }
-        .icon-gradient-4 { background: linear-gradient(135deg, #f59e0b, #f97316); }
-        .icon-gradient-5 { background: linear-gradient(135deg, #3b82f6, #0ea5e9); }
-        .icon-gradient-6 { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
-        
+
+        /* 图标渐变 - 3D 效果 */
+        .icon-gradient-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            box-shadow:
+                0 8px 20px rgba(59, 130, 246, 0.4),
+                0 4px 8px rgba(59, 130, 246, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        .icon-gradient-2 {
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            box-shadow:
+                0 8px 20px rgba(236, 72, 153, 0.4),
+                0 4px 8px rgba(236, 72, 153, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        .icon-gradient-3 {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            box-shadow:
+                0 8px 20px rgba(16, 185, 129, 0.4),
+                0 4px 8px rgba(16, 185, 129, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        .icon-gradient-4 {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            box-shadow:
+                0 8px 20px rgba(245, 158, 11, 0.4),
+                0 4px 8px rgba(245, 158, 11, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        .icon-gradient-5 {
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+            box-shadow:
+                0 8px 20px rgba(59, 130, 246, 0.4),
+                0 4px 8px rgba(59, 130, 246, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        .icon-gradient-6 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+            box-shadow:
+                0 8px 20px rgba(139, 92, 246, 0.4),
+                0 4px 8px rgba(139, 92, 246, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 滚动显示动画 */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        .mermaid { display: flex; justify-content: center; margin: 2rem 0; }
-        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mermaid 图表样式 */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        /* 标签样式 */
         .tag {
             display: inline-flex;
             align-items: center;
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.85rem;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             border-radius: 9999px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-        
+
+        /* 特性卡片玻璃效果 */
+        .feature-card {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.8) 100%
+            );
+            backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow:
+                0 4px 24px rgba(0, 0, 0, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        .dark .feature-card {
+            background: linear-gradient(
+                135deg,
+                rgba(30, 41, 59, 0.9) 0%,
+                rgba(15, 23, 42, 0.85) 100%
+            );
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 4px 24px rgba(0, 0, 0, 0.2),
+                0 1px 3px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .dark .feature-card:hover {
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        /* 按钮光泽效果 */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 100%
+            );
+            transition: left 0.6s ease;
+        }
+        .btn-shine:hover::before {
+            left: 100%;
+        }
+
+        /* 架构图容器玻璃效果 */
+        .arch-diagram {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 250, 252, 0.9) 100%
+            );
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        .dark .arch-diagram {
+            background: linear-gradient(
+                135deg,
+                rgba(30, 41, 59, 0.95) 0%,
+                rgba(15, 23, 42, 0.92) 100%
+            );
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        /* 响应式调整 */
         @media (max-width: 768px) {
             .hero-title { font-size: 2.5rem !important; }
+        }
+
+        /* 页脚玻璃效果 */
+        .footer-glass {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(248, 250, 252, 0.75) 100%
+            );
+            backdrop-filter: blur(20px) saturate(150%);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .footer-glass {
+            background: linear-gradient(
+                135deg,
+                rgba(15, 23, 42, 0.85) 0%,
+                rgba(30, 41, 59, 0.8) 100%
+            );
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
@@ -300,27 +610,27 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="animation-delay: 0.2s;">
-                    <a href="#apps" class="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all hover:-translate-y-1">
+                    <a href="#apps" class="btn-shine group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all hover:-translate-y-1">
                         开始探索
                         <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </a>
-                    <a href="#architecture" class="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                    <a href="#architecture" class="btn-shine inline-flex items-center gap-2 px-8 py-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200/50 dark:border-slate-700/50 hover:border-primary-300 dark:hover:border-primary-600 transition-all hover:-translate-y-1 hover:shadow-lg">
                         <i class="fa-solid fa-diagram-project"></i>
                         查看架构
                     </a>
                 </div>
                 
                 <div class="mt-16 pt-8 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-wrap justify-center gap-8 md:gap-16 animate-fade-in" style="animation-delay: 0.4s;">
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">6</div>
+                    <div class="text-center group cursor-default">
+                        <div class="text-4xl md:text-5xl font-black text-gradient mb-1 group-hover:scale-110 transition-transform">6</div>
                         <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">AI 应用</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">100%</div>
+                    <div class="text-center group cursor-default">
+                        <div class="text-4xl md:text-5xl font-black text-gradient mb-1 group-hover:scale-110 transition-transform">100%</div>
                         <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">本地运行</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">∞</div>
+                    <div class="text-center group cursor-default">
+                        <div class="text-4xl md:text-5xl font-black text-gradient mb-1 group-hover:scale-110 transition-transform">∞</div>
                         <div class="text-sm text-slate-500 uppercase tracking-wider font-medium mt-1">创意可能</div>
                     </div>
                 </div>
@@ -353,10 +663,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-500">Nova CV</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">智能简历构建器，配备 Gemini AI 助手，12 款专业模版，一键生成精美 PDF</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold border border-blue-100 dark:border-blue-800">
+                                    <span class="tag bg-gradient-to-r from-blue-50/90 to-indigo-50/90 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/50">
                                         <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI 智能润色
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold border border-purple-100 dark:border-purple-800">
+                                    <span class="tag bg-gradient-to-r from-purple-50/90 to-pink-50/90 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/50">
                                         <i class="fa-solid fa-layer-group mr-2"></i>12+ 精选模版
                                     </span>
                                 </div>
@@ -383,10 +693,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-pink-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-pink-500 group-hover:to-rose-500">AI 智能写真</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">专业级影像生成工作台，100+ 种风格选择，从职业肖像到艺术绘画，一键生成</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/30 dark:to-rose-900/30 text-pink-600 dark:text-pink-400 rounded-full text-sm font-semibold border border-pink-100 dark:border-pink-800">
+                                    <span class="tag bg-gradient-to-r from-pink-50/90 to-rose-50/90 dark:from-pink-900/40 dark:to-rose-900/40 text-pink-600 dark:text-pink-400 border border-pink-200/60 dark:border-pink-800/50">
                                         <i class="fa-solid fa-images mr-2"></i>100+ 艺术风格
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-semibold border border-orange-100 dark:border-orange-800">
+                                    <span class="tag bg-gradient-to-r from-orange-50/90 to-red-50/90 dark:from-orange-900/40 dark:to-red-900/40 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/50">
                                         <i class="fa-solid fa-bolt mr-2"></i>即时生成
                                     </span>
                                 </div>
@@ -413,10 +723,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-emerald-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-500">Bao 复古拍立得</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">AI 写真相机应用，多种胶片风格，支持 AI 风格转换，打造独特的复古照片墙</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 rounded-full text-sm font-semibold border border-emerald-100 dark:border-emerald-800">
+                                    <span class="tag bg-gradient-to-r from-emerald-50/90 to-teal-50/90 dark:from-emerald-900/40 dark:to-teal-900/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">
                                         <i class="fa-solid fa-film mr-2"></i>胶片风格
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 text-teal-600 dark:text-teal-400 rounded-full text-sm font-semibold border border-teal-100 dark:border-teal-800">
+                                    <span class="tag bg-gradient-to-r from-teal-50/90 to-cyan-50/90 dark:from-teal-900/40 dark:to-cyan-900/40 text-teal-600 dark:text-teal-400 border border-teal-200/60 dark:border-teal-800/50">
                                         <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI 写真馆
                                     </span>
                                 </div>
@@ -443,10 +753,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-amber-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-500">MD 转 Word 工坊</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">专业的 Markdown 排版工具，支持 Mermaid 图表，多种字体与纸张，一键导出 Word/PDF</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-600 dark:text-amber-400 rounded-full text-sm font-semibold border border-amber-100 dark:border-amber-800">
+                                    <span class="tag bg-gradient-to-r from-amber-50/90 to-orange-50/90 dark:from-amber-900/40 dark:to-orange-900/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/50">
                                         <i class="fa-brands fa-markdown mr-2"></i>Markdown
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-semibold border border-orange-100 dark:border-orange-800">
+                                    <span class="tag bg-gradient-to-r from-orange-50/90 to-red-50/90 dark:from-orange-900/40 dark:to-red-900/40 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/50">
                                         <i class="fa-solid fa-diagram-project mr-2"></i>Mermaid
                                     </span>
                                 </div>
@@ -473,10 +783,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-cyan-500">圣诞树 3D</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">沉浸式 3D 圣诞树体验，支持手势控制、照片上传，打造专属的冬日记忆宫殿</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold border border-blue-100 dark:border-blue-800">
+                                    <span class="tag bg-gradient-to-r from-blue-50/90 to-cyan-50/90 dark:from-blue-900/40 dark:to-cyan-900/40 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/50">
                                         <i class="fa-solid fa-cube mr-2"></i>Three.js
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-cyan-50 to-sky-50 dark:from-cyan-900/30 dark:to-sky-900/30 text-cyan-600 dark:text-cyan-400 rounded-full text-sm font-semibold border border-cyan-100 dark:border-cyan-800">
+                                    <span class="tag bg-gradient-to-r from-cyan-50/90 to-sky-50/90 dark:from-cyan-900/40 dark:to-sky-900/40 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-800/50">
                                         <i class="fa-solid fa-hand mr-2"></i>手势控制
                                     </span>
                                 </div>
@@ -503,10 +813,10 @@
                                 <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-violet-500 transition-all duration-300 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent group-hover:bg-gradient-to-br group-hover:from-violet-500 group-hover:to-purple-500">年度工作总结</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mb-7 leading-relaxed text-lg font-medium flex-grow">精美的年度工作总结展示模板，时间线布局，数据可视化，支持深色/浅色模式</p>
                                 <div class="flex flex-wrap gap-2 mb-8">
-                                    <span class="px-4 py-2 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 text-violet-600 dark:text-violet-400 rounded-full text-sm font-semibold border border-violet-100 dark:border-violet-800">
+                                    <span class="tag bg-gradient-to-r from-violet-50/90 to-purple-50/90 dark:from-violet-900/40 dark:to-purple-900/40 text-violet-600 dark:text-violet-400 border border-violet-200/60 dark:border-violet-800/50">
                                         <i class="fa-solid fa-timeline mr-2"></i>时间线
                                     </span>
-                                    <span class="px-4 py-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold border border-purple-100 dark:border-purple-800">
+                                    <span class="tag bg-gradient-to-r from-purple-50/90 to-indigo-50/90 dark:from-purple-900/40 dark:to-indigo-900/40 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/50">
                                         <i class="fa-solid fa-chart-pie mr-2"></i>数据可视化
                                     </span>
                                 </div>
@@ -525,47 +835,47 @@
         </section>
         
         <!-- 特性区域 -->
-        <section id="features" class="py-24 px-4 bg-white/50 dark:bg-slate-900/50">
+        <section id="features" class="py-24 px-4">
             <div class="max-w-7xl mx-auto">
                 <div class="text-center mb-16 reveal">
-                    <span class="inline-block px-4 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+                    <span class="tag bg-emerald-100/80 dark:bg-emerald-900/30 backdrop-blur-sm text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50 mb-4">
                         <i class="fa-solid fa-star mr-2"></i>核心特性
                     </span>
                     <h2 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">为什么选择我们？</h2>
                     <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">每一个细节都经过精心打磨，只为给您最好的体验</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal">
-                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-500 text-2xl">
+                    <div class="feature-card text-center p-8 rounded-3xl reveal">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 flex items-center justify-center text-primary-500 text-2xl shadow-lg shadow-primary-500/10">
                             <i class="fa-solid fa-bolt"></i>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">极速响应</h3>
-                        <p class="text-slate-600 dark:text-slate-400">纯前端架构，无需后端服务器，毫秒级响应，流畅体验</p>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">纯前端架构，无需后端服务器，毫秒级响应，流畅体验</p>
                     </div>
-                    
-                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.1s;">
-                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500 text-2xl">
+
+                    <div class="feature-card text-center p-8 rounded-3xl reveal" style="animation-delay: 0.1s;">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 flex items-center justify-center text-emerald-500 text-2xl shadow-lg shadow-emerald-500/10">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">隐私安全</h3>
-                        <p class="text-slate-600 dark:text-slate-400">所有数据本地存储，不上传任何信息，您的隐私由您掌控</p>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">所有数据本地存储，不上传任何信息，您的隐私由您掌控</p>
                     </div>
-                    
-                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.2s;">
-                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-500 text-2xl">
+
+                    <div class="feature-card text-center p-8 rounded-3xl reveal" style="animation-delay: 0.2s;">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 dark:from-pink-500/20 dark:to-rose-500/20 flex items-center justify-center text-pink-500 text-2xl shadow-lg shadow-pink-500/10">
                             <i class="fa-solid fa-mobile-screen"></i>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">响应式设计</h3>
-                        <p class="text-slate-600 dark:text-slate-400">完美适配手机、平板、桌面，随时随地开始创作</p>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">完美适配手机、平板、桌面，随时随地开始创作</p>
                     </div>
-                    
-                    <div class="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 reveal" style="animation-delay: 0.3s;">
-                        <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 text-2xl">
+
+                    <div class="feature-card text-center p-8 rounded-3xl reveal" style="animation-delay: 0.3s;">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 flex items-center justify-center text-amber-500 text-2xl shadow-lg shadow-amber-500/10">
                             <i class="fa-solid fa-moon"></i>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">深色模式</h3>
-                        <p class="text-slate-600 dark:text-slate-400">支持深色/浅色模式切换，保护您的眼睛，夜间创作更舒适</p>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">支持深色/浅色模式切换，保护您的眼睛，夜间创作更舒适</p>
                     </div>
                 </div>
             </div>
@@ -582,14 +892,14 @@
                     <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">六大应用模块，覆盖创意工作流的各个环节</p>
                 </div>
                 
-                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl reveal">
+                <div class="arch-diagram rounded-3xl p-8 shadow-xl reveal">
                     <div class="mermaid" id="architecture-diagram"></div>
                 </div>
             </div>
         </section>
         
         <!-- 页脚 -->
-        <footer class="py-12 px-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+        <footer class="footer-glass py-12 px-4 border-t border-slate-200/50 dark:border-slate-800/50">
             <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div class="flex items-center gap-3">
